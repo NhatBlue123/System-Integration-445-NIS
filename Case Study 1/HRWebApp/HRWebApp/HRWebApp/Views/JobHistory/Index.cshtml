@@ -1,0 +1,112 @@
+﻿@model IEnumerable<HRWebApp.Models.Job_History>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            Full Name
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Department)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Division)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Start_Date)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.End_Date)
+        </th>
+        @*<th>
+            @Html.DisplayNameFor(model => model.Job_Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Supervisor)
+        </th>*@
+        <th>
+            @Html.DisplayNameFor(model => model.Job_Category)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Location)
+        </th>
+        @*<th>
+            @Html.DisplayNameFor(model => model.Departmen_Code)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Salary_Type)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Pay_Period)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Hours_per_Week)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Hazardous_Training)
+        </th>*@
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Personal.First_Name)
+            @Html.DisplayFor(modelItem => item.Personal.Last_Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Department)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Division)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Start_Date)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.End_Date)
+        </td>
+        @*<td>
+            @Html.DisplayFor(modelItem => item.Job_Title)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Supervisor)
+        </td>*@
+        <td>
+            @Html.DisplayFor(modelItem => item.Job_Category)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Location)
+        </td>
+        @*<td>
+            @Html.DisplayFor(modelItem => item.Departmen_Code)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Salary_Type)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Pay_Period)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Hours_per_Week)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Hazardous_Training)
+        </td>*@
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.ID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.ID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.ID })
+        </td>
+    </tr>
+}
+
+</table>

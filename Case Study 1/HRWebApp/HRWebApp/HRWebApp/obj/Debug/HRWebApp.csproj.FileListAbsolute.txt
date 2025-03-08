@@ -1,0 +1,44 @@
+c:\users\kunpc\documents\visual studio 2013\Projects\HRWebApp\HRWebApp\bin\HRWebApp.dll.config
+c:\users\kunpc\documents\visual studio 2013\Projects\HRWebApp\HRWebApp\bin\HRWebApp.dll
+c:\users\kunpc\documents\visual studio 2013\Projects\HRWebApp\HRWebApp\bin\HRWebApp.pdb
+c:\users\kunpc\documents\visual studio 2013\Projects\HRWebApp\HRWebApp\bin\System.Web.Helpers.dll
+c:\users\kunpc\documents\visual studio 2013\Projects\HRWebApp\HRWebApp\bin\System.Web.Mvc.dll
+c:\users\kunpc\documents\visual studio 2013\Projects\HRWebApp\HRWebApp\bin\System.Web.Razor.dll
+c:\users\kunpc\documents\visual studio 2013\Projects\HRWebApp\HRWebApp\bin\System.Web.Webpages.Deployment.dll
+c:\users\kunpc\documents\visual studio 2013\Projects\HRWebApp\HRWebApp\bin\System.Web.Webpages.dll
+c:\users\kunpc\documents\visual studio 2013\Projects\HRWebApp\HRWebApp\bin\System.Web.Webpages.Razor.dll
+c:\users\kunpc\documents\visual studio 2013\Projects\HRWebApp\HRWebApp\bin\System.Web.Razor.xml
+c:\users\kunpc\documents\visual studio 2013\Projects\HRWebApp\HRWebApp\bin\System.Web.Webpages.xml
+c:\users\kunpc\documents\visual studio 2013\Projects\HRWebApp\HRWebApp\bin\System.Web.Webpages.Deployment.xml
+c:\users\kunpc\documents\visual studio 2013\Projects\HRWebApp\HRWebApp\bin\System.Web.Webpages.Razor.xml
+c:\users\kunpc\documents\visual studio 2013\Projects\HRWebApp\HRWebApp\bin\System.Web.Helpers.xml
+c:\users\kunpc\documents\visual studio 2013\Projects\HRWebApp\HRWebApp\bin\System.Web.Mvc.xml
+c:\users\kunpc\documents\visual studio 2013\Projects\HRWebApp\HRWebApp\obj\Debug\HRWebApp.dll
+c:\users\kunpc\documents\visual studio 2013\Projects\HRWebApp\HRWebApp\obj\Debug\HRWebApp.pdb
+c:\users\kunpc\documents\visual studio 2013\Projects\HRWebApp\HRWebApp\obj\Debug\HRWebApp.csprojResolveAssemblyReference.cache
+c:\users\kunpc\documents\visual studio 2013\Projects\HRWebApp\HRWebApp\bin\EntityFramework.dll
+c:\users\kunpc\documents\visual studio 2013\Projects\HRWebApp\HRWebApp\bin\EntityFramework.SqlServer.dll
+c:\users\kunpc\documents\visual studio 2013\Projects\HRWebApp\HRWebApp\bin\EntityFramework.xml
+c:\users\kunpc\documents\visual studio 2013\Projects\HRWebApp\HRWebApp\bin\EntityFramework.SqlServer.xml
+E:\Anhdao\DTQT\Giao trinh\Software Intergration Practices\Material\5.Case study\Apps\HRWebApp\HRWebApp\HRWebApp\bin\HRWebApp.dll.config
+E:\Anhdao\DTQT\Giao trinh\Software Intergration Practices\Material\5.Case study\Apps\HRWebApp\HRWebApp\HRWebApp\bin\HRWebApp.dll
+E:\Anhdao\DTQT\Giao trinh\Software Intergration Practices\Material\5.Case study\Apps\HRWebApp\HRWebApp\HRWebApp\bin\HRWebApp.pdb
+E:\Anhdao\DTQT\Giao trinh\Software Intergration Practices\Material\5.Case study\Apps\HRWebApp\HRWebApp\HRWebApp\bin\EntityFramework.dll
+E:\Anhdao\DTQT\Giao trinh\Software Intergration Practices\Material\5.Case study\Apps\HRWebApp\HRWebApp\HRWebApp\bin\EntityFramework.SqlServer.dll
+E:\Anhdao\DTQT\Giao trinh\Software Intergration Practices\Material\5.Case study\Apps\HRWebApp\HRWebApp\HRWebApp\bin\System.Web.Helpers.dll
+E:\Anhdao\DTQT\Giao trinh\Software Intergration Practices\Material\5.Case study\Apps\HRWebApp\HRWebApp\HRWebApp\bin\System.Web.Mvc.dll
+E:\Anhdao\DTQT\Giao trinh\Software Intergration Practices\Material\5.Case study\Apps\HRWebApp\HRWebApp\HRWebApp\bin\System.Web.Razor.dll
+E:\Anhdao\DTQT\Giao trinh\Software Intergration Practices\Material\5.Case study\Apps\HRWebApp\HRWebApp\HRWebApp\bin\System.Web.Webpages.Deployment.dll
+E:\Anhdao\DTQT\Giao trinh\Software Intergration Practices\Material\5.Case study\Apps\HRWebApp\HRWebApp\HRWebApp\bin\System.Web.Webpages.dll
+E:\Anhdao\DTQT\Giao trinh\Software Intergration Practices\Material\5.Case study\Apps\HRWebApp\HRWebApp\HRWebApp\bin\System.Web.Webpages.Razor.dll
+E:\Anhdao\DTQT\Giao trinh\Software Intergration Practices\Material\5.Case study\Apps\HRWebApp\HRWebApp\HRWebApp\bin\EntityFramework.xml
+E:\Anhdao\DTQT\Giao trinh\Software Intergration Practices\Material\5.Case study\Apps\HRWebApp\HRWebApp\HRWebApp\bin\EntityFramework.SqlServer.xml
+E:\Anhdao\DTQT\Giao trinh\Software Intergration Practices\Material\5.Case study\Apps\HRWebApp\HRWebApp\HRWebApp\bin\System.Web.Razor.xml
+E:\Anhdao\DTQT\Giao trinh\Software Intergration Practices\Material\5.Case study\Apps\HRWebApp\HRWebApp\HRWebApp\bin\System.Web.Webpages.xml
+E:\Anhdao\DTQT\Giao trinh\Software Intergration Practices\Material\5.Case study\Apps\HRWebApp\HRWebApp\HRWebApp\bin\System.Web.Webpages.Deployment.xml
+E:\Anhdao\DTQT\Giao trinh\Software Intergration Practices\Material\5.Case study\Apps\HRWebApp\HRWebApp\HRWebApp\bin\System.Web.Webpages.Razor.xml
+E:\Anhdao\DTQT\Giao trinh\Software Intergration Practices\Material\5.Case study\Apps\HRWebApp\HRWebApp\HRWebApp\bin\System.Web.Helpers.xml
+E:\Anhdao\DTQT\Giao trinh\Software Intergration Practices\Material\5.Case study\Apps\HRWebApp\HRWebApp\HRWebApp\bin\System.Web.Mvc.xml
+E:\Anhdao\DTQT\Giao trinh\Software Intergration Practices\Material\5.Case study\Apps\HRWebApp\HRWebApp\HRWebApp\obj\Debug\HRWebApp.csprojResolveAssemblyReference.cache
+E:\Anhdao\DTQT\Giao trinh\Software Intergration Practices\Material\5.Case study\Apps\HRWebApp\HRWebApp\HRWebApp\obj\Debug\HRWebApp.dll
+E:\Anhdao\DTQT\Giao trinh\Software Intergration Practices\Material\5.Case study\Apps\HRWebApp\HRWebApp\HRWebApp\obj\Debug\HRWebApp.pdb
