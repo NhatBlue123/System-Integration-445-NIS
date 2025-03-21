@@ -38,7 +38,7 @@
 <script>
 function redirectToHRApp() {
     var username = "<%= request.getSession().getAttribute("USER") %>"; // Lấy user từ session
-    var timestamp = Date.now();
+    var timestamp = Date.now();  
     //bit to aicii
     var token = btoa(username + "|" + timestamp);
 

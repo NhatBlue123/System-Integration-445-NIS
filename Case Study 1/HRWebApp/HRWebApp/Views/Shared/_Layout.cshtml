@@ -18,6 +18,13 @@
           rel='stylesheet'>
 </head>
 <body>
+    @{
+        var username = Session["USER"] as string;
+        var timestamp = Session["LOGIN_TIME"] as long?;
+        var loginTime = timestamp.HasValue ?
+            DateTimeOffset.FromUnixTimeMilliseconds(timestamp.Value).ToLocalTime().ToString("HH:mm:ss dd/MM/yyyy")
+            : "Unknown";
+    }
     <div class="navbar navbar-fixed-top">
         <div class="navbar-inner">
             <div class="container">
@@ -38,6 +45,7 @@
                     </form>
                     <ul class="nav pull-right">
                         <li class="nav-user dropdown">
+                            <p>Name: @username</p>
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <img src="~/images/user.png" class="nav-avatar" />
                                 <b class="caret"></b>

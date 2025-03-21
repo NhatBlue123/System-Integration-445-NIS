@@ -45,3 +45,28 @@ C:\Users\bluez\OneDrive\Desktop\Chieu\HRWebApp\HRWebApp\obj\Debug\HRWebApp.cspro
 C:\Users\bluez\OneDrive\Desktop\Chieu\HRWebApp\HRWebApp\obj\Debug\HRWebApp.csproj.Up2Date
 C:\Users\bluez\OneDrive\Desktop\Chieu\HRWebApp\HRWebApp\obj\Debug\HRWebApp.dll
 C:\Users\bluez\OneDrive\Desktop\Chieu\HRWebApp\HRWebApp\obj\Debug\HRWebApp.pdb
+C:\Users\Bluez\Desktop\MyGitHub\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\HRWebApp.dll.config
+C:\Users\Bluez\Desktop\MyGitHub\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\HRWebApp.dll
+C:\Users\Bluez\Desktop\MyGitHub\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\HRWebApp.pdb
+C:\Users\Bluez\Desktop\MyGitHub\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\EntityFramework.dll
+C:\Users\Bluez\Desktop\MyGitHub\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\EntityFramework.SqlServer.dll
+C:\Users\Bluez\Desktop\MyGitHub\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\Microsoft.Web.Infrastructure.dll
+C:\Users\Bluez\Desktop\MyGitHub\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\System.Web.Helpers.dll
+C:\Users\Bluez\Desktop\MyGitHub\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\System.Web.Mvc.dll
+C:\Users\Bluez\Desktop\MyGitHub\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\System.Web.Razor.dll
+C:\Users\Bluez\Desktop\MyGitHub\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\System.Web.WebPages.Deployment.dll
+C:\Users\Bluez\Desktop\MyGitHub\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\System.Web.WebPages.dll
+C:\Users\Bluez\Desktop\MyGitHub\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\System.Web.WebPages.Razor.dll
+C:\Users\Bluez\Desktop\MyGitHub\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\EntityFramework.xml
+C:\Users\Bluez\Desktop\MyGitHub\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\EntityFramework.SqlServer.xml
+C:\Users\Bluez\Desktop\MyGitHub\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\System.Web.Helpers.xml
+C:\Users\Bluez\Desktop\MyGitHub\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\System.Web.Mvc.xml
+C:\Users\Bluez\Desktop\MyGitHub\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\System.Web.Razor.xml
+C:\Users\Bluez\Desktop\MyGitHub\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\System.Web.WebPages.xml
+C:\Users\Bluez\Desktop\MyGitHub\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\System.Web.WebPages.Deployment.xml
+C:\Users\Bluez\Desktop\MyGitHub\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\System.Web.WebPages.Razor.xml
+C:\Users\Bluez\Desktop\MyGitHub\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\obj\Debug\HRWebApp.csproj.AssemblyReference.cache
+C:\Users\Bluez\Desktop\MyGitHub\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\obj\Debug\HRWebApp.csproj.CoreCompileInputs.cache
+C:\Users\Bluez\Desktop\MyGitHub\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\obj\Debug\HRWebApp.csproj.Up2Date
+C:\Users\Bluez\Desktop\MyGitHub\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\obj\Debug\HRWebApp.dll
+C:\Users\Bluez\Desktop\MyGitHub\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\obj\Debug\HRWebApp.pdb

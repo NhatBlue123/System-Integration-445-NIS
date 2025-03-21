@@ -149,6 +149,7 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\AuthController.cs" />
     <Compile Include="Controllers\BenefitPlansController.cs" />
+    <Compile Include="Controllers\BlueController.cs" />
     <Compile Include="Controllers\JobHistoryController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\PersonalsController.cs" />
@@ -172,6 +173,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Views\Auth\Dashboard.cshtml" />
+    <Content Include="Views\Blue\Dashboard1.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
