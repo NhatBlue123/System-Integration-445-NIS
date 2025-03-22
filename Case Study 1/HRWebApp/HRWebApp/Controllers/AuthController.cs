@@ -12,48 +12,35 @@ namespace HRWebApp.Controllers
             try
             {
                 if (string.IsNullOrEmpty(token))
-                    return new HttpStatusCodeResult(400, "Ko co token");
+                    return new HttpStatusCodeResult(400, "Không có token");
 
-                // Giải mã token từ Base64
                 byte[] tokenBytes = Convert.FromBase64String(token);
                 string decoded = Encoding.UTF8.GetString(tokenBytes);
 
                 string[] parts = decoded.Split('|');
-                if (parts.Length != 2) return new HttpStatusCodeResult(400, "dinh dang token loi");
+                if (parts.Length != 2) return new HttpStatusCodeResult(400, "Định dạng token lỗi");
 
                 string username = parts[0];
-                long timestamp;
+                if (!long.TryParse(parts[1], out long timestamp))
+                    return new HttpStatusCodeResult(400, "Thời gian lỗi");
 
-                if (!long.TryParse(parts[1], out timestamp))
-                    return new HttpStatusCodeResult(400, "thoi gian loi");
-
-                // Kiểm tra thời gian token (1 phút)
                 long now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-                if (now - timestamp > 60) return new HttpStatusCodeResult(400, "het han token");
+                if (now - timestamp > 60) return new HttpStatusCodeResult(400, "Token đã hết hạn");
 
-                // Lưu session
                 Session["USER"] = username;
                 Session["LOGIN_TIME"] = timestamp;
-                Session["EXPIRE_TIME"] = now + 60; // Token hết hạn sau 1 phút
-                Session.Timeout = 1;
-                // Kiểm tra nếu session đã hết hạn thì xóa
-                if (Session["EXPIRE_TIME"] != null && now > (long)Session["EXPIRE_TIME"])
-                {
-                    Session.Clear();
-                    return new HttpStatusCodeResult(400, "Session het han, vui long dang nhap lai");
-                }
 
-                return View("Dashboard");
+                return RedirectToAction("Index", "Admin");
             }
             catch (FormatException)
             {
-                return new HttpStatusCodeResult(400, "dinh dang token loi");
+                return new HttpStatusCodeResult(400, "Định dạng token lỗi");
             }
             catch (Exception)
             {
-                return new HttpStatusCodeResult(400, "Ko co token");
+                return new HttpStatusCodeResult(400, "Lỗi xử lý token");
             }
         }
-
+        
     }
 }

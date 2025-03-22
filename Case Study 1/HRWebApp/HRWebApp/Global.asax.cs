@@ -14,5 +14,27 @@ namespace HRWebApp
             AreaRegistration.RegisterAllAreas();
             RouteConfig.RegisterRoutes(RouteTable.Routes);
         }
+        protected void Session_End(Object sender, EventArgs e)
+        {
+            Session.Clear();
+            Session.Abandon();
+        }
+        protected void Application_BeginRequest()
+        {
+            System.Diagnostics.Debug.WriteLine("Application_BeginRequest called");
+
+            HttpContext.Current.Response.AddHeader("Access-Control-Allow-Origin", "*");
+            HttpContext.Current.Response.AddHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+            HttpContext.Current.Response.AddHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With");
+
+            if (HttpContext.Current.Request.HttpMethod == "OPTIONS")
+            {
+                HttpContext.Current.Response.StatusCode = 200;
+                HttpContext.Current.Response.End();
+            }
+        }
+
+
+
     }
 }

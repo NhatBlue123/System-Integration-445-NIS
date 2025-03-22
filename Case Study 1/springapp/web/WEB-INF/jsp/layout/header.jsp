@@ -37,13 +37,29 @@
 </div>
 <script>
 function redirectToHRApp() {
-    var username = "<%= request.getSession().getAttribute("USER") %>"; // Lấy user từ session
-    var timestamp = Date.now();  
-    //bit to aicii
-    var token = btoa(username + "|" + timestamp);
+    var username = "<%= request.getSession().getAttribute("USER") %>";
+    if (!username || username.trim() === "null") {
+        alert("User không hợp lệ!");
+        return;
+    }
+    var tokenUrl = "http://localhost:8080/springapp/admin/generate-token?username=" + encodeURIComponent(username);
 
-//    window.location.href = "http://localhost:19335/Auth/SSOLogin?token=" + token;
-     window.open("http://localhost:19335/Auth/SSOLogin?token=" + token, "_blank");
-
+    fetch(tokenUrl)
+        .then(function(response) {
+            if (!response.ok) {
+                throw new Error("Lỗi tạo token: " + response.status);
+            }
+            return response.text();
+        })
+        .then(function(token) {
+            console.log("Token nhận được:", token);
+//            var hrUrl = "http://localhost:19335/Auth/SSOLogin?token=" + encodeURIComponent(token);
+//            console.log("Đang gọi API HR App: " + hrUrl);
+            window.open("http://localhost:19335/Auth/SSOLogin?token=" + token, "_blank");
+        })
+        .catch(function(error) {
+            console.error("Lỗi:", error);
+            alert("Không thể đăng nhập vào HR App!");
+        });
 }
 </script>
