@@ -18,6 +18,13 @@ namespace HRWebApp
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Admin", action = "Index", id = UrlParameter.Optional }
             );
+
+            routes.MapRoute(
+                name: "ErrorToken",
+                url: "Auth/ErrorToken",
+                defaults: new { controller = "Auth", action = "ErrorToken" }
+            );
         }
     }
+
 }

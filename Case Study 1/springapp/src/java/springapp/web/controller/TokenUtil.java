@@ -13,7 +13,7 @@ import java.util.Base64;
 public class TokenUtil {
   
     public static String generateToken(String username) {
-        long timestamp = System.currentTimeMillis();
+        long timestamp = System.currentTimeMillis() / 1000;
         String rawToken = username + "|" + timestamp;
         return Base64.getEncoder().encodeToString(rawToken.getBytes());
     }

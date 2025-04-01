@@ -172,8 +172,8 @@
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
-    <Content Include="Views\Auth\Dashboard.cshtml" />
     <Content Include="Views\Blue\Dashboard1.cshtml" />
+    <Content Include="Views\Auth\ErrorToken.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

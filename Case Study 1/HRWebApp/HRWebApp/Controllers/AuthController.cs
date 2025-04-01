@@ -23,9 +23,12 @@ namespace HRWebApp.Controllers
                 string username = parts[0];
                 if (!long.TryParse(parts[1], out long timestamp))
                     return new HttpStatusCodeResult(400, "Thời gian lỗi");
+                   // return View("ErrorToken");
 
-                long now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-                if (now - timestamp > 60) return new HttpStatusCodeResult(400, "Token đã hết hạn");
+                long now = DateTimeOffset.UtcNow.ToUnixTimeSeconds(); // Lấy thời gian hiện tại theo giây
+                if (now - timestamp > 60)
+                    //return new HttpStatusCodeResult(400, "Token đã hết hạn");
+                    return RedirectToAction("ErrorToken","Auth");
 
                 Session["USER"] = username;
                 Session["LOGIN_TIME"] = timestamp;
@@ -41,6 +44,9 @@ namespace HRWebApp.Controllers
                 return new HttpStatusCodeResult(400, "Lỗi xử lý token");
             }
         }
-        
+        public ActionResult ErrorToken()
+        {
+            return View();
+        }
     }
 }
