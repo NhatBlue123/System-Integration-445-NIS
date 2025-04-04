@@ -60,6 +60,10 @@ public class Users  implements java.io.Serializable {
     public void setActive(boolean active) {
         this.active = active;
     }
+    public String getUser()
+    {
+        return "UserId" + this.userId + " UserName: " + this.userName + " Email: " + this.email + " Active: " + this.active;
+    }
 
 
 

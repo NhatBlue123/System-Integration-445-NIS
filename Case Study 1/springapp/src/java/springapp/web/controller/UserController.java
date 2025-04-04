@@ -10,11 +10,15 @@ import java.io.Console;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import org.hibernate.Session;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import springapp.web.dao.UserDao;
 import springapp.web.model.HibernateUtil;
@@ -73,5 +77,20 @@ public class UserController {
             return "redirect:/admin/login.html";
         }
     }
+    
+@RequestMapping(value = "/user/{username}", method = RequestMethod.GET, produces = "application/json")
+@ResponseBody
+public ResponseEntity<?> getUserByUsername(@PathVariable("username") String username) {
+     Users user = dao.getUserByUserName(username);
+    if (user != null) {
+        String json = String.format(
+            "{\"id\": \"%s\",\"username\": \"%s\", \"email\": \"%s\", \"active\": \"%s\"}",
+            user.getUserId(),user.getUserName(), user.getEmail(), user.isActive()
+        );
+        return new ResponseEntity<>(json, HttpStatus.OK);
+    } else {
+        return new ResponseEntity<>("{\"error\": \"User not found\"}", HttpStatus.NOT_FOUND);
+    }
+}
 
 }

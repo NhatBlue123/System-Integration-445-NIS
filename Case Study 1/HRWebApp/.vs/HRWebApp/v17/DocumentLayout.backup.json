@@ -3,7 +3,15 @@
   "WorkspaceRootPath": "C:\\Users\\Bluez\\Desktop\\MyGitHub\\System-Integration-445-NIS\\Case Study 1\\HRWebApp\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{178BE937-CF63-4A77-B0C9-FF1A5A511C7B}|HRWebApp\\HRWebApp.csproj|c:\\users\\bluez\\desktop\\mygithub\\system-integration-445-nis\\case study 1\\hrwebapp\\hrwebapp\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{178BE937-CF63-4A77-B0C9-FF1A5A511C7B}|HRWebApp\\HRWebApp.csproj|c:\\users\\bluez\\desktop\\mygithub\\system-integration-445-nis\\case study 1\\hrwebapp\\hrwebapp\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{178BE937-CF63-4A77-B0C9-FF1A5A511C7B}|HRWebApp\\HRWebApp.csproj|solutionrelative:hrwebapp\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{178BE937-CF63-4A77-B0C9-FF1A5A511C7B}|HRWebApp\\HRWebApp.csproj|C:\\Users\\Bluez\\Desktop\\MyGitHub\\System-Integration-445-NIS\\Case Study 1\\HRWebApp\\HRWebApp\\Views\\_ViewStart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{178BE937-CF63-4A77-B0C9-FF1A5A511C7B}|HRWebApp\\HRWebApp.csproj|solutionrelative:HRWebApp\\Views\\_ViewStart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{178BE937-CF63-4A77-B0C9-FF1A5A511C7B}|HRWebApp\\HRWebApp.csproj|C:\\Users\\Bluez\\Desktop\\MyGitHub\\System-Integration-445-NIS\\Case Study 1\\HRWebApp\\hrwebapp\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{178BE937-CF63-4A77-B0C9-FF1A5A511C7B}|HRWebApp\\HRWebApp.csproj|solutionrelative:hrwebapp\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -11,7 +19,7 @@
       "RelativeMoniker": "D:0:0:{178BE937-CF63-4A77-B0C9-FF1A5A511C7B}|HRWebApp\\HRWebApp.csproj|solutionrelative:hrwebapp\\app_start\\routeconfig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{178BE937-CF63-4A77-B0C9-FF1A5A511C7B}|HRWebApp\\HRWebApp.csproj|c:\\users\\bluez\\desktop\\mygithub\\system-integration-445-nis\\case study 1\\hrwebapp\\hrwebapp\\views\\auth\\errortoken.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{178BE937-CF63-4A77-B0C9-FF1A5A511C7B}|HRWebApp\\HRWebApp.csproj|C:\\Users\\Bluez\\Desktop\\MyGitHub\\System-Integration-445-NIS\\Case Study 1\\HRWebApp\\hrwebapp\\views\\auth\\errortoken.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{178BE937-CF63-4A77-B0C9-FF1A5A511C7B}|HRWebApp\\HRWebApp.csproj|solutionrelative:hrwebapp\\views\\auth\\errortoken.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
@@ -21,10 +29,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{178BE937-CF63-4A77-B0C9-FF1A5A511C7B}|HRWebApp\\HRWebApp.csproj|C:\\Users\\Bluez\\Desktop\\MyGitHub\\System-Integration-445-NIS\\Case Study 1\\HRWebApp\\hrwebapp\\global.asax.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{178BE937-CF63-4A77-B0C9-FF1A5A511C7B}|HRWebApp\\HRWebApp.csproj|solutionrelative:hrwebapp\\global.asax.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{178BE937-CF63-4A77-B0C9-FF1A5A511C7B}|HRWebApp\\HRWebApp.csproj|C:\\Users\\Bluez\\Desktop\\MyGitHub\\System-Integration-445-NIS\\Case Study 1\\HRWebApp\\hrwebapp\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{178BE937-CF63-4A77-B0C9-FF1A5A511C7B}|HRWebApp\\HRWebApp.csproj|solutionrelative:hrwebapp\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{178BE937-CF63-4A77-B0C9-FF1A5A511C7B}|HRWebApp\\HRWebApp.csproj|C:\\Users\\Bluez\\Desktop\\MyGitHub\\System-Integration-445-NIS\\Case Study 1\\HRWebApp\\HRWebApp\\Views\\Login\\Login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
@@ -45,10 +49,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{178BE937-CF63-4A77-B0C9-FF1A5A511C7B}|HRWebApp\\HRWebApp.csproj|C:\\Users\\Bluez\\Desktop\\MyGitHub\\System-Integration-445-NIS\\Case Study 1\\HRWebApp\\hrwebapp\\properties\\assemblyinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{178BE937-CF63-4A77-B0C9-FF1A5A511C7B}|HRWebApp\\HRWebApp.csproj|solutionrelative:hrwebapp\\properties\\assemblyinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{178BE937-CF63-4A77-B0C9-FF1A5A511C7B}|HRWebApp\\HRWebApp.csproj|C:\\Users\\Bluez\\Desktop\\MyGitHub\\System-Integration-445-NIS\\Case Study 1\\HRWebApp\\HRWebApp\\Views\\_ViewStart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{178BE937-CF63-4A77-B0C9-FF1A5A511C7B}|HRWebApp\\HRWebApp.csproj|solutionrelative:HRWebApp\\Views\\_ViewStart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{178BE937-CF63-4A77-B0C9-FF1A5A511C7B}|HRWebApp\\HRWebApp.csproj|C:\\Users\\Bluez\\Desktop\\MyGitHub\\System-Integration-445-NIS\\Case Study 1\\HRWebApp\\hrwebapp\\views\\blue\\dashboard1.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
@@ -138,7 +138,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 8,
+          "SelectedChildIndex": 6,
           "Children": [
             {
               "$type": "Bookmark",
@@ -165,34 +165,29 @@
               "Name": "ST:0:0:{e5c86464-96be-4d7c-9a8b-abcb3bbf5f92}"
             },
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{007a3a6b-b5b2-454d-a2bd-cf929f989be2}"
-            },
-            {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "ErrorToken.cshtml",
-              "DocumentMoniker": "C:\\Users\\Bluez\\Desktop\\MyGitHub\\System-Integration-445-NIS\\Case Study 1\\HRWebApp\\HRWebApp\\Views\\Auth\\ErrorToken.cshtml",
-              "RelativeDocumentMoniker": "HRWebApp\\Views\\Auth\\ErrorToken.cshtml",
-              "ToolTip": "C:\\Users\\Bluez\\Desktop\\MyGitHub\\System-Integration-445-NIS\\Case Study 1\\HRWebApp\\HRWebApp\\Views\\Auth\\ErrorToken.cshtml",
-              "RelativeToolTip": "HRWebApp\\Views\\Auth\\ErrorToken.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 0,
+              "Title": "_Layout.cshtml",
+              "DocumentMoniker": "C:\\Users\\Bluez\\Desktop\\MyGitHub\\System-Integration-445-NIS\\Case Study 1\\HRWebApp\\HRWebApp\\Views\\Shared\\_Layout.cshtml",
+              "RelativeDocumentMoniker": "HRWebApp\\Views\\Shared\\_Layout.cshtml",
+              "ToolTip": "C:\\Users\\Bluez\\Desktop\\MyGitHub\\System-Integration-445-NIS\\Case Study 1\\HRWebApp\\HRWebApp\\Views\\Shared\\_Layout.cshtml",
+              "RelativeToolTip": "HRWebApp\\Views\\Shared\\_Layout.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABsAAAAHAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-04-01T13:40:37.811Z",
+              "WhenOpened": "2025-03-15T08:13:23.482Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "AuthController.cs",
               "DocumentMoniker": "C:\\Users\\Bluez\\Desktop\\MyGitHub\\System-Integration-445-NIS\\Case Study 1\\HRWebApp\\HRWebApp\\Controllers\\AuthController.cs",
               "RelativeDocumentMoniker": "HRWebApp\\Controllers\\AuthController.cs",
               "ToolTip": "C:\\Users\\Bluez\\Desktop\\MyGitHub\\System-Integration-445-NIS\\Case Study 1\\HRWebApp\\HRWebApp\\Controllers\\AuthController.cs",
               "RelativeToolTip": "HRWebApp\\Controllers\\AuthController.cs",
-              "ViewState": "AgIAAAgAAAAAAAAAAAAAwBEAAAAgAAAAAAAAAA==",
+              "ViewState": "AgIAAA0AAAAAAAAAAAAQwCAAAAArAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-08T05:05:24.952Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-08T05:05:24.952Z"
             },
             {
               "$type": "Document",
@@ -208,7 +203,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 6,
               "Title": "Global.asax.cs",
               "DocumentMoniker": "C:\\Users\\Bluez\\Desktop\\MyGitHub\\System-Integration-445-NIS\\Case Study 1\\HRWebApp\\HRWebApp\\Global.asax.cs",
               "RelativeDocumentMoniker": "HRWebApp\\Global.asax.cs",
@@ -216,12 +211,11 @@
               "RelativeToolTip": "HRWebApp\\Global.asax.cs",
               "ViewState": "AgIAAAUAAAAAAAAAAAAkwA8AAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-21T14:31:27.338Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-21T14:31:27.338Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "RouteConfig.cs",
               "DocumentMoniker": "C:\\Users\\Bluez\\Desktop\\MyGitHub\\System-Integration-445-NIS\\Case Study 1\\HRWebApp\\HRWebApp\\App_Start\\RouteConfig.cs",
               "RelativeDocumentMoniker": "HRWebApp\\App_Start\\RouteConfig.cs",
@@ -229,12 +223,39 @@
               "RelativeToolTip": "HRWebApp\\App_Start\\RouteConfig.cs",
               "ViewState": "AgIAAAUAAAAAAAAAAAAcwA4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-15T05:03:49.222Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-15T05:03:49.222Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 1,
+              "Title": "_ViewStart.cshtml",
+              "DocumentMoniker": "C:\\Users\\Bluez\\Desktop\\MyGitHub\\System-Integration-445-NIS\\Case Study 1\\HRWebApp\\HRWebApp\\Views\\_ViewStart.cshtml",
+              "RelativeDocumentMoniker": "HRWebApp\\Views\\_ViewStart.cshtml",
+              "ToolTip": "C:\\Users\\Bluez\\Desktop\\MyGitHub\\System-Integration-445-NIS\\Case Study 1\\HRWebApp\\HRWebApp\\Views\\_ViewStart.cshtml",
+              "RelativeToolTip": "HRWebApp\\Views\\_ViewStart.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-03-08T05:12:16.972Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ErrorToken.cshtml",
+              "DocumentMoniker": "C:\\Users\\Bluez\\Desktop\\MyGitHub\\System-Integration-445-NIS\\Case Study 1\\HRWebApp\\HRWebApp\\Views\\Auth\\ErrorToken.cshtml",
+              "RelativeDocumentMoniker": "HRWebApp\\Views\\Auth\\ErrorToken.cshtml",
+              "ToolTip": "C:\\Users\\Bluez\\Desktop\\MyGitHub\\System-Integration-445-NIS\\Case Study 1\\HRWebApp\\HRWebApp\\Views\\Auth\\ErrorToken.cshtml",
+              "RelativeToolTip": "HRWebApp\\Views\\Auth\\ErrorToken.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-04-01T13:40:37.811Z"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{007a3a6b-b5b2-454d-a2bd-cf929f989be2}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
               "Title": "web.config",
               "DocumentMoniker": "C:\\Users\\Bluez\\Desktop\\MyGitHub\\System-Integration-445-NIS\\Case Study 1\\HRWebApp\\HRWebApp\\Views\\web.config",
               "RelativeDocumentMoniker": "HRWebApp\\Views\\web.config",
@@ -246,7 +267,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 5,
               "Title": "Index.cshtml",
               "DocumentMoniker": "C:\\Users\\Bluez\\Desktop\\MyGitHub\\System-Integration-445-NIS\\Case Study 1\\HRWebApp\\HRWebApp\\Views\\Admin\\Index.cshtml",
               "RelativeDocumentMoniker": "HRWebApp\\Views\\Admin\\Index.cshtml",
@@ -254,12 +275,11 @@
               "RelativeToolTip": "HRWebApp\\Views\\Admin\\Index.cshtml",
               "ViewState": "AgIAAN4CAAAAAAAAAAAAAO0CAAAdAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-03-08T05:11:10.955Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-08T05:11:10.955Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "Login.cshtml",
               "DocumentMoniker": "C:\\Users\\Bluez\\Desktop\\MyGitHub\\System-Integration-445-NIS\\Case Study 1\\HRWebApp\\HRWebApp\\Views\\Login\\Login.cshtml",
               "RelativeDocumentMoniker": "HRWebApp\\Views\\Login\\Login.cshtml",
@@ -271,7 +291,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "Web.config",
               "DocumentMoniker": "C:\\Users\\Bluez\\Desktop\\MyGitHub\\System-Integration-445-NIS\\Case Study 1\\HRWebApp\\HRWebApp\\Web.config",
               "RelativeDocumentMoniker": "HRWebApp\\Web.config",
@@ -284,19 +304,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "_Layout.cshtml",
-              "DocumentMoniker": "C:\\Users\\Bluez\\Desktop\\MyGitHub\\System-Integration-445-NIS\\Case Study 1\\HRWebApp\\HRWebApp\\Views\\Shared\\_Layout.cshtml",
-              "RelativeDocumentMoniker": "HRWebApp\\Views\\Shared\\_Layout.cshtml",
-              "ToolTip": "C:\\Users\\Bluez\\Desktop\\MyGitHub\\System-Integration-445-NIS\\Case Study 1\\HRWebApp\\HRWebApp\\Views\\Shared\\_Layout.cshtml",
-              "RelativeToolTip": "HRWebApp\\Views\\Shared\\_Layout.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAADEAAAA2AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-03-15T08:13:23.482Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "packages.config",
               "DocumentMoniker": "C:\\Users\\Bluez\\Desktop\\MyGitHub\\System-Integration-445-NIS\\Case Study 1\\HRWebApp\\HRWebApp\\packages.config",
               "RelativeDocumentMoniker": "HRWebApp\\packages.config",
@@ -308,7 +316,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 11,
               "Title": "AssemblyInfo.cs",
               "DocumentMoniker": "C:\\Users\\Bluez\\Desktop\\MyGitHub\\System-Integration-445-NIS\\Case Study 1\\HRWebApp\\HRWebApp\\Properties\\AssemblyInfo.cs",
               "RelativeDocumentMoniker": "HRWebApp\\Properties\\AssemblyInfo.cs",
@@ -317,18 +325,6 @@
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAyAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-21T17:25:48.104Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "_ViewStart.cshtml",
-              "DocumentMoniker": "C:\\Users\\Bluez\\Desktop\\MyGitHub\\System-Integration-445-NIS\\Case Study 1\\HRWebApp\\HRWebApp\\Views\\_ViewStart.cshtml",
-              "RelativeDocumentMoniker": "HRWebApp\\Views\\_ViewStart.cshtml",
-              "ToolTip": "C:\\Users\\Bluez\\Desktop\\MyGitHub\\System-Integration-445-NIS\\Case Study 1\\HRWebApp\\HRWebApp\\Views\\_ViewStart.cshtml",
-              "RelativeToolTip": "HRWebApp\\Views\\_ViewStart.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-03-08T05:12:16.972Z"
             },
             {
               "$type": "Document",

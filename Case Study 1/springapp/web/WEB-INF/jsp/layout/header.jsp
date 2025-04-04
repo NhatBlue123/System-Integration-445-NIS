@@ -56,6 +56,7 @@ function redirectToHRApp() {
 //            var hrUrl = "http://localhost:19335/Auth/SSOLogin?token=" + encodeURIComponent(token);
 //            console.log("Đang gọi API HR App: " + hrUrl);
             window.open("http://localhost:19335/Auth/SSOLogin?token=" + token, "_blank");
+                       // console.log("Token nhận được:", token);
         })
         .catch(function(error) {
             console.error("Lỗi:", error);

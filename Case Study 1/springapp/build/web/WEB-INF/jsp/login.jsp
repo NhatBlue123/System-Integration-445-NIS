@@ -31,7 +31,7 @@
                                 <div class="module-foot">
                                     <div class="control-group">
                                         <div class="controls clearfix">
-                                            <button type="submit" class="btn btn-primary pull-right">Login</button>
+                                            <button type="submit" class="btn btn-primary pull-right" onclick="onClickLogin()">Login</button>
                                             <label class="checkbox">
                                                 <input type="checkbox"> Remember me
                                             </label>
@@ -43,6 +43,15 @@
                     </div>
                 </div>
             </div><!--/.wrapper-->
+            <script>
+                const onClickLogin = () =>{
+                    let user = document.getElementById('username').value;
+                    let pass = document.getElementById('password').value;
+                    console.log("Username: " + user + " Password: " + pass);
+                //    Console
+                }
+                onClickLogin();
+                </script>
         </form:form>
     </tiles:putAttribute>
 </tiles:insertDefinition>
