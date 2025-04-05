@@ -70,3 +70,28 @@ C:\Users\Bluez\Desktop\MyGitHub\System-Integration-445-NIS\Case Study 1\HRWebApp
 C:\Users\Bluez\Desktop\MyGitHub\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\obj\Debug\HRWebApp.csproj.Up2Date
 C:\Users\Bluez\Desktop\MyGitHub\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\obj\Debug\HRWebApp.dll
 C:\Users\Bluez\Desktop\MyGitHub\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\obj\Debug\HRWebApp.pdb
+D:\my github\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\HRWebApp.dll.config
+D:\my github\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\HRWebApp.dll
+D:\my github\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\HRWebApp.pdb
+D:\my github\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\EntityFramework.dll
+D:\my github\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\EntityFramework.SqlServer.dll
+D:\my github\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\Microsoft.Web.Infrastructure.dll
+D:\my github\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\System.Web.Helpers.dll
+D:\my github\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\System.Web.Mvc.dll
+D:\my github\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\System.Web.Razor.dll
+D:\my github\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\System.Web.WebPages.Deployment.dll
+D:\my github\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\System.Web.WebPages.dll
+D:\my github\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\System.Web.WebPages.Razor.dll
+D:\my github\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\EntityFramework.xml
+D:\my github\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\EntityFramework.SqlServer.xml
+D:\my github\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\System.Web.Helpers.xml
+D:\my github\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\System.Web.Mvc.xml
+D:\my github\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\System.Web.Razor.xml
+D:\my github\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\System.Web.WebPages.xml
+D:\my github\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\System.Web.WebPages.Deployment.xml
+D:\my github\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\bin\System.Web.WebPages.Razor.xml
+D:\my github\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\obj\Debug\HRWebApp.csprojAssemblyReference.cache
+D:\my github\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\obj\Debug\HRWebApp.csproj.CoreCompileInputs.cache
+D:\my github\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\obj\Debug\HRWebApp.csproj.CopyComplete
+D:\my github\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\obj\Debug\HRWebApp.dll
+D:\my github\System-Integration-445-NIS\Case Study 1\HRWebApp\HRWebApp\obj\Debug\HRWebApp.pdb
