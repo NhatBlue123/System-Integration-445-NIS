@@ -74,3 +74,54 @@ Case Study 1/springapp_2db/nbproject/private/
 Case Study 1/springapp_2db/build/
 Case Study 1/**/*.jar
 Case Study 1/**/*.class
+/Case Study 2/springapp/nbproject/private/
+
+# Ignore build results
+bin/
+obj/
+*.exe
+*.dll
+*.pdb
+*.cache
+*.mdb
+
+# Ignore user-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# VS Code workspace
+.vscode/
+
+# Rider IDE
+.idea/
+
+# VS specific
+*.vspscc
+*.vssscc
+*.dbmdl
+*.bak
+*.log
+*.sql
+
+# SQL Server & SQLite files
+*.mdf
+*.ldf
+*.sqlite
+*.sqlite3
+*.db
+*.db.lock
+*.db-wal
+*.db-shm
+
+# Ignore local configuration
+appsettings.*.json
+*.launchSettings.json
+
+# Ignore VS project folders
+.vs/
+TestResults/
+packages/
+_ReSharper*/
+

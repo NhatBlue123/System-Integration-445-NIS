@@ -1,0 +1,30 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>HR App Dashboard</title>
+</head>
+<body>
+    @{
+        var username = Session["USER"] as string;
+        var timestamp = Session["LOGIN_TIME"] as long?;
+        var loginTime = timestamp.HasValue ?
+            DateTimeOffset.FromUnixTimeMilliseconds(timestamp.Value).ToLocalTime().ToString("HH:mm:ss dd/MM/yyyy")
+            : "Unknown";
+    }
+
+    <h1>Welcome, @username!</h1>
+    <p>Login Time: @loginTime</p>
+    <p>Current Time: <span id="currentTime"></span></p>
+    <p>Session Timeout: @Session.Timeout phút</p>
+    <p>hHHH</p>
+
+    <script>
+        function updateClock() {
+            var now = new Date();
+            document.getElementById("currentTime").innerText = now.toLocaleString();
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+    </script>
+</body>
+</html>
