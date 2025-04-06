@@ -38,6 +38,15 @@ public class LoginController {
         model.addAttribute("user", new Users());
         return "login";
     }
+    
+    @RequestMapping("/admin/dashboard")
+    public String dashboard() {
+    return "dashboard"; // Trả về file JSP: /WEB-INF/jsp/admin/dashboardPR_HR.jsp
+}
+
+    
+    
+    
     @Transactional
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public String proccessLogin(@ModelAttribute(value = "user") Users user, ModelMap model, HttpServletRequest request) {
