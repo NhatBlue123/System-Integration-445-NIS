@@ -89,7 +89,7 @@ public ResponseEntity<?> getUserByUsername(@PathVariable("username") String user
         );
         return new ResponseEntity<>(json, HttpStatus.OK);
     } else {
-        return new ResponseEntity<>("{\"error\": \"User not found\"}", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("{\"error\": \"User not found\"}", HttpStatus.NOT_FOUND);
     }
 }
 
