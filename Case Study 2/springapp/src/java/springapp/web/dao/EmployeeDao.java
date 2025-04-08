@@ -63,6 +63,35 @@ public class EmployeeDao {
         session.close();
     }
 }
+    public List<Employee> listUser() {
+        List<Employee> list;
+        try {
+            Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+            session.beginTransaction();
+            list = session.createQuery("from Employee").list();
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            list = null;
+        }
+        return list;
+    }
+    public List<Employee> listUserLimit(int limit) {
+        List<Employee> list;
+        try {
+            Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+            session.beginTransaction();
+            // lay so dong dua tren limi
+            list = session.createQuery("from Employee").setMaxResults(limit).list();
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            list = null;
+        }
+        return list;
+    }
+    
+    
 
 
 }
