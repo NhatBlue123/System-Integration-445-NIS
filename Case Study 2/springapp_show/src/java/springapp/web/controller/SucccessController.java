@@ -22,14 +22,7 @@ public class SucccessController {
 
     @RequestMapping(value = {"/dashboard"}, method = RequestMethod.GET)
     public ModelAndView viewsDashboard(HttpServletRequest request) {
-        Users user = (Users) request.getSession().getAttribute("LOGGEDIN_USER");
-        if (user != null) {
-            ModelAndView model = new ModelAndView("admin/dashboard");
-            return model;
-        } else {
-            ModelAndView model = new ModelAndView("login");
-            model.addObject("user", new Users());
-            return model;
-        }
+        ModelAndView model = new ModelAndView("admin/dashboard");
+        return model;
     }
 }

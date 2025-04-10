@@ -40,7 +40,7 @@ public class UserController {
             value = "admin/listUser";
         } else {
             model.addAttribute("user", new Users());
-            value = "redirect:/admin/login.html";
+            value = "admin/listUser";
         }
         return value;
     }
@@ -57,7 +57,7 @@ public class UserController {
             }
         } else {
             model.addAttribute("user", new Users());
-            return "redirect:/admin/login.html";
+                return "admin/listUser";
         }
 
     }
@@ -70,7 +70,7 @@ public class UserController {
             return "admin/addUser";
         } else {
             model.addAttribute("user", new Users());
-            return "redirect:/admin/login.html";
+            return "admin/addUser";
         }
     }
 

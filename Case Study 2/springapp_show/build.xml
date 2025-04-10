@@ -7,8 +7,8 @@
 <!-- the Compile on Save feature is turned off for the project. -->
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
-<project name="springapp" default="default" basedir=".">
-    <description>Builds, tests, and runs the project springapp.</description>
+<project name="springapp_employee_personal" default="default" basedir=".">
+    <description>Builds, tests, and runs the project springapp_employee_personal.</description>
     <import file="nbproject/build-impl.xml"/>
     <!--
 

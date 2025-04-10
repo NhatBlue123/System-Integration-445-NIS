@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package springapp.web.controller;
 
 import java.util.List;
@@ -15,34 +10,28 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import springapp.web.model.HibernateUtil;
 import springapp.web.model.Users;
 
-/**
- *
- * @author AnhDao
- */
 @Controller
 @RequestMapping(value = "/admin")
-public class PayRateController {
+public class EPersonController {
 
-    @RequestMapping(value = {"/payrates/list"}, method = RequestMethod.GET)
-    public String listUsers(ModelMap model, HttpServletRequest request) {
+    @RequestMapping(value = "/EPerson", method = RequestMethod.GET)
+    public String listEPerson(ModelMap model, HttpServletRequest request) {
         Users user = (Users) request.getSession().getAttribute("LOGGEDIN_USER");
         String value = "";
         if (user != null) {
             try {
                 Session session = HibernateUtil.getSessionFactory().getCurrentSession();
                 session.beginTransaction();
-                List listPayRates = session.createQuery("from PayRates").list();
-                model.addAttribute("listPayRates", listPayRates);
+                List listEPersons = session.createQuery("from EPerson").list();
+                model.addAttribute("listEPersons", listEPersons);
                 session.getTransaction().commit();
-                value = "admin/listPayRate";
+                value = "admin/EPerson";
             } catch (Exception e) {
-                value = "admin/listPayRate";
+                value = "admin/EPerson";
             }
-
         } else {
-            model.addAttribute("user", new Users());
-            value= "redirect:/admin/login.html";
+                value = "admin/EPerson";
         }
         return value;
     }
-}
+} 

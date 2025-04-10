@@ -3,6 +3,7 @@
     <ul class="widget widget-menu unstyled">
         <li class="active"><a href="<%=request.getContextPath()%>/admin/dashboard.html"><i class="menu-icon icon-dashboard"></i>Dashboard
             </a></li>
+        <li><a href="<%=request.getContextPath()%>/admin/EPerson.html"><i class="menu-icon icon-bullhorn"></i>EPerson Management </a></li>
         <li><a href="<%=request.getContextPath()%>/admin/employee/list.html"><i class="menu-icon icon-bullhorn"></i>Employee</a>
         </li>
         <li><a href="<%=request.getContextPath()%>/admin/payrates/list.html"><i class="menu-icon icon-inbox"></i>Pay Rates </a></li>

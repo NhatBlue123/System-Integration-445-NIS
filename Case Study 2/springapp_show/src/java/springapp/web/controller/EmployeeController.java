@@ -40,8 +40,7 @@ public class EmployeeController {
             }
 
         } else {
-            model.addAttribute("user", new Users());
-            value= "redirect:/admin/login.html";
+                value = "admin/listEmployee";
         }
         return value;
     }
