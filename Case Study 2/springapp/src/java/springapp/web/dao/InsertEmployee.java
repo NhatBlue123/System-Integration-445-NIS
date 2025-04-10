@@ -4,10 +4,17 @@
  */
 package springapp.web.dao;
 
+import com.github.javafaker.Faker;
+import java.util.Locale;
+
 /**
  *
  * @author Bluez
  */
 public class InsertEmployee {
-    
+    public static void main(String[] args) {
+        Faker myF = new Faker(new Locale("vi"));
+        System.out.println("my lan: " + myF.cat());
+        
+    }
 }

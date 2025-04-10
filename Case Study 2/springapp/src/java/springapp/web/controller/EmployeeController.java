@@ -5,8 +5,10 @@
  */
 package springapp.web.controller;
 
+import com.github.javafaker.Faker;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 import javax.servlet.http.HttpServletRequest;
 import org.hibernate.Session;
@@ -115,6 +117,7 @@ public ResponseEntity<String> getLimitEmployees(@PathVariable("limit") int limit
     
 @RequestMapping(value = "/employee/generate", method = RequestMethod.POST)
 public ResponseEntity<String> generateEmployees() {
+    Faker myF = new Faker(new Locale("vi"));
     try {
         List<Employee> list = new ArrayList<>();
         Random rand = new Random();
@@ -128,19 +131,9 @@ public ResponseEntity<String> generateEmployees() {
             emp.setEmployeeNumber(1002 + i);
             emp.setIdEmployee(i);
 
-            if (i <= startIndex + 125000) {
-                emp.setFirstName("Nguyen " + i);
-                emp.setLastName("Nhat " + i);
-            } else if (i <= startIndex + 250000) {
-                emp.setFirstName("Huynh " + i);
-                emp.setLastName("Bao " + i);
-            } else if (i <= startIndex + 375000) {
-                emp.setFirstName("Tran " + i);
-                emp.setLastName("Vu " + i);
-            } else {
-                emp.setFirstName("Phan " + i);
-                emp.setLastName("Kiet " + i);
-            }
+            emp.setFirstName(myF.name().firstName());
+            emp.setLastName(myF.name().lastName());
+          
 
             emp.setSsn(100000000L + i);
             emp.setPayRate(String.format("%.2f", rand.nextDouble() * 100));
