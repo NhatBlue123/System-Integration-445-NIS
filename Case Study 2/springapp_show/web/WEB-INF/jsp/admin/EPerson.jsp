@@ -90,7 +90,7 @@
                         });
                     })
                     .catch(error => {
-                        console.error("Lỗi khi load dữ liệu employee:", error);
+                        console.error("ERROR COLLECT D�T:", error);
                     });
             });
         </script>

@@ -138,20 +138,25 @@ public class EmployeeController {
 
     }
 
-    @RequestMapping(value = "/employee/generate", method = RequestMethod.POST)
-    public ResponseEntity<String> generateEmployees() {
-        Faker myF = new Faker(new Locale("vi"));
+    @RequestMapping(value = "/employee/generate/{limit}", method = RequestMethod.POST)
+    public ResponseEntity<String> generateEmployees(@PathVariable("limit") int limit) {
+        Faker myF = new Faker(new Locale("en"));
         try {
             List<Employee> list = new ArrayList<>();
             Random rand = new Random();
 
             //  Lấy số lượng hiện có trong DB
+            // curren = 5
             int currentCount = edao.getEmployeeCount();
+            // max = 10
+            int maxIndex = currentCount + limit;
+            // start 6
             int startIndex = currentCount + 1;
-
-            for (int i = startIndex; i < startIndex + 10; i++) {
+            int dem = 0;
+            for (int i = startIndex; i < maxIndex + 1 ; i++) {
+                
                 Employee emp = new Employee();
-                emp.setEmployeeNumber(1002 + i);
+                emp.setEmployeeNumber(1000 + i);
                 emp.setIdEmployee(i);
 
                 emp.setFirstName(myF.name().firstName());
@@ -163,7 +168,7 @@ public class EmployeeController {
                 emp.setVacationDays(rand.nextInt(30));
                 emp.setPaidToDate((byte) (rand.nextInt(2)));
                 emp.setPaidLastYear((byte) (rand.nextInt(2)));
-
+                dem++;
                 list.add(emp);
 
                 if (list.size() == 1000) {
@@ -177,7 +182,7 @@ public class EmployeeController {
                 edao.insertBatch(list);
             }
 
-            return new ResponseEntity<>("Tạo 500000 employee thành công", HttpStatus.OK);
+            return new ResponseEntity<>("Tạo " + dem  + " employee thành công", HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>("Lỗi khi tạo employee", HttpStatus.INTERNAL_SERVER_ERROR);

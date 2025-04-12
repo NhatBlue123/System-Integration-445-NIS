@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using Bogus;
 using HRWebApp.Models;
 
 namespace HRWebApp.Controllers
@@ -21,6 +22,68 @@ namespace HRWebApp.Controllers
             return View(personals.ToList());
         }
 
+        //GET: Personals/getAllPersonal
+        public JsonResult getAllPersonal()
+        {
+           
+            var personals = db.Personals
+           .Select(p => new {
+                  p.Employee_ID,
+                  p.First_Name,
+                  p.Last_Name,
+                  p.Middle_Initial,
+                  p.Address1,
+                  p.Address2,
+                  p.City,
+                  p.State,
+                  p.Zip,
+                  p.Email,
+                  p.Phone_Number,
+                  p.Social_Security_Number,
+                  p.Drivers_License,
+                  p.Marital_Status,
+                  p.Gender,
+                  p.Shareholder_Status,
+                  p.Benefit_Plans,
+                  p.Ethnicity
+            })
+            .ToList();
+            return Json(personals, JsonRequestBehavior.AllowGet);
+        }
+
+
+        // GET: Personals/getLimitPersonal?limit=111
+        public JsonResult getLimitPersonal(int limit)
+        {
+            var fake = new Bogus.Faker();
+            var personals = db.Personals
+           .Select(p => new {
+               p.Employee_ID,
+               p.First_Name,
+               p.Last_Name,
+               p.Middle_Initial,
+               p.Address1,
+               p.Address2,
+               p.City,
+               p.State,
+               p.Zip,
+               p.Email,
+               p.Phone_Number,
+               p.Social_Security_Number,
+               p.Drivers_License,
+               p.Marital_Status,
+               p.Gender,
+               p.Shareholder_Status,
+               p.Benefit_Plans,
+               p.Ethnicity
+           })
+                .Take(limit)
+                .ToList();
+
+            return Json(personals, JsonRequestBehavior.AllowGet);
+        }
+
+
         // GET: Personals/Details/5
         public ActionResult Details(decimal id)
         {
@@ -35,6 +98,66 @@ namespace HRWebApp.Controllers
             }
             return View(personal);
         }
+
+        // POST: Personals/GenerateFakePersonals
+        [HttpPost]
+        public ActionResult GenerateFakePersonals(int limit)
+        {
+            try
+            {
+                var context = new HRDB();
+
+                int currentCount = context.Personals.Count();   // Số dòng hiện tại
+                int startIndex = currentCount + 1;
+                int maxIndex = currentCount + limit;
+                int inserted = 0;
+
+                var faker = new Bogus.Faker<Personal>()
+                    .RuleFor(p => p.Employee_ID, (f, p) => 1000 + startIndex + f.IndexFaker)
+                    .RuleFor(p => p.First_Name, f => f.Name.FirstName())
+                    .RuleFor(p => p.Last_Name, f => f.Name.LastName())
+                    .RuleFor(p => p.Middle_Initial, f => f.Random.Char('A', 'Z').ToString())
+                    .RuleFor(p => p.Address1, f => f.Address.StreetAddress())
+                    .RuleFor(p => p.Address2, f => f.Address.SecondaryAddress())
+                    .RuleFor(p => p.City, f => f.Address.City())
+                    .RuleFor(p => p.State, f => f.Address.StateAbbr())
+                    .RuleFor(p => p.Zip, f => Convert.ToDecimal(f.Random.Number(10000, 99999)))
+                    .RuleFor(p => p.Email, f => f.Internet.Email())
+                    .RuleFor(p => p.Phone_Number, f => f.Phone.PhoneNumber())
+                    .RuleFor(p => p.Social_Security_Number, f => f.Random.Replace("###-##-####"))
+                    .RuleFor(p => p.Drivers_License, f => f.Random.Replace("DL########"))
+                    .RuleFor(p => p.Marital_Status, f => f.PickRandom("Single", "Married", "Divorced"))
+                    .RuleFor(p => p.Gender, f => f.PickRandom(true, false))
+                    .RuleFor(p => p.Shareholder_Status, f => f.Random.Bool()) // NOT NULL
+                    .RuleFor(p => p.Benefit_Plans, f => (decimal?)null)
+                    .RuleFor(p => p.Ethnicity, f => f.PickRandom("Asian", "White", "Black", "Latino", "Other"));
+
+                context.Configuration.AutoDetectChangesEnabled = false;
+
+                const int batchSize = 1000;
+                for (int i = startIndex; i <= maxIndex; i += batchSize)
+                {
+                    var toGenerate = Math.Min(batchSize, maxIndex - i + 1);
+                    var batch = faker.Generate(toGenerate);
+                    context.Personals.AddRange(batch);
+                    context.SaveChanges();
+                    inserted += batch.Count;
+                    System.Diagnostics.Debug.WriteLine($"✅ Inserted batch - Total so far: {inserted}");
+                }
+
+                context.Configuration.AutoDetectChangesEnabled = true;
+
+                return Json(new { success = true, message = $"✅ Tạo thành công {inserted} bản ghi Personal!" });
+            }
+            catch (Exception ex)
+            {
+                var inner = ex.InnerException?.Message ?? ex.Message;
+                return Json(new { success = false, error = inner });
+            }
+        }
+
+
+
 
         // GET: Personals/Create
         public ActionResult Create()
