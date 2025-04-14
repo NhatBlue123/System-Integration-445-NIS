@@ -12,6 +12,7 @@ import java.util.Locale;
 import java.util.Random;
 import javax.servlet.http.HttpServletRequest;
 import org.hibernate.Session;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 import springapp.web.model.HibernateUtil;
 import springapp.web.model.Users;
 import springapp.web.dao.EmployeeDao;
@@ -30,14 +32,14 @@ import springapp.web.model.Employee;
  *
  * @author KunPC
  */
-@RestController // tra ve JSON
+@Controller // tra ve JSON
 //@Controller tra ve HTML
 @RequestMapping(value = "/admin")
 public class EmployeeController {
 
     EmployeeDao edao = new EmployeeDao();
 
-    @RequestMapping(value = {"/employee/list"}, method = RequestMethod.GET)
+     @RequestMapping(value = {"/employee/list"}, method = RequestMethod.GET)
     public String listUsers(ModelMap model, HttpServletRequest request) {
         Users user = (Users) request.getSession().getAttribute("LOGGEDIN_USER");
         String value = "";
@@ -50,12 +52,12 @@ public class EmployeeController {
                 session.getTransaction().commit();
                 value = "admin/listEmployee";
             } catch (Exception e) {
-                value = "admin/listEmployee";
+                 value = "admin/listEmployee";
             }
 
         } else {
             model.addAttribute("user", new Users());
-            value = "redirect:/admin/login.html";
+            value= "redirect:/admin/login.html";
         }
         return value;
     }
@@ -86,7 +88,7 @@ public class EmployeeController {
     public ResponseEntity<List<Employee>> getAllEmployees() {
         try {
 
-            List<Employee> employees = edao.listUser();
+            List<Employee> employees = edao.listEmployee();
 
             return new ResponseEntity<>(employees, HttpStatus.OK);
         } catch (Exception e) {
@@ -137,9 +139,64 @@ public class EmployeeController {
         }
 
     }
+    
+    @RequestMapping(value = "/employee/generateAEmployee", method = RequestMethod.POST)
+public ResponseEntity<String> generateAEmployee() {
+    Faker myF = new Faker(new Locale("en"));
+    try {
+        List<Employee> list = new ArrayList<>();
+        Random rand = new Random();
+
+        int currentCount = edao.getEmployeeCount();
+        int startIndex = currentCount + 1;
+
+        Employee emp = new Employee();
+        emp.setEmployeeNumber(startIndex);                
+        emp.setIdEmployee(1000 + startIndex);            
+
+        emp.setFirstName(myF.name().firstName());
+        emp.setLastName(myF.name().lastName());
+        
+        String hrApiUrl = "http://localhost:19335/Personals/CreateAPersonals"
+        + "?firstName=" + emp.getFirstName()
+        + "&lastName=" + emp.getLastName()
+        + "&id=" + emp.getIdEmployee();
+
+
+        emp.setSsn(100000000L + startIndex);
+        emp.setPayRate(String.format("%.2f", rand.nextDouble() * 100));
+        emp.setPayRatesId(rand.nextInt(5) + 1);
+        emp.setVacationDays(rand.nextInt(30));
+        emp.setPaidToDate((byte) (rand.nextInt(2)));
+        emp.setPaidLastYear((byte) (rand.nextInt(2)));
+
+        list.add(emp);  // chỉ 1 employee
+
+        edao.insertBatch(list);
+        
+        RestTemplate restTemplate = new RestTemplate();
+        try {
+              String result = restTemplate.postForObject(hrApiUrl, null, String.class);
+              System.out.println("HR App response: " + result);
+            } catch (Exception ex) {
+          System.err.println("❌ Không thể gọi HR App: " + ex.getMessage());
+        }
+
+        return new ResponseEntity<>("Tạo 1 employee thành công với ID = " + emp.getIdEmployee(), HttpStatus.OK);
+    } catch (Exception e) {
+        e.printStackTrace();
+        return new ResponseEntity<>("Lỗi khi tạo employee", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
+   @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
+
+    
 
     @RequestMapping(value = "/employee/generate/{limit}", method = RequestMethod.POST)
-    public ResponseEntity<String> generateEmployees(@PathVariable("limit") int limit) {
+    public ResponseEntity<String> generateEmployeesLimit(@PathVariable("limit") int limit) {
         Faker myF = new Faker(new Locale("en"));
         try {
             List<Employee> list = new ArrayList<>();

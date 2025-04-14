@@ -63,7 +63,7 @@ public class EmployeeDao {
         session.close();
     }
 }
-    public List<Employee> listUser() {
+    public List<Employee> listEmployee() {
         List<Employee> list;
         try {
             Session session = HibernateUtil.getSessionFactory().getCurrentSession();

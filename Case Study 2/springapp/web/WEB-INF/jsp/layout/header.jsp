@@ -42,7 +42,7 @@ function redirectToHRApp() {
         alert("User không hợp lệ!");
         return;
     }
-    var tokenUrl = "http://localhost:8080/springapp/admin/generate-token?username=" + encodeURIComponent(username);
+    var tokenUrl = "http://localhost:8888/springapp/admin/generate-token?username=" + encodeURIComponent(username);
 
     fetch(tokenUrl)
         .then(function(response) {
