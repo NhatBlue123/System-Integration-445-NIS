@@ -29,7 +29,7 @@
                             <core:forEach var="employee" items="${listEmployees}">  
                                 <tr class="even gradeX">
                                     <td>${employee.employeeNumber}</td>
-                                    <td>${employee.lastName} ${employee.firstName}</td>
+                                    <td>${employee.firstName} ${employee.lastName}</td>
                                     <td>${employee.ssn}</td>
                                     <td class="center">${employee.payRate}</td>
                                     <td class="center">${employee.vacationDays}</td>
