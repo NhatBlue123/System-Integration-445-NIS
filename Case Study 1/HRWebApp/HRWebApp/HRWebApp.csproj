@@ -147,6 +147,7 @@
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\API.cs" />
     <Compile Include="Controllers\AuthController.cs" />
     <Compile Include="Controllers\BenefitPlansController.cs" />
     <Compile Include="Controllers\BlueController.cs" />
