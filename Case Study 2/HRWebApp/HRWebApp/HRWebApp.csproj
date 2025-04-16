@@ -153,7 +153,6 @@
     <Compile Include="Controllers\AuthController.cs" />
     <Compile Include="Controllers\BenefitPlansController.cs" />
     <Compile Include="Controllers\BlueController.cs" />
-    <Compile Include="Controllers\GetPers.cs" />
     <Compile Include="Controllers\JobHistoryController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\PersonalsController.cs" />

@@ -103,7 +103,7 @@ namespace HRWebApp.Controllers
 
         // POST: Personals/CreateAPersonals/firstName=John&lastName=Doe //something
         [HttpPost]
-        public ActionResult CreateAPersonals(String firstName,String lastName, decimal id)
+        public ActionResult CreateAPersonals()
         {
             try
             {
@@ -115,8 +115,8 @@ namespace HRWebApp.Controllers
                 var faker = new Bogus.Faker<Personal>()
                     .RuleFor(p => p.Employee_ID, (f, p) => 1000 + startIndex + f.IndexFaker)
                  
-                    .RuleFor(p => p.First_Name, firstName)
-                    .RuleFor(p => p.Last_Name, lastName)
+                    .RuleFor(p => p.First_Name, f  => f.Name.FirstName())
+                    .RuleFor(p => p.Last_Name, f => f.Name.LastName())
                     .RuleFor(p => p.Middle_Initial, f => f.Random.Char('A', 'Z').ToString())
                     .RuleFor(p => p.Address1, f => f.Address.StreetAddress())
                     .RuleFor(p => p.Address2, f => f.Address.SecondaryAddress())
@@ -140,7 +140,7 @@ namespace HRWebApp.Controllers
                 context.SaveChanges();
                 context.Configuration.AutoDetectChangesEnabled = true;
                 name = personal.First_Name + " " + personal.Last_Name;
-
+                decimal id = personal.Employee_ID;
                 return Json(new { success = false, message = $"Tao thanh cong personal voi userame = {name} va id = {id}" });
 
             }
@@ -310,6 +310,34 @@ namespace HRWebApp.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        // GET: /PersonalsApi/GetAll
+        public JsonResult GetAll()
+        {
+            var personals = db.Personals.Select(p => new
+            {
+                p.Employee_ID,
+                p.First_Name,
+                p.Last_Name,
+                p.Middle_Initial,
+                p.Address1,
+                p.Address2,
+                p.City,
+                p.State,
+                p.Zip,
+                p.Email,
+                p.Phone_Number,
+                p.Social_Security_Number,
+                p.Drivers_License,
+                p.Marital_Status,
+                p.Gender,
+                p.Shareholder_Status,
+                p.Benefit_Plans,
+                p.Ethnicity
+            }).ToList();
+
+            return Json(personals, JsonRequestBehavior.AllowGet);
         }
     }
 }
