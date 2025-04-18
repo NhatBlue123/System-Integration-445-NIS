@@ -32,6 +32,7 @@ import springapp.web.model.Employee;
  *
  * @author KunPC
  */
+//@CrossOrigin(origins = "http://localhost:8888")
 @Controller // tra ve JSON
 //@Controller tra ve HTML
 @RequestMapping(value = "/admin")
@@ -84,18 +85,6 @@ public class EmployeeController {
         }
     }
 
-    @RequestMapping(value = {"employee/all"}, method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<List<Employee>> getAllEmployees() {
-        try {
-
-            List<Employee> employees = edao.listEmployee();
-
-            return new ResponseEntity<>(employees, HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 
     @RequestMapping(value = {"employee/getLimitEmployee/{limit}"}, method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<String> getLimitEmployees(@PathVariable("limit") int limit) {
@@ -107,7 +96,50 @@ public class EmployeeController {
                 json.append(String.format(
                         "{"
                         + "\"employeeNumber\": \"%d\", "
-                        + "\"id\": \"%d\", "
+                        + "\"idEmployee\": \"%d\", "
+                        + "\"firstName\": \"%s\", "
+                        + "\"lastName\": \"%s\", "
+                        + "\"ssn\": \"%d\", "
+                        + "\"payRate\": \"%s\", "
+                        + "\"payRatesId\": \"%d\", "
+                        + "\"vacationDays\": \"%d\", "
+                        + "\"paidToDate\": \"%d\", "
+                        + "\"paidLastYear\": \"%d\""
+                        + "}",
+                        e.getEmployeeNumber(),
+                        e.getIdEmployee(),
+                        e.getFirstName(),
+                        e.getLastName(),
+                        e.getSsn(),
+                        e.getPayRate(),
+                        e.getPayRatesId(),
+                        e.getVacationDays(),
+                        e.getPaidToDate(),
+                        e.getPaidLastYear()
+                ));
+                if (i != employees.size() - 1) {
+                    json.append(",");
+                }
+            }
+            json.append("]");
+            return new ResponseEntity<>(json.toString(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("[]", HttpStatus.OK);
+        }
+
+    }
+    
+     @RequestMapping(value = {"employee/getAllEmployee"}, method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<String> getAllEmployees() {
+        List<Employee> employees = edao.listEmployee();
+        if (employees != null && !employees.isEmpty()) {
+            StringBuilder json = new StringBuilder("[");
+            for (int i = 0; i < employees.size(); i++) {
+                Employee e = employees.get(i);
+                json.append(String.format(
+                        "{"
+                        + "\"employeeNumber\": \"%d\", "
+                        + "\"idEmployee\": \"%d\", "
                         + "\"firstName\": \"%s\", "
                         + "\"lastName\": \"%s\", "
                         + "\"ssn\": \"%d\", "
