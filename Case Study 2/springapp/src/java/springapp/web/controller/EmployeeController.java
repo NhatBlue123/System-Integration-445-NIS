@@ -84,6 +84,17 @@ public class EmployeeController {
 
         }
     }
+    
+    @RequestMapping(value = {"employee/deleteAllE"}, method = RequestMethod.GET)
+    public ResponseEntity<String> deleteAllEs() {
+        try {
+
+            return new ResponseEntity<>("test thanh cong", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("{\"error\": \"test that bai\"}", HttpStatus.EXPECTATION_FAILED);
+
+        }
+    }
 
     @RequestMapping(value = {"employee/getLimitEmployee/{limit}"}, method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<String> getLimitEmployees(@PathVariable("limit") int limit) {
@@ -190,10 +201,9 @@ public class EmployeeController {
             emp.setFirstName(myF.name().firstName());
             emp.setLastName(myF.name().lastName());
 
-            String hrApiUrl = "http://localhost:19335/Personals/CreateAPersonals"
+            String hrApiUrl = "Personals/CreateAPersonalWithFirtsNameAndLastName/"
                     + "?firstName=" + emp.getFirstName()
-                    + "&lastName=" + emp.getLastName()
-                    + "&id=" + emp.getIdEmployee();
+                    + "&lastName=" + emp.getLastName();
 
             emp.setSsn(100000000L + startIndex);
             emp.setPayRate(String.format("%.2f", rand.nextDouble() * 100));
