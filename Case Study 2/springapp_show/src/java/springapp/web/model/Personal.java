@@ -15,6 +15,8 @@ public class Personal {
     public String First_Name;
 
     public String Last_Name;
+    
+    public String Full_Name = First_Name + " " + Last_Name;
 
     public int getEmployee_ID() {
         return Employee_ID;
@@ -24,6 +26,10 @@ public class Personal {
         this.Employee_ID = Employee_ID;
     }
 
+    public String getFull_Name()
+    {
+        return this.Full_Name;
+    }
     public String getFirst_Name() {
         return First_Name;
     }

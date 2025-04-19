@@ -52,6 +52,7 @@ public class MergedEmployeePersonal {
      private int idEmployee;
      private String lastName;
      private String firstName;
+     private String fullName = this.lastName + " " + this.fullName;
      private long ssn;
      private String payRate;
      private Integer payRatesId;
@@ -70,6 +71,14 @@ public class MergedEmployeePersonal {
     }
     public int getIdEmployee() {
         return this.idEmployee;
+    }
+    public String getFullName()
+    {
+        return this.fullName;
+    }
+    public void setFullName(String fullName)
+    {
+        this.fullName = fullName;
     }
     
     public void setIdEmployee(int idEmployee) {

@@ -13,6 +13,7 @@ public class Employee  implements java.io.Serializable {
      private int idEmployee;
      private String lastName;
      private String firstName;
+     private String fullName = firstName + " " + lastName;
      private long ssn;
      private String payRate;
      private Integer payRatesId;
@@ -42,6 +43,11 @@ public class Employee  implements java.io.Serializable {
        this.vacationDays = vacationDays;
        this.paidToDate = paidToDate;
        this.paidLastYear = paidLastYear;
+    }
+    
+    public String getFullName()
+    {
+        return this.fullName;
     }
    
     public int getEmployeeNumber() {

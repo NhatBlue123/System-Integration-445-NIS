@@ -24,6 +24,13 @@ namespace HRWebApp.Models
         [StringLength(50)]
         public string Last_Name { get; set; }
 
+
+        // cho full_name = First_Name + " " + Last_Name;
+        // public string Full_Name { get; set; }
+
+
+
+
         [StringLength(50)]
         public string Middle_Initial { get; set; }
 

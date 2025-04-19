@@ -141,6 +141,7 @@ public class EmployeeController {
                         + "\"idEmployee\": \"%d\", "
                         + "\"firstName\": \"%s\", "
                         + "\"lastName\": \"%s\", "
+                        + "\"fullName\": \"%s\", "
                         + "\"ssn\": \"%d\", "
                         + "\"payRate\": \"%s\", "
                         + "\"payRatesId\": \"%d\", "
@@ -152,6 +153,7 @@ public class EmployeeController {
                         e.getIdEmployee(),
                         e.getFirstName(),
                         e.getLastName(),
+                        e.getFullName(),
                         e.getSsn(),
                         e.getPayRate(),
                         e.getPayRatesId(),
