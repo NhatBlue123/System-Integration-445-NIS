@@ -40,7 +40,7 @@ public class EmployeeController {
 
     EmployeeDao edao = new EmployeeDao();
 
-     @RequestMapping(value = {"/employee/list"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/employee/list"}, method = RequestMethod.GET)
     public String listUsers(ModelMap model, HttpServletRequest request) {
         Users user = (Users) request.getSession().getAttribute("LOGGEDIN_USER");
         String value = "";
@@ -53,12 +53,12 @@ public class EmployeeController {
                 session.getTransaction().commit();
                 value = "admin/listEmployee";
             } catch (Exception e) {
-                 value = "admin/listEmployee";
+                value = "admin/listEmployee";
             }
 
         } else {
             model.addAttribute("user", new Users());
-            value= "redirect:/admin/login.html";
+            value = "redirect:/admin/login.html";
         }
         return value;
     }
@@ -84,7 +84,6 @@ public class EmployeeController {
 
         }
     }
-
 
     @RequestMapping(value = {"employee/getLimitEmployee/{limit}"}, method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<String> getLimitEmployees(@PathVariable("limit") int limit) {
@@ -128,8 +127,8 @@ public class EmployeeController {
         }
 
     }
-    
-     @RequestMapping(value = {"employee/getAllEmployee"}, method = RequestMethod.GET, produces = "application/json")
+
+    @RequestMapping(value = {"employee/getAllEmployee"}, method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<String> getAllEmployees() {
         List<Employee> employees = edao.listEmployee();
         if (employees != null && !employees.isEmpty()) {
@@ -171,61 +170,94 @@ public class EmployeeController {
         }
 
     }
-    
-    @RequestMapping(value = "/employee/generateAEmployee", method = RequestMethod.POST)
-public ResponseEntity<String> generateAEmployee() {
-    Faker myF = new Faker(new Locale("en"));
-    try {
-        List<Employee> list = new ArrayList<>();
-        Random rand = new Random();
 
-        int currentCount = edao.getEmployeeCount();
-        int startIndex = currentCount + 1;
-
-        Employee emp = new Employee();
-        emp.setEmployeeNumber(startIndex);                
-        emp.setIdEmployee(1000 + startIndex);            
-
-        emp.setFirstName(myF.name().firstName());
-        emp.setLastName(myF.name().lastName());
-        
-        String hrApiUrl = "http://localhost:19335/Personals/CreateAPersonals"
-        + "?firstName=" + emp.getFirstName()
-        + "&lastName=" + emp.getLastName()
-        + "&id=" + emp.getIdEmployee();
-
-
-        emp.setSsn(100000000L + startIndex);
-        emp.setPayRate(String.format("%.2f", rand.nextDouble() * 100));
-        emp.setPayRatesId(rand.nextInt(5) + 1);
-        emp.setVacationDays(rand.nextInt(30));
-        emp.setPaidToDate((byte) (rand.nextInt(2)));
-        emp.setPaidLastYear((byte) (rand.nextInt(2)));
-
-        list.add(emp);  // chỉ 1 employee
-
-        edao.insertBatch(list);
-        
-        RestTemplate restTemplate = new RestTemplate();
+    @RequestMapping(value = "/employee/generateAEmployeeAndAPersonal", method = RequestMethod.POST)
+    public ResponseEntity<String> generateAEmployeeAndAPersonal() {
+        Faker myF = new Faker(new Locale("en"));
         try {
-              String result = restTemplate.postForObject(hrApiUrl, null, String.class);
-              System.out.println("HR App response: " + result);
-            } catch (Exception ex) {
-          System.err.println("❌ Không thể gọi HR App: " + ex.getMessage());
-        }
+            List<Employee> list = new ArrayList<>();
+            Random rand = new Random();
 
-        return new ResponseEntity<>("Tạo 1 employee thành công với ID = " + emp.getIdEmployee(), HttpStatus.OK);
-    } catch (Exception e) {
-        e.printStackTrace();
-        return new ResponseEntity<>("Lỗi khi tạo employee", HttpStatus.INTERNAL_SERVER_ERROR);
+            int currentCount = edao.getEmployeeCount();
+            int startIndex = currentCount + 1;
+
+            Employee emp = new Employee();
+            emp.setEmployeeNumber(startIndex);
+            emp.setIdEmployee(1000 + startIndex);
+
+            emp.setFirstName(myF.name().firstName());
+            emp.setLastName(myF.name().lastName());
+
+            String hrApiUrl = "http://localhost:19335/Personals/CreateAPersonals"
+                    + "?firstName=" + emp.getFirstName()
+                    + "&lastName=" + emp.getLastName()
+                    + "&id=" + emp.getIdEmployee();
+
+            emp.setSsn(100000000L + startIndex);
+            emp.setPayRate(String.format("%.2f", rand.nextDouble() * 100));
+            emp.setPayRatesId(rand.nextInt(5) + 1);
+            emp.setVacationDays(rand.nextInt(30));
+            emp.setPaidToDate((byte) (rand.nextInt(2)));
+            emp.setPaidLastYear((byte) (rand.nextInt(2)));
+
+            list.add(emp);  // chỉ 1 employee
+
+            edao.insertBatch(list);
+
+            RestTemplate restTemplate = new RestTemplate();
+            try {
+                String result = restTemplate.postForObject(hrApiUrl, null, String.class);
+                System.out.println("HR App response: " + result);
+            } catch (Exception ex) {
+                System.err.println("❌ Không thể gọi HR App: " + ex.getMessage());
+            }
+
+            return new ResponseEntity<>("Tạo 1 employee thành công với ID = " + emp.getIdEmployee(), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Lỗi khi tạo employee", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
-}
-   @Bean
+
+    @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
 
-    
+    @RequestMapping(value = "/employee/generateAEmployee", method = RequestMethod.POST)
+    public ResponseEntity<String> generateAEmployee() {
+        Faker myF = new Faker(new Locale("en"));
+        try {
+            List<Employee> list = new ArrayList<>();
+            Random rand = new Random();
+
+            int currentCount = edao.getEmployeeCount();
+            int startIndex = currentCount + 1;
+
+            Employee emp = new Employee();
+            emp.setEmployeeNumber(startIndex);
+            emp.setIdEmployee(1000 + startIndex);
+
+            emp.setFirstName(myF.name().firstName());
+            emp.setLastName(myF.name().lastName());
+
+            emp.setSsn(100000000L + startIndex);
+            emp.setPayRate(String.format("%.2f", rand.nextDouble() * 100));
+            emp.setPayRatesId(rand.nextInt(5) + 1);
+            emp.setVacationDays(rand.nextInt(30));
+            emp.setPaidToDate((byte) (rand.nextInt(2)));
+            emp.setPaidLastYear((byte) (rand.nextInt(2)));
+
+            list.add(emp);  // chỉ 1 employee
+
+            edao.insertBatch(list);
+
+            return new ResponseEntity<>("Tạo 1 employee thành công với ID = " + emp.getIdEmployee(), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Lỗi khi tạo employee", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @RequestMapping(value = "/employee/generate/{limit}", method = RequestMethod.POST)
     public ResponseEntity<String> generateEmployeesLimit(@PathVariable("limit") int limit) {
@@ -242,8 +274,8 @@ public ResponseEntity<String> generateAEmployee() {
             // start 6
             int startIndex = currentCount + 1;
             int dem = 0;
-            for (int i = startIndex; i < maxIndex + 1 ; i++) {
-                
+            for (int i = startIndex; i < maxIndex + 1; i++) {
+
                 Employee emp = new Employee();
                 emp.setEmployeeNumber(1000 + i);
                 emp.setIdEmployee(i);
@@ -271,7 +303,7 @@ public ResponseEntity<String> generateAEmployee() {
                 edao.insertBatch(list);
             }
 
-            return new ResponseEntity<>("Tạo " + dem  + " employee thành công", HttpStatus.OK);
+            return new ResponseEntity<>("Tạo " + dem + " employee thành công", HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>("Lỗi khi tạo employee", HttpStatus.INTERNAL_SERVER_ERROR);
