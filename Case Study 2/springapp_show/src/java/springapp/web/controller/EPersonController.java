@@ -16,11 +16,13 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.client.RestTemplate;
+import redis.clients.jedis.Jedis;
 import springapp.web.model.Employee;
 import springapp.web.model.HibernateUtil;
 import springapp.web.model.MergedEmployeePersonal;
 import springapp.web.model.Personal;
 import springapp.web.model.Users;
+import until.RedisConfig;
 
 @Controller
 @RequestMapping(value = "/admin")
@@ -92,11 +94,11 @@ public class EPersonController {
                 mergedList.add(merged);
             }
 
-          System.out.println("== Merged List ==");
-          for (MergedEmployeePersonal m : mergedList) {
+            System.out.println("== Merged List ==");
+            for (MergedEmployeePersonal m : mergedList) {
                 System.out.println("ID: " + m.getIdEmployee()
                         + ", FirstName: " + m.getFirstName()
-                 + ", MiddleInitial: " + m.getMiddle_Initial());
+                        + ", MiddleInitial: " + m.getMiddle_Initial());
             }
 
             model.addAttribute("listMerge", mergedList);
@@ -108,6 +110,7 @@ public class EPersonController {
 
         return "admin/EPerson";
     }
+
     public String listEPersonByNAME(ModelMap model, HttpServletRequest request) {
         try {
             List<Employee> employees = fetchEmployees();
@@ -166,6 +169,15 @@ public class EPersonController {
                 }
 
                 mergedList.add(merged);
+
+            }
+            ObjectMapper mapper = new ObjectMapper();
+            String mergedJson = mapper.writeValueAsString(mergedList);
+
+            try (Jedis jedis = RedisConfig.getJedis()) {
+                jedis.set("mergeJon",mergedJson);
+                jedis.expire("mergeJon", 300);
+            } catch (Exception e) {
             }
 
             model.addAttribute("listMerge", mergedList);
