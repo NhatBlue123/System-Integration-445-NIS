@@ -103,7 +103,7 @@ namespace HRWebApp.Controllers
         }
 
 
-        // POST: Personals/CreateAPersonals/firstName=John&lastName=Doe //something
+        // POST: Personals/CreateAPersonals
         [HttpPost]
         public ActionResult CreateAPersonals()
         {
