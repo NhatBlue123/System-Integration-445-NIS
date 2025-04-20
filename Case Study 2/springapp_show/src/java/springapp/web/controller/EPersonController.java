@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 import redis.clients.jedis.Jedis;
 import springapp.web.model.Employee;
@@ -34,81 +35,114 @@ public class EPersonController {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @RequestMapping(value = "/EPerson", method = RequestMethod.GET)
-    public String listEPersonById(ModelMap model, HttpServletRequest request) {
-        Users user = (Users) request.getSession().getAttribute("LOGGEDIN_USER");
 
-        try {
-            List<Employee> employees = fetchEmployees();
-            List<Personal> personals = fetchPersonals();
 
-            // Tạo map từ Personal theo ID
-            Map<Integer, Personal> personalMap = personals.stream()
-                    .collect(Collectors.toMap(Personal::getEmployee_ID, p -> p));
+    public String listEPersonByIdJedis(ModelMap model, HttpServletRequest request) {
 
-            // Merge dữ liệu
+        try (Jedis jedis = RedisConfig.getJedis()) {
+            System.out.println("Ket noi duoc jedis");
+
+            String cached = jedis.get("mergedEPerson");
             List<MergedEmployeePersonal> mergedList = new ArrayList<>();
 
-            Set<Integer> allIds = new HashSet<Integer>();
-            employees.forEach(e -> allIds.add(e.getIdEmployee()));
-            personals.forEach(p -> allIds.add(p.getEmployee_ID()));
+            // nếu cached có thì hiển thị lên table
+            if (cached != null) {
+                mergedList = objectMapper.readValue(cached, new TypeReference<List<MergedEmployeePersonal>>() {
+                });
+                //cho dữ liệu vào listMerge
+                model.addAttribute("listMerge", mergedList);
 
-            for (Integer id : allIds) {
-                Employee emp = employees.stream()
-                        .filter(e -> e.getIdEmployee() == id)
-                        .findFirst().orElse(null);
+                System.out.println("OK CACHED");
+            } // 
+            else {
 
-                Personal per = personalMap.get(id);
+                List<Employee> employees = fetchEmployees();
+                List<Personal> personals = fetchPersonals();
 
-                MergedEmployeePersonal merged = new MergedEmployeePersonal();
-                if (emp != null) {
-                    merged.setIdEmployee(emp.getIdEmployee());
-                    merged.setEmployeeNumber(emp.getEmployeeNumber());
-                    merged.setFirstName(emp.getFirstName());
-                    merged.setLastName(emp.getLastName());
-                    merged.setSsn(emp.getSsn());
-                    merged.setPayRate(emp.getPayRate());
-                    merged.setPayRatesId(emp.getPayRatesId());
-                    merged.setVacationDays(emp.getVacationDays());
-                    merged.setPaidToDate(emp.getPaidToDate());
-                    merged.setPaidLastYear(emp.getPaidLastYear());
+                // Tạo map từ Personal theo ID
+                Map<Integer, Personal> personalMap = personals.stream()
+                        .collect(Collectors.toMap(Personal::getEmployee_ID, p -> p));
+
+                // Merge dữ liệu
+                Set<Integer> allIds = new HashSet<Integer>();
+                employees.forEach(e -> allIds.add(e.getIdEmployee()));
+                personals.forEach(p -> allIds.add(p.getEmployee_ID()));
+
+                for (Integer id : allIds) {
+                    Employee emp = employees.stream()
+                            .filter(e -> e.getIdEmployee() == id)
+                            .findFirst().orElse(null);
+
+                    Personal per = personalMap.get(id);
+
+                    MergedEmployeePersonal merged = new MergedEmployeePersonal();
+                    if (emp != null) {
+                        merged.setIdEmployee(emp.getIdEmployee());
+                        merged.setEmployeeNumber(emp.getEmployeeNumber());
+                        merged.setFirstName(emp.getFirstName());
+                        merged.setLastName(emp.getLastName());
+                        merged.setSsn(emp.getSsn());
+                        merged.setPayRate(emp.getPayRate());
+                        merged.setPayRatesId(emp.getPayRatesId());
+                        merged.setVacationDays(emp.getVacationDays());
+                        merged.setPaidToDate(emp.getPaidToDate());
+                        merged.setPaidLastYear(emp.getPaidLastYear());
+                    }
+
+                    if (per != null) {
+                        merged.setMiddle_Initial(per.getMiddle_Initial());
+                        merged.setAddress1(per.getAddress1());
+                        merged.setAddress2(per.getAddress2());
+                        merged.setCity(per.getCity());
+                        merged.setState(per.getState());
+                        merged.setZip(per.getZip());
+                        merged.setEmail(per.getEmail());
+                        merged.setPhone_Number(per.getPhone_Number());
+                        merged.setSocial_Security_Number(per.getSocial_Security_Number());
+                        merged.setDrivers_License(per.getDrivers_License());
+                        merged.setMarital_Status(per.getMarital_Status());
+                        merged.setGender(per.isGender());
+                        merged.setShareholder_Status(per.isShareholder_Status());
+                        merged.setBenefit_Plans(per.getBenefit_Plans());
+                        merged.setEthnicity(per.getEthnicity());
+                    }
+
+                    mergedList.add(merged);
                 }
 
-                if (per != null) {
-                    merged.setMiddle_Initial(per.getMiddle_Initial());
-                    merged.setAddress1(per.getAddress1());
-                    merged.setAddress2(per.getAddress2());
-                    merged.setCity(per.getCity());
-                    merged.setState(per.getState());
-                    merged.setZip(per.getZip());
-                    merged.setEmail(per.getEmail());
-                    merged.setPhone_Number(per.getPhone_Number());
-                    merged.setSocial_Security_Number(per.getSocial_Security_Number());
-                    merged.setDrivers_License(per.getDrivers_License());
-                    merged.setMarital_Status(per.getMarital_Status());
-                    merged.setGender(per.isGender());
-                    merged.setShareholder_Status(per.isShareholder_Status());
-                    merged.setBenefit_Plans(per.getBenefit_Plans());
-                    merged.setEthnicity(per.getEthnicity());
-                }
+                jedis.set("mergedEPerson", objectMapper.writeValueAsString(mergedList));
+                jedis.expire("mergedEPerson", 300);
+                System.out.println("Da luu vao cache");
 
-                mergedList.add(merged);
             }
 
-            System.out.println("== Merged List ==");
-            for (MergedEmployeePersonal m : mergedList) {
-                System.out.println("ID: " + m.getIdEmployee()
-                        + ", FirstName: " + m.getFirstName()
-                        + ", MiddleInitial: " + m.getMiddle_Initial());
-            }
-
+//            System.out.println("== Merged List ==");
+//            for (MergedEmployeePersonal m : mergedList) {
+//                System.out.println("ID: " + m.getIdEmployee()
+//                        + ", FirstName: " + m.getFirstName()
+//                        + ", MiddleInitial: " + m.getMiddle_Initial());
+//            }
             model.addAttribute("listMerge", mergedList);
 
         } catch (Exception e) {
+            System.err.println("Khong ket noi duoc jedis");
             e.printStackTrace();
             model.addAttribute("listMerge", new ArrayList<>()); // fallback
         }
 
         return "admin/EPerson";
+    }
+
+    @RequestMapping(value = "/EPerson/clearCache", method = RequestMethod.GET)
+    @ResponseBody
+    public String clearCache() {
+        try (Jedis jedis = RedisConfig.getJedis()) {
+            jedis.del("mergedEPerson");
+            return "Đã xóa cache mergedEPerson";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Lỗi khi xóa cache";
+        }
     }
 
     public String listEPersonByNAME(ModelMap model, HttpServletRequest request) {
@@ -171,14 +205,6 @@ public class EPersonController {
                 mergedList.add(merged);
 
             }
-            ObjectMapper mapper = new ObjectMapper();
-            String mergedJson = mapper.writeValueAsString(mergedList);
-
-            try (Jedis jedis = RedisConfig.getJedis()) {
-                jedis.set("mergeJon",mergedJson);
-                jedis.expire("mergeJon", 300);
-            } catch (Exception e) {
-            }
 
             model.addAttribute("listMerge", mergedList);
         } catch (Exception e) {
@@ -238,6 +264,7 @@ public class EPersonController {
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>("Lỗi server: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+
         }
     }
 
@@ -259,6 +286,7 @@ public class EPersonController {
         } catch (Exception e) {
             e.printStackTrace();
             return new ArrayList<>(); // fallback
+
         }
     }
 

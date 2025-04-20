@@ -84,7 +84,7 @@ public class EmployeeController {
 
         }
     }
-    
+
     @RequestMapping(value = {"employee/deleteAllE"}, method = RequestMethod.GET)
     public ResponseEntity<String> deleteAllEs() {
         try {
@@ -184,52 +184,52 @@ public class EmployeeController {
 
     }
 
-    @RequestMapping(value = "/employee/generateAEmployeeAndAPersonal", method = RequestMethod.POST)
-    public ResponseEntity<String> generateAEmployeeAndAPersonal() {
-        Faker myF = new Faker(new Locale("en"));
-        try {
-            List<Employee> list = new ArrayList<>();
-            Random rand = new Random();
-
-            int currentCount = edao.getEmployeeCount();
-            int startIndex = currentCount + 1;
-
-            Employee emp = new Employee();
-            emp.setEmployeeNumber(startIndex);
-            emp.setIdEmployee(1000 + startIndex);
-
-            emp.setFirstName(myF.name().firstName());
-            emp.setLastName(myF.name().lastName());
-
-            String hrApiUrl = "Personals/CreateAPersonalWithFirtsNameAndLastName/"
-                    + "?firstName=" + emp.getFirstName()
-                    + "&lastName=" + emp.getLastName();
-
-            emp.setSsn(100000000L + startIndex);
-            emp.setPayRate(String.format("%.2f", rand.nextDouble() * 100));
-            emp.setPayRatesId(rand.nextInt(5) + 1);
-            emp.setVacationDays(rand.nextInt(30));
-            emp.setPaidToDate((byte) (rand.nextInt(2)));
-            emp.setPaidLastYear((byte) (rand.nextInt(2)));
-
-            list.add(emp);  // chỉ 1 employee
-
-            edao.insertBatch(list);
-
-            RestTemplate restTemplate = new RestTemplate();
-            try {
-                String result = restTemplate.postForObject(hrApiUrl, null, String.class);
-                System.out.println("HR App response: " + result);
-            } catch (Exception ex) {
-                System.err.println("❌ Không thể gọi HR App: " + ex.getMessage());
-            }
-
-            return new ResponseEntity<>("Tạo 1 employee thành công với ID = " + emp.getIdEmployee(), HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>("Lỗi khi tạo employee", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+//    @RequestMapping(value = "/employee/generateAEmployeeAndAPersonal", method = RequestMethod.POST)
+//    public ResponseEntity<String> generateAEmployeeAndAPersonal() {
+//        Faker myF = new Faker(new Locale("en"));
+//        try {
+//            List<Employee> list = new ArrayList<>();
+//            Random rand = new Random();
+//
+//            int currentCount = edao.getEmployeeCount();
+//            int startIndex = currentCount + 1;
+//
+//            Employee emp = new Employee();
+//            emp.setEmployeeNumber(startIndex);
+//            emp.setIdEmployee(1000 + startIndex);
+//
+//            emp.setFirstName(myF.name().firstName());
+//            emp.setLastName(myF.name().lastName());
+//
+//            String hrApiUrl = "Personals/CreateAPersonalWithFirtsNameAndLastName/"
+//                    + "?firstName=" + emp.getFirstName()
+//                    + "&lastName=" + emp.getLastName();
+//
+//            emp.setSsn(100000000L + startIndex);
+//            emp.setPayRate(String.format("%.2f", rand.nextDouble() * 100));
+//            emp.setPayRatesId(rand.nextInt(5) + 1);
+//            emp.setVacationDays(rand.nextInt(30));
+//            emp.setPaidToDate((byte) (rand.nextInt(2)));
+//            emp.setPaidLastYear((byte) (rand.nextInt(2)));
+//
+//            list.add(emp);  // chỉ 1 employee
+//
+//            edao.insertBatch(list);
+//
+//            RestTemplate restTemplate = new RestTemplate();
+//            try {
+//                String result = restTemplate.postForObject(hrApiUrl, null, String.class);
+//                System.out.println("HR App response: " + result);
+//            } catch (Exception ex) {
+//                System.err.println("❌ Không thể gọi HR App: " + ex.getMessage());
+//            }
+//
+//            return new ResponseEntity<>("Tạo 1 employee thành công với ID = " + emp.getIdEmployee(), HttpStatus.OK);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return new ResponseEntity<>("Lỗi khi tạo employee", HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
 
     @Bean
     public RestTemplate restTemplate() {
@@ -263,6 +263,17 @@ public class EmployeeController {
             list.add(emp);  // chỉ 1 employee
 
             edao.insertBatch(list);
+
+            // xử lý xóa cache khi thêm mới employee
+            try {
+                RestTemplate rest = new RestTemplate();
+                String cacheUrl = "http://localhost:8888/springapp_show/admin/EPerson/clearCache";
+                rest.getForObject(cacheUrl, String.class);
+                System.out.println("Da xoa cache");
+
+            } catch (Exception e) {
+                System.err.println("Loi khi xoa cache" + e.getMessage());
+            }
 
             return new ResponseEntity<>("Tạo 1 employee thành công với ID = " + emp.getIdEmployee(), HttpStatus.OK);
         } catch (Exception e) {
@@ -314,6 +325,15 @@ public class EmployeeController {
             if (!list.isEmpty()) {
                 edao.insertBatch(list);
             }
+            try {
+                RestTemplate rest = new RestTemplate();
+                String cacheUrl = "http://localhost:8888/springapp_show/admin/EPerson/clearCache";
+                rest.getForObject(cacheUrl, String.class);
+                System.out.println("Da xoa cache");
+
+            } catch (Exception e) {
+                System.err.println("Loi khi xoa cache" + e.getMessage());
+            }
 
             return new ResponseEntity<>("Tạo " + dem + " employee thành công", HttpStatus.OK);
         } catch (Exception e) {
@@ -321,6 +341,26 @@ public class EmployeeController {
             return new ResponseEntity<>("Lỗi khi tạo employee", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @RequestMapping(value = {"employee/deleteAll"}, method = RequestMethod.DELETE)
+    public ResponseEntity<String> deleteAllEmployees() {
+        try {
+            edao.deleteAll();
+            try {
+                RestTemplate rest = new RestTemplate();
+                String cacheUrl = "http://localhost:8888/springapp_show/admin/EPerson/clearCache";
+                rest.getForObject(cacheUrl, String.class);
+                System.out.println("Da xoa cache");
+
+            } catch (Exception e) {
+                System.err.println("Loi khi xoa cache" + e.getMessage());
+            }
+            return new ResponseEntity<>("Đã xoá toàn bộ employee", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Lỗi khi xoá employee", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }
 
 //@Controller

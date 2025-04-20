@@ -14,9 +14,10 @@ import org.hibernate.Transaction;
 import org.springframework.stereotype.Repository;
 import springapp.web.model.Employee;
 import springapp.web.model.HibernateUtil;
+
 @Repository
 public class EmployeeDao {
-    
+
     public void insert(Employee employee) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction tx = session.beginTransaction();
@@ -25,44 +26,50 @@ public class EmployeeDao {
             session.save(employee);
             tx.commit();
         } catch (Exception e) {
-            if (tx != null) tx.rollback();
+            if (tx != null) {
+                tx.rollback();
+            }
             throw e;
         } finally {
             session.close();
         }
     }
+
     public void insertBatch(List<Employee> employees) {
-    Session session = HibernateUtil.getSessionFactory().openSession();
-    Transaction tx = session.beginTransaction();
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction tx = session.beginTransaction();
 
-    try {
-        for (int i = 0; i < employees.size(); i++) {
-            session.save(employees.get(i));
+        try {
+            for (int i = 0; i < employees.size(); i++) {
+                session.save(employees.get(i));
 
-            if (i % 50 == 0) { // Flush theo batch nhỏ để giảm memory
-                session.flush();
-                session.clear();
+                if (i % 50 == 0) { // Flush theo batch nhỏ để giảm memory
+                    session.flush();
+                    session.clear();
+                }
             }
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            throw e;
+        } finally {
+            session.close();
         }
-        tx.commit();
-    } catch (Exception e) {
-        if (tx != null) tx.rollback();
-        throw e;
-    } finally {
-        session.close();
+
     }
-    
-    
-}
+
     public int getEmployeeCount() {
-    Session session = HibernateUtil.getSessionFactory().openSession();
-    try {
-        Long count = (Long) session.createQuery("select count(e) from Employee e").uniqueResult();
-        return count.intValue();
-    } finally {
-        session.close();
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try {
+            Long count = (Long) session.createQuery("select count(e) from Employee e").uniqueResult();
+            return count.intValue();
+        } finally {
+            session.close();
+        }
     }
-}
+
     public List<Employee> listEmployee() {
         List<Employee> list;
         try {
@@ -76,6 +83,7 @@ public class EmployeeDao {
         }
         return list;
     }
+
     public List<Employee> listUserLimit(int limit) {
         List<Employee> list;
         try {
@@ -90,8 +98,18 @@ public class EmployeeDao {
         }
         return list;
     }
-    
-    
 
+    public void deleteAll() {
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        try {
+            session.beginTransaction();
+            session.createQuery("DELETE FROM Employee").executeUpdate();
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            session.getTransaction().rollback();
+            throw e;
+        }
+    }
 
 }
