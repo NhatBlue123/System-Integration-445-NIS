@@ -8,14 +8,15 @@ HR App (C#) (port 19355) — Quản lý dữ liệu Personal
 
 Spring Show (port 8888) — Hiển thị dữ liệu gộp từ hai hệ thống trên, có tích hợp WebSocket và Redis
 
-🚀 Hướng dẫn cài đặt và chạy
+🚀 Hướng dẫn cài đặt và chạy:
+
 🐬 1. Khởi tạo MySQL bằng Docker:
 docker run --name mysql-springapp -e MYSQL_ROOT_PASSWORD=123 -p 3308:3306 -d mysql:5.6
 
 🔧 Sau đó cập nhật cấu hình kết nối trong file hibernate.cfg.xml như sau:
-<property name="connection.url">jdbc:mysql://localhost:3308/your_database</property>
-<property name="connection.username">root</property>
-<property name="connection.password">123</property>
+"<property name="connection.url">jdbc:mysql://localhost:3308/your_database</property>"
+"<property name="connection.username">root</property>"
+"<property name="connection.password">123</property>"
 
 🧠 2. Khởi tạo Redis bằng Docker
 docker run --name redis --network spring-redis-net -p 6379:6379 redis
