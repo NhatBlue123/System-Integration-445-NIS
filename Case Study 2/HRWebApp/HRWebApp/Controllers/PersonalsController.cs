@@ -212,6 +212,24 @@ namespace HRWebApp.Controllers
             }
         }
 
+        [HttpDelete]
+//[Route("Personals/DeleteAll")]
+public JsonResult DeleteAllPersonals()
+{
+    try
+    {
+        db.Personals.RemoveRange(db.Personals);
+        db.SaveChanges();
+
+        Task.Run(async () => await ClearCacheAsync());
+
+        return Json(new { success = true, message = "Đã xoá tất cả Personal." }, JsonRequestBehavior.AllowGet);
+    }
+    catch (Exception ex)
+    {
+        return Json(new { success = false, error = ex.Message }, JsonRequestBehavior.AllowGet);
+    }
+}
 
         // POST: Personals/GenerateLimitPersonals/3
         [HttpPost]
@@ -269,6 +287,32 @@ namespace HRWebApp.Controllers
                 return Json(new { success = false, error = inner });
             }
         }
+
+        [HttpDelete]
+[Route("Personals/DeleteById")]
+public JsonResult DeleteByEmployeeId(int id)
+{
+    try
+    {
+        var personal = db.Personals.FirstOrDefault(p => p.Employee_ID == id);
+        if (personal == null)
+        {
+            return Json(new { success = false, message = $"Không tìm thấy Personal với ID = {id}" }, JsonRequestBehavior.AllowGet);
+        }
+
+        db.Personals.Remove(personal);
+        db.SaveChanges();
+
+        Task.Run(async () => await ClearCacheAsync());
+
+        return Json(new { success = true, message = $"Đã xoá Personal với ID = {id}" }, JsonRequestBehavior.AllowGet);
+    }
+    catch (Exception ex)
+    {
+        return Json(new { success = false, error = ex.Message }, JsonRequestBehavior.AllowGet);
+    }
+}
+
 
 
 
