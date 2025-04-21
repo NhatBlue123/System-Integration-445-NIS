@@ -91,6 +91,7 @@ public class EPersonController {
 
                     if (per != null) {
                         merged.setMiddle_Initial(per.getMiddle_Initial());
+                        merged.setIdEmployee(per.getEmployee_ID());
                         merged.setAddress1(per.getAddress1());
                         merged.setAddress2(per.getAddress2());
                         merged.setCity(per.getCity());

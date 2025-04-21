@@ -77,7 +77,7 @@
                             movableColumns: true,
                             columns: [
                             {title: "ID", field: "idEmployee", headerFilter: "input"},
-                            {title: "Emp No", field: "employeeNumber", headerFilter: "input"},
+                            {title: "Employee Number", field: "employeeNumber", headerFilter: "input"},
                             {title: "Last Name", field: "lastName", headerFilter: "input"},
                             {title: "First Name", field: "firstName", headerFilter: "input"},
                             {title: "SSN", field: "ssn", headerFilter: "input"},

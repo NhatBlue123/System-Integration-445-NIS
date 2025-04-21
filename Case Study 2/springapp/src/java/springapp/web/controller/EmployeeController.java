@@ -247,8 +247,8 @@ public class EmployeeController {
             int startIndex = currentCount + 1;
 
             Employee emp = new Employee();
-            emp.setEmployeeNumber(startIndex);
-            emp.setIdEmployee(1000 + startIndex);
+            emp.setEmployeeNumber(1000 + startIndex);
+            emp.setIdEmployee(startIndex);
 
             emp.setFirstName(myF.name().firstName());
             emp.setLastName(myF.name().lastName());

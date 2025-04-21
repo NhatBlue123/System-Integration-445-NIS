@@ -16,7 +16,7 @@
                 </button>
             </form>
             <ul class="nav pull-right">
-                <li><a href="#">Welcome: <%=request.getSession().getAttribute("USER")%> </a></li>
+                <li><a href="#">Welcome: GROUP 2 </a></li>
                 <li class="nav-user dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <img src="<%=request.getContextPath()%>/resources/images/user.png" class="nav-avatar" />
                         <b class="caret"></b></a>

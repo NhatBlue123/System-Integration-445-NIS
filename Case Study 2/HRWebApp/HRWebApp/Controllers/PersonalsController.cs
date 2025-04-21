@@ -5,16 +5,21 @@ using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Bogus;
+using System.Net.Http;
+using System.Threading.Tasks;
 using HRWebApp.Models;
+
 
 namespace HRWebApp.Controllers
 {
     public class PersonalsController : Controller
     {
         private HRDB db = new HRDB();
+        private CacheCleaner cacheCleaner = new CacheCleaner();
 
         // GET: Personals
         public ActionResult Index()
@@ -26,29 +31,29 @@ namespace HRWebApp.Controllers
         //GET: Personals/getAllPersonal
         public JsonResult getAllPersonal()
         {
-           
+
             var personals = db.Personals
            .Select(p => new {
-                  p.Employee_ID,
-                  p.First_Name,
-                  p.Last_Name,
-                  Full_Name = p.First_Name + " " + p.Last_Name,
-                  p.Middle_Initial,
-                  p.Address1,
-                  p.Address2,
-                  p.City,
-                  p.State,
-                  p.Zip,
-                  p.Email,
-                  p.Phone_Number,
-                  p.Social_Security_Number,
-                  p.Drivers_License,
-                  p.Marital_Status,
-                  p.Gender,
-                  p.Shareholder_Status,
-                  p.Benefit_Plans,
-                  p.Ethnicity
-            })
+               p.Employee_ID,
+               p.First_Name,
+               p.Last_Name,
+               Full_Name = p.First_Name + " " + p.Last_Name,
+               p.Middle_Initial,
+               p.Address1,
+               p.Address2,
+               p.City,
+               p.State,
+               p.Zip,
+               p.Email,
+               p.Phone_Number,
+               p.Social_Security_Number,
+               p.Drivers_License,
+               p.Marital_Status,
+               p.Gender,
+               p.Shareholder_Status,
+               p.Benefit_Plans,
+               p.Ethnicity
+           })
             .ToList();
             return Json(personals, JsonRequestBehavior.AllowGet);
         }
@@ -105,7 +110,7 @@ namespace HRWebApp.Controllers
 
         // POST: Personals/CreateAPersonals
         [HttpPost]
-        public ActionResult CreateAPersonals()
+        public async Task<ActionResult> CreateAPersonal()
         {
             try
             {
@@ -115,9 +120,9 @@ namespace HRWebApp.Controllers
                 String name = "";
 
                 var faker = new Bogus.Faker<Personal>()
-                    .RuleFor(p => p.Employee_ID, (f, p) => 1000 + startIndex + f.IndexFaker)
-                 
-                    .RuleFor(p => p.First_Name, f  => f.Name.FirstName())
+                    .RuleFor(p => p.Employee_ID, (f, p) => startIndex + f.IndexFaker)
+
+                    .RuleFor(p => p.First_Name, f => f.Name.FirstName())
                     .RuleFor(p => p.Last_Name, f => f.Name.LastName())
                     .RuleFor(p => p.Middle_Initial, f => f.Random.Char('A', 'Z').ToString())
                     .RuleFor(p => p.Address1, f => f.Address.StreetAddress())
@@ -143,7 +148,11 @@ namespace HRWebApp.Controllers
                 context.Configuration.AutoDetectChangesEnabled = true;
                 name = personal.First_Name + " " + personal.Last_Name;
                 decimal id = personal.Employee_ID;
-                return Json(new { success = false, message = $"Tao thanh cong personal voi id = {id}" });
+
+                await CacheCleaner.ClearCacheAsync();
+
+
+                return Json(new { success = true, message = $"Tao thanh cong personal voi id = {id}" });
 
             }
             catch (Exception ex)
@@ -155,7 +164,7 @@ namespace HRWebApp.Controllers
 
         // POST: Personals/CreateAPersonalWithFirtsNameAndLastName/firstName=John&lastName=Doe //something
         [HttpPost]
-        public ActionResult CreateAPersonalWithFirtsNameAndLastName(String firstName,String lastName)
+        public ActionResult CreateAPersonalWithFirtsNameAndLastName(String firstName, String lastName)
         {
             try
             {
@@ -165,7 +174,7 @@ namespace HRWebApp.Controllers
                 String name = "";
 
                 var faker = new Bogus.Faker<Personal>()
-                    .RuleFor(p => p.Employee_ID, (f, p) => 1000 + startIndex + f.IndexFaker)
+                    .RuleFor(p => p.Employee_ID, (f, p) => startIndex + f.IndexFaker)
 
                     .RuleFor(p => p.First_Name, firstName)
                     .RuleFor(p => p.Last_Name, lastName)
@@ -204,9 +213,9 @@ namespace HRWebApp.Controllers
         }
 
 
-        // POST: Personals/GenerateFakePersonals
+        // POST: Personals/GenerateLimitPersonals/3
         [HttpPost]
-        public ActionResult GenerateFakePersonals(int limit)
+        public ActionResult GenerateLimitPersonals(int limit)
         {
             try
             {
@@ -218,7 +227,7 @@ namespace HRWebApp.Controllers
                 int inserted = 0;
 
                 var faker = new Bogus.Faker<Personal>()
-                    .RuleFor(p => p.Employee_ID, (f, p) => 1000 + startIndex + f.IndexFaker)
+                    .RuleFor(p => p.Employee_ID, (f, p) => startIndex + f.IndexFaker)
                     .RuleFor(p => p.First_Name, f => f.Name.FirstName())
                     .RuleFor(p => p.Last_Name, f => f.Name.LastName())
                     .RuleFor(p => p.Middle_Initial, f => f.Random.Char('A', 'Z').ToString())
@@ -391,6 +400,33 @@ namespace HRWebApp.Controllers
             }).ToList();
 
             return Json(personals, JsonRequestBehavior.AllowGet);
+        }
+    
+
+    public static async Task ClearCacheAsync()
+        {
+            string url = "http://localhost:8888/springapp_show/admin/EPerson/clearCache";
+
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    HttpResponseMessage response = await client.GetAsync(url);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        Console.WriteLine("✅ Đã xoá cache thành công");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"⚠️ Lỗi: Không thể xóa cache. Mã lỗi: {response.StatusCode}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("❌ Lỗi khi gọi API xóa cache: " + ex.Message);
+            }
         }
     }
 }
