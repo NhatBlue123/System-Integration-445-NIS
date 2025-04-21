@@ -110,7 +110,7 @@ namespace HRWebApp.Controllers
 
         // POST: Personals/CreateAPersonals
         [HttpPost]
-        public async Task<ActionResult> CreateAPersonal()
+        public ActionResult CreateAPersonal()
         {
             try
             {
@@ -149,7 +149,7 @@ namespace HRWebApp.Controllers
                 name = personal.First_Name + " " + personal.Last_Name;
                 decimal id = personal.Employee_ID;
 
-                await CacheCleaner.ClearCacheAsync();
+                Task.Run(async () => await ClearCacheAsync());
 
 
                 return Json(new { success = true, message = $"Tao thanh cong personal voi id = {id}" });
@@ -212,7 +212,7 @@ namespace HRWebApp.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpPost]
 //[Route("Personals/DeleteAll")]
 public JsonResult DeleteAllPersonals()
 {
@@ -221,7 +221,7 @@ public JsonResult DeleteAllPersonals()
         db.Personals.RemoveRange(db.Personals);
         db.SaveChanges();
 
-        Task.Run(async () => await ClearCacheAsync());
+      //  Task.Run(async () => await ClearCacheAsync());
 
         return Json(new { success = true, message = "Đã xoá tất cả Personal." }, JsonRequestBehavior.AllowGet);
     }
@@ -288,9 +288,8 @@ public JsonResult DeleteAllPersonals()
             }
         }
 
-        [HttpDelete]
-[Route("Personals/DeleteById")]
-public JsonResult DeleteByEmployeeId(int id)
+        [HttpPost]
+        public ActionResult DeleteByEmployeeId(int id)
 {
     try
     {
@@ -303,7 +302,7 @@ public JsonResult DeleteByEmployeeId(int id)
         db.Personals.Remove(personal);
         db.SaveChanges();
 
-        Task.Run(async () => await ClearCacheAsync());
+       // Task.Run(async () => await ClearCacheAsync());
 
         return Json(new { success = true, message = $"Đã xoá Personal với ID = {id}" }, JsonRequestBehavior.AllowGet);
     }
