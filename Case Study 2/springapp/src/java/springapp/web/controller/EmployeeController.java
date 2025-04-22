@@ -85,8 +85,6 @@ public class EmployeeController {
         }
     }
 
-   
-
     @RequestMapping(value = {"employee/getLimitEmployee/{limit}"}, method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<String> getLimitEmployees(@PathVariable("limit") int limit) {
         List<Employee> employees = edao.listUserLimit(limit);
@@ -221,7 +219,6 @@ public class EmployeeController {
 //            return new ResponseEntity<>("Lỗi khi tạo employee", HttpStatus.INTERNAL_SERVER_ERROR);
 //        }
 //    }
-
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
@@ -266,13 +263,14 @@ public class EmployeeController {
                 System.err.println("Loi khi xoa cache" + e.getMessage());
             }
 
-            return new ResponseEntity<>("Tạo 1 employee thành công với ID = " + emp.getIdEmployee(), HttpStatus.OK);
+           
+            return new ResponseEntity<>("Tạo 1 employee thành công", HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>("Lỗi khi tạo employee", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     @RequestMapping(value = "/employee/generateAEmployeeById/{id}", method = RequestMethod.POST)
     public ResponseEntity<String> generateAEmployeeById(@PathVariable("id") int id) {
         Faker myF = new Faker(new Locale("en"));
@@ -397,7 +395,7 @@ public class EmployeeController {
             return new ResponseEntity<>("Lỗi khi xoá employee", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     @RequestMapping(value = {"employee/deleteEmployeeById/{id}"}, method = RequestMethod.DELETE)
     public ResponseEntity<String> deleteEmployeeById(@PathVariable("id") int id) {
         try {
@@ -411,7 +409,7 @@ public class EmployeeController {
             } catch (Exception e) {
                 System.err.println("Loi khi xoa cache" + e.getMessage());
             }
-            return new ResponseEntity<>("Đã xoá employee với id = " + id +"", HttpStatus.OK);
+            return new ResponseEntity<>("Đã xoá employee với id = " + id + "", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Lỗi khi xoá employee", HttpStatus.INTERNAL_SERVER_ERROR);
         }

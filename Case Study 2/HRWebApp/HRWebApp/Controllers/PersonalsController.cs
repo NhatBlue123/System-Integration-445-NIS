@@ -201,7 +201,7 @@ namespace HRWebApp.Controllers
                 name = personal.First_Name + " " + personal.Last_Name;
                 decimal employeeId = personal.Employee_ID;
 
-              //  Task.Run(async () => await ClearCacheAsync());
+                Task.Run(async () => await ClearCacheAsync());
 
                 return Json(new { success = true, message = $"Tao thanh cong personal voi id = {employeeId}" });
             }
@@ -273,7 +273,7 @@ public JsonResult DeleteAllPersonals()
         db.Personals.RemoveRange(db.Personals);
         db.SaveChanges();
 
-      //  Task.Run(async () => await ClearCacheAsync());
+        Task.Run(async () => await ClearCacheAsync());
 
         return Json(new { success = true, message = "Đã xoá tất cả Personal." }, JsonRequestBehavior.AllowGet);
     }
@@ -330,8 +330,9 @@ public JsonResult DeleteAllPersonals()
                 }
 
                 context.Configuration.AutoDetectChangesEnabled = true;
+                Task.Run(async () => await ClearCacheAsync());
 
-                return Json(new { success = true, message = $"✅ Tạo thành công {inserted} bản ghi Personal!" });
+                return Json(new { success = true, message = $"✅ Tạo thành công {inserted}  Personals!" });
             }
             catch (Exception ex)
             {
@@ -354,7 +355,7 @@ public JsonResult DeleteAllPersonals()
         db.Personals.Remove(personal);
         db.SaveChanges();
 
-       // Task.Run(async () => await ClearCacheAsync());
+        Task.Run(async () => await ClearCacheAsync());
 
         return Json(new { success = true, message = $"Đã xoá Personal với ID = {id}" }, JsonRequestBehavior.AllowGet);
     }

@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -33,9 +34,10 @@ public class EPersonController {
     private static final String PERSONAL_API_URL = "http://localhost:19335/Personals/getAllPersonal";
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    private EPersonSocketController socketC;
 
     @RequestMapping(value = "/EPerson", method = RequestMethod.GET)
-
 
     public String listEPersonByIdJedis(ModelMap model, HttpServletRequest request) {
 
@@ -107,6 +109,11 @@ public class EPersonController {
                         merged.setBenefit_Plans(per.getBenefit_Plans());
                         merged.setEthnicity(per.getEthnicity());
                     }
+                    if (emp != null && per != null) {
+                        merged.setFirstName(emp.getFirstName() + "(" + per.getFirst_Name() + ")");
+                        merged.setLastName(emp.getLastName() + "(" + per.getLast_Name() + ")");
+
+                    }
 
                     mergedList.add(merged);
                 }
@@ -139,7 +146,8 @@ public class EPersonController {
     public String clearCache() {
         try (Jedis jedis = RedisConfig.getJedis()) {
             jedis.del("mergedEPerson");
-            return "Đã xóa cache mergedEPerson";
+            updateRealtimeMergeData();
+            return "Đã xóa cache mergedEPerson và đẩy realTime";
         } catch (Exception e) {
             e.printStackTrace();
             return "Lỗi khi xóa cache";
@@ -269,10 +277,7 @@ public class EPersonController {
         }
     }
 
-    // ==============================
-    // HÀM TIỆN ÍCH
-    // ==============================
-    // Gọi API lấy danh sách Employee
+   
     private List<Employee> fetchEmployees() {
         try {
             ResponseEntity<String> response = restTemplate.exchange(
@@ -396,4 +401,81 @@ public class EPersonController {
         json.append("]");
         return json.toString();
     }
+
+    public void updateRealtimeMergeData() {
+        try (Jedis jedis = RedisConfig.getJedis()) {
+            List<Employee> employees = fetchEmployees();
+            List<Personal> personals = fetchPersonals();
+
+            Map<Integer, Personal> personalMap = personals.stream()
+                    .collect(Collectors.toMap(Personal::getEmployee_ID, p -> p));
+
+            Set<Integer> allIds = new HashSet<>();
+            employees.forEach(e -> allIds.add(e.getIdEmployee()));
+            personals.forEach(p -> allIds.add(p.getEmployee_ID()));
+
+            List<MergedEmployeePersonal> mergedList = new ArrayList<>();
+
+            for (Integer id : allIds) {
+                Employee emp = employees.stream().filter(e -> e.getIdEmployee() == id).findFirst().orElse(null);
+                Personal per = personalMap.get(id);
+
+                MergedEmployeePersonal merged = new MergedEmployeePersonal();
+                if (emp != null) {
+                    merged.setIdEmployee(emp.getIdEmployee());
+                    merged.setEmployeeNumber(emp.getEmployeeNumber());
+                    merged.setFirstName(emp.getFirstName());
+                    merged.setLastName(emp.getLastName());
+                    merged.setSsn(emp.getSsn());
+                    merged.setPayRate(emp.getPayRate());
+                    merged.setPayRatesId(emp.getPayRatesId());
+                    merged.setVacationDays(emp.getVacationDays());
+                    merged.setPaidToDate(emp.getPaidToDate());
+                    merged.setPaidLastYear(emp.getPaidLastYear());
+                }
+
+                if (per != null) {
+                    merged.setMiddle_Initial(per.getMiddle_Initial());
+                    merged.setIdEmployee(per.getEmployee_ID());
+                    merged.setAddress1(per.getAddress1());
+                    merged.setAddress2(per.getAddress2());
+                    merged.setCity(per.getCity());
+                    merged.setState(per.getState());
+                    merged.setZip(per.getZip());
+                    merged.setEmail(per.getEmail());
+                    merged.setPhone_Number(per.getPhone_Number());
+                    merged.setSocial_Security_Number(per.getSocial_Security_Number());
+                    merged.setDrivers_License(per.getDrivers_License());
+                    merged.setMarital_Status(per.getMarital_Status());
+                    merged.setGender(per.isGender());
+                    merged.setShareholder_Status(per.isShareholder_Status());
+                    merged.setBenefit_Plans(per.getBenefit_Plans());
+                    merged.setEthnicity(per.getEthnicity());
+                }
+                if (emp != null && per != null) {
+                    merged.setFirstName(emp.getFirstName() + "(" + per.getFirst_Name() + ")");
+                    merged.setLastName(emp.getLastName() + "(" + per.getLast_Name() + ")");
+
+                }
+
+                mergedList.add(merged);
+            }
+
+            jedis.set("mergedEPerson", objectMapper.writeValueAsString(mergedList));
+            jedis.expire("mergedEPerson", 300);
+
+            socketC.bcMergeData(mergedList); 
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @RequestMapping(value = "/EPerson/realtime-update", method = RequestMethod.GET)
+    @ResponseBody
+    public String updateAndPushWebSocket() {
+        updateRealtimeMergeData();
+        return "Đã merge và đẩy xuống socket!";
+    }
+
 }

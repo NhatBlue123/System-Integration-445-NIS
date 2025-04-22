@@ -20,7 +20,6 @@
     <servlet-mapping>
         <servlet-name>springapp</servlet-name>
         <url-pattern>/</url-pattern>
-        <url-pattern>/ws/*</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
