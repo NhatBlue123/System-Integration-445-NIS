@@ -112,4 +112,23 @@ public class EmployeeDao {
         }
     }
 
+    public boolean deleteById(int id) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction tx = session.beginTransaction();
+        try {
+            int deletedCount = session.createQuery("DELETE FROM Employee WHERE idEmployee = :id")
+                    .setParameter("id", id)
+                    .executeUpdate();
+            tx.commit();
+            return deletedCount > 0;
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+            return false;
+        } finally {
+            session.close();
+        }
+    }
 }
