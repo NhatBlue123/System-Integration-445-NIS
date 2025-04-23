@@ -375,6 +375,7 @@ public JsonResult DeleteAllPersonals()
             ViewBag.Benefit_Plans = new SelectList(db.Benefit_Plans, "Benefit_Plan_ID", "Plan_Name");
             ViewBag.Employee_ID = new SelectList(db.Emergency_Contacts, "Employee_ID", "Emergency_Contact_Name");
             ViewBag.Employee_ID = new SelectList(db.Employments, "Employee_ID", "Employment_Status");
+            Task.Run(async () => await ClearCacheAsync());
             return View();
         }
 
@@ -389,6 +390,8 @@ public JsonResult DeleteAllPersonals()
             {
                 db.Personals.Add(personal);
                 db.SaveChanges();
+                Task.Run(async () => await ClearCacheAsync());
+
                 return RedirectToAction("Index");
             }
 
@@ -413,6 +416,8 @@ public JsonResult DeleteAllPersonals()
             ViewBag.Benefit_Plans = new SelectList(db.Benefit_Plans, "Benefit_Plan_ID", "Plan_Name", personal.Benefit_Plans);
             ViewBag.Employee_ID = new SelectList(db.Emergency_Contacts, "Employee_ID", "Emergency_Contact_Name", personal.Employee_ID);
             ViewBag.Employee_ID = new SelectList(db.Employments, "Employee_ID", "Employment_Status", personal.Employee_ID);
+            Task.Run(async () => await ClearCacheAsync());
+
             return View(personal);
         }
 
@@ -432,6 +437,7 @@ public JsonResult DeleteAllPersonals()
             ViewBag.Benefit_Plans = new SelectList(db.Benefit_Plans, "Benefit_Plan_ID", "Plan_Name", personal.Benefit_Plans);
             ViewBag.Employee_ID = new SelectList(db.Emergency_Contacts, "Employee_ID", "Emergency_Contact_Name", personal.Employee_ID);
             ViewBag.Employee_ID = new SelectList(db.Employments, "Employee_ID", "Employment_Status", personal.Employee_ID);
+            Task.Run(async () => await ClearCacheAsync());
             return View(personal);
         }
 
@@ -443,6 +449,7 @@ public JsonResult DeleteAllPersonals()
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Personal personal = db.Personals.Find(id);
+            Task.Run(async () => await ClearCacheAsync());
             if (personal == null)
             {
                 return HttpNotFound();
@@ -458,6 +465,7 @@ public JsonResult DeleteAllPersonals()
             Personal personal = db.Personals.Find(id);
             db.Personals.Remove(personal);
             db.SaveChanges();
+            Task.Run(async () => await ClearCacheAsync());
             return RedirectToAction("Index");
         }
 
