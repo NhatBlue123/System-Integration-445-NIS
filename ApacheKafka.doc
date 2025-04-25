@@ -1,0 +1,112 @@
+Dùng Apache Kafka trong project  xây dựng kiến trúc event-driven (kiến trúc dựa trên sự kiện), thay cho việc gọi trực tiếp HTTP (RestTemplate). Nó sẽ giúp:
+
+Không cần gọi HTTP từ SpringApp → SpringShow khi thêm/xoá.
+
+SpringShow chỉ cần lắng nghe (consume) message từ Kafka là tự cập nhật dữ liệu.
+
+Hạn chế phụ thuộc trực tiếp giữa các hệ thống.
+
+Linh hoạt mở rộng về sau (gửi event cho nhiều service).
+
+✅ Tổng quan kiến trúc khi dùng Kafka:
+
+📦 springapp (8080)
+    └──> Khi thêm/xoá employee
+          └──> Gửi Kafka message: "employee_updated"
+
+📦 hrapp (19355)
+    └──> Khi thêm/xoá personal
+          └──> Gửi Kafka message: "personal_updated"
+
+📦 springapp_show (8888)
+    └──> Subcribe Kafka topic
+          └──> Khi nhận message:
+              ├── Xoá cache Redis
+              ├── Merge lại dữ liệu
+              └── Gửi WebSocket cập nhật realtime UI
+
+
+✨ Các bước triển khai Kafka
+1. Cài đặt Kafka (local hoặc docker)
+docker network create kafka-net
+
+# Zookeeper
+docker run -d --name zookeeper --network kafka-net -p 2181:2181 zookeeper
+
+# Kafka
+docker run -d --name kafka --network kafka-net -p 9092:9092 -e KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181 \
+  -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092 \
+  -e KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092 \
+  confluentinc/cp-kafka
+2. Thêm Kafka dependency
+<dependency>
+  <groupId>org.springframework.kafka</groupId>
+  <artifactId>spring-kafka</artifactId>
+</dependency>
+Nếu dùng ant thì lên gg tải jar hay chi về
+3. Cấu hình Kafka (ở cả 3 app)
+- config file application.properties:
+spring.kafka.bootstrap-servers=localhost:9092
+spring.kafka.consumer.group-id=merge-group
+spring.kafka.consumer.auto-offset-reset=earliest
+spring.kafka.consumer.key-deserializer=org.apache.kafka.common.serialization.StringDeserializer
+spring.kafka.consumer.value-deserializer=org.apache.kafka.common.serialization.StringDeserializer
+spring.kafka.producer.key-serializer=org.apache.kafka.common.serialization.StringSerializer
+spring.kafka.producer.value-serializer=org.apache.kafka.common.serialization.StringSerializer
+4. Gửi sự kiện từ springapp
+file 📄 KafkaProducerService.java:
+@Service
+public class KafkaProducerService {
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
+
+    public void sendEmployeeUpdatedEvent() {
+        kafkaTemplate.send("employee_updated", "Update employee");
+    }
+}
+
+Trong controller thêm employee:
+@Autowired
+private KafkaProducerService kafkaProducer;
+
+...
+
+kafkaProducer.sendEmployeeUpdatedEvent();
+5. Lắng nghe sự kiện từ springapp_show
+-📄 KafkaConsumerService.java
+@Service
+public class KafkaConsumerService {
+
+    @Autowired
+    private EPersonController epersonController;
+
+    @KafkaListener(topics = {"employee_updated", "personal_updated"}, groupId = "merge-group")
+    public void handleUpdateEvent(String message) {
+        System.out.println("📥 Kafka received: " + message);
+
+        // Clear Redis cache
+        try (Jedis jedis = RedisConfig.getJedis()) {
+            jedis.del("mergedEPerson");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Gọi lại merge + gửi WebSocket
+        epersonController.updateRealtimeMergeData();
+    }
+}
+6. Tạo topic (tuỳ Kafka version)
+docker exec kafka kafka-topics.sh --create --topic employee_updated --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
+docker exec kafka kafka-topics.sh --create --topic personal_updated --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
+✅ Lợi ích
+Không cần gọi HTTP giữa các app.
+
+Mở rộng dễ dàng thêm nhiều consumer (logging, analytics...).
+
+Mạnh hơn khi scale hệ thống microservices.
+
+WebSocket realtime vẫn giữ nguyên → chỉ thay cách kích hoạt.
+
+
+
+
