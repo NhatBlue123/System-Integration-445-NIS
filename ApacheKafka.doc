@@ -44,7 +44,7 @@ docker run -d --name kafka --network kafka-net -p 9092:9092 -e KAFKA_ZOOKEEPER_C
   <groupId>org.springframework.kafka</groupId>
   <artifactId>spring-kafka</artifactId>
 </dependency>
-Nếu dùng ant thì lên gg tải jar hay chi về
+Nếu dùng ant thì lên gg tải jar hay chi về OK.
 3. Cấu hình Kafka (ở cả 3 app)
 - config file application.properties:
 spring.kafka.bootstrap-servers=localhost:9092
