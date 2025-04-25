@@ -1,3 +1,4 @@
+MỤC TIÊU:
 Dùng Apache Kafka trong project  xây dựng kiến trúc event-driven (kiến trúc dựa trên sự kiện), thay cho việc gọi trực tiếp HTTP (RestTemplate). Nó sẽ giúp:
 
 Không cần gọi HTTP từ SpringApp → SpringShow khi thêm/xoá.
@@ -72,6 +73,7 @@ private KafkaProducerService kafkaProducer;
 ...
 
 kafkaProducer.sendEmployeeUpdatedEvent();
+
 5. Lắng nghe sự kiện từ springapp_show
 -📄 KafkaConsumerService.java
 @Service
@@ -95,6 +97,7 @@ public class KafkaConsumerService {
         epersonController.updateRealtimeMergeData();
     }
 }
+
 6. Tạo topic (tuỳ Kafka version)
 docker exec kafka kafka-topics.sh --create --topic employee_updated --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
 docker exec kafka kafka-topics.sh --create --topic personal_updated --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
