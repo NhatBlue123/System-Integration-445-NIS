@@ -94,6 +94,8 @@ public class EPersonController {
                     if (per != null) {
                         merged.setMiddle_Initial(per.getMiddle_Initial());
                         merged.setIdEmployee(per.getEmployee_ID());
+                        merged.setFirstName(per.getFirst_Name());
+                        merged.setLastName(per.getLast_Name());
                         merged.setAddress1(per.getAddress1());
                         merged.setAddress2(per.getAddress2());
                         merged.setCity(per.getCity());
@@ -152,6 +154,11 @@ public class EPersonController {
             e.printStackTrace();
             return "Lỗi khi xóa cache";
         }
+    }
+    @RequestMapping(value = "/EPerson/addEPerson", method = RequestMethod.GET)
+    public String addEPerson(ModelMap model, HttpServletRequest request)
+    {
+        return "admin/addEPerson";
     }
 
     public String listEPersonByNAME(ModelMap model, HttpServletRequest request) {

@@ -26,8 +26,9 @@
                 </i><i class="icon-chevron-down pull-right"></i><i class="icon-chevron-up pull-right">
                 </i>More Pages </a>
             <ul id="togglePages" class="collapse unstyled">
-                <li><a href="<%=request.getContextPath()%>/admin/user/list.html"><i class="icon-inbox"></i>All Users </a></li>
-                <li><a href="<%=request.getContextPath()%>/admin/user/add.html"><i class="icon-inbox"></i>Create User</a></li>
+                <li><a href="<%=request.getContextPath()%>/admin/EPerson/addEPerson.html"><i class="icon-inbox"></i>Create EPerson </a></li>
+                <li><a href="<%=request.getContextPath()%>/admin/deleteEPerson.html"><i class="icon-inbox"></i>Delete EPerson </a></li>
+                <li><a href="<%=request.getContextPath()%>/admin/editEPerson.html"><i class="icon-inbox"></i>Edit EPerson </a></li>
                 <li><a href="other-user-profile.html"><i class="icon-inbox"></i>Profile </a></li>
                 
             </ul>
