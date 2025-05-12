@@ -14,7 +14,7 @@ import java.util.Locale;
 public class InsertEmployee {
     public static void main(String[] args) {
         Faker myF = new Faker(new Locale("vi"));
-        System.out.println("my lan: " + myF.cat());
+     //   System.out.println("my lan: " + myF.name().firstName());
         
     }
 }

@@ -158,9 +158,10 @@ public class EPersonController {
     @RequestMapping(value = "/EPerson/addEPerson", method = RequestMethod.GET)
     public String addEPerson(ModelMap model, HttpServletRequest request)
     {
+        model.addAttribute("eperson", new MergedEmployeePersonal());
         return "admin/addEPerson";
     }
-
+    
     public String listEPersonByNAME(ModelMap model, HttpServletRequest request) {
         try {
             List<Employee> employees = fetchEmployees();
