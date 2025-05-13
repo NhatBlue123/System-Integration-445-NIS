@@ -57,7 +57,7 @@
             }
         </style>
 
-        <form:form method="POST" action="${contextPath}/EPerson/createEPerson" modelAttribute="eperson">
+        <form:form method="POST" action="${contextPath}/admin/EPerson/createEPerson" modelAttribute="eperson">
             <div class="form-container">
                 <!-- Employee Section -->
                 <div class="form-section">

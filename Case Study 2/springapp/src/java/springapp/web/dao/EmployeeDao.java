@@ -131,4 +131,20 @@ public class EmployeeDao {
             session.close();
         }
     }
+    
+    public boolean checkExistId(int idEmployee)
+    {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try{
+            Long count = (Long) session.createQuery("SELECT COUNT(e) FROM Employee e WHERE e.idEmployee = :idEmployee")
+                    .setParameter("idEmployee", idEmployee).uniqueResult();
+            return count !=null && count > 0;
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+            return false;
+        }finally{
+            session.close();
+        }
+    }
 }

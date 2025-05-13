@@ -26,6 +26,7 @@ import org.springframework.web.client.RestTemplate;
 import springapp.web.model.HibernateUtil;
 import springapp.web.model.Users;
 import springapp.web.dao.EmployeeDao;
+import springapp.web.model.EPerson;
 import springapp.web.model.Employee;
 
 /**
@@ -224,6 +225,43 @@ public class EmployeeController {
         return new RestTemplate();
     }
 
+    @RequestMapping(value = "/employee/generateAEmployeeByEPerson", method = RequestMethod.POST)
+    public ResponseEntity<String> generateAEmployeeByEPerson(@RequestBody EPerson eperson) {
+        try {
+
+            Employee emp = new Employee();
+            if (edao.checkExistId(eperson.getIdEmployee())) {
+                return new ResponseEntity<>("Lỗi khi tạo employee từ EPerson vì trùng id", HttpStatus.BAD_REQUEST);
+            }
+            
+            emp.setIdEmployee(eperson.getIdEmployee());
+            emp.setEmployeeNumber(eperson.getEmployeeNumber());
+            emp.setFirstName(eperson.getFirstName());
+            emp.setLastName(eperson.getLastName());
+            emp.setSsn(eperson.getSsn());
+            emp.setPayRate(eperson.getPayRate());
+            emp.setPayRatesId(eperson.getPayRatesId());
+            emp.setVacationDays(eperson.getVacationDays());
+            emp.setPaidToDate(eperson.getPaidToDate());
+            emp.setPaidLastYear(eperson.getPaidLastYear());
+            //   list.add(emp);
+            edao.insert(emp);
+            try {
+                RestTemplate rest = new RestTemplate();
+                String cacheUrl = "http://localhost:8888/springapp_show/admin/EPerson/clearCache";
+                rest.getForObject(cacheUrl, String.class);
+                System.out.println("Da xoa cache");
+
+            } catch (Exception e) {
+                System.err.println("Loi khi xoa cache" + e.getMessage());
+            }
+
+            return new ResponseEntity<>("Đã tạo employee từ EPerson", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Lỗi khi tạo employee từ EPerson", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @RequestMapping(value = "/employee/generateAEmployee", method = RequestMethod.POST)
     public ResponseEntity<String> generateAEmployee() {
         Faker myF = new Faker(new Locale("en"));
@@ -263,7 +301,6 @@ public class EmployeeController {
                 System.err.println("Loi khi xoa cache" + e.getMessage());
             }
 
-           
             return new ResponseEntity<>("Tạo 1 employee thành công", HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();

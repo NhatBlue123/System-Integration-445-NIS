@@ -8,7 +8,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import springapp.web.model.MergedEmployeePersonal;
+import springapp.web.model.EPerson;
 
 /**
  *
@@ -20,7 +20,7 @@ public class EPersonSocketController {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
     
-    public void bcMergeData(List<MergedEmployeePersonal> data)
+    public void bcMergeData(List<EPerson> data)
     {
         messagingTemplate.convertAndSend("/topic/eperson",data);
     }
