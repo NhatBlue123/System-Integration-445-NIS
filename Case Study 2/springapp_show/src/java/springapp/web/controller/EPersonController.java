@@ -496,11 +496,11 @@ public class EPersonController {
         }
     }
 
-    @RequestMapping(value = "/EPerson/realtime-update", method = RequestMethod.GET)
-    @ResponseBody
-    public String updateAndPushWebSocket() {
-        updateRealtimeMergeData();
-        return "Đã merge và đẩy xuống socket!";
-    }
+//    @RequestMapping(value = "/EPerson/realtime-update", method = RequestMethod.GET)
+//    @ResponseBody
+//    public String updateAndPushWebSocket() {
+//        updateRealtimeMergeData();
+//        return "Đã merge và đẩy xuống socket!";
+//    }
 
 }

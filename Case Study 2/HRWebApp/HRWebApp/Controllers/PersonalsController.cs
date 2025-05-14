@@ -12,6 +12,8 @@ using Bogus;
 using System.Net.Http;
 using System.Threading.Tasks;
 using HRWebApp.Models;
+using System.Web.Mvc;
+//using System.Web.Mvc;
 
 
 namespace HRWebApp.Controllers
@@ -161,7 +163,21 @@ namespace HRWebApp.Controllers
                 return Json(new { success = false, error = inner });
             }
         }
-
+        // POST: Personals/CreateAPersonalByEPerson
+        [HttpPost]
+        public ActionResult CreateAPersonalByEPerson(EPerson eperson)
+        {
+            try
+            {
+                var context = new HRDB();
+                return Json(new { success = true, message = $"Tao thanh cong personal" });
+            }
+            catch (Exception ex)
+            {
+                var inner = ex.InnerException?.Message ?? ex.Message;
+                return Json(new { success = false, error = inner });
+            }
+        }
         // POST: Personals/CreateAPersonalById?id = 122
         [HttpPost]
         public ActionResult CreateAPersonalById(int id)

@@ -4,6 +4,7 @@
  */
 package springapp.web.model;
 
+
 /**
  *
  * @author bluez

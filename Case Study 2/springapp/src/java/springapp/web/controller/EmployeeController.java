@@ -5,6 +5,8 @@
  */
 package springapp.web.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,11 +25,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 import springapp.web.model.HibernateUtil;
 import springapp.web.model.Users;
 import springapp.web.dao.EmployeeDao;
 import springapp.web.model.EPerson;
 import springapp.web.model.Employee;
+import config.RedisConfig;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  *
@@ -40,34 +46,69 @@ import springapp.web.model.Employee;
 public class EmployeeController {
 
     EmployeeDao edao = new EmployeeDao();
+    Jedis jedis = RedisConfig.getJedis();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
+    //JedisPool jedisPool = new JedisPool(RedisConfig.getHost(),RedisConfig.getPort());
     @RequestMapping(value = {"/employee/list"}, method = RequestMethod.GET)
     public String listUsers(ModelMap model, HttpServletRequest request) {
         Users user = (Users) request.getSession().getAttribute("LOGGEDIN_USER");
-        String value = "";
-        if (user != null) {
-            try {
-                Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-                session.beginTransaction();
-                List listEmployees = session.createQuery("from Employee").list();
-                model.addAttribute("listEmployees", listEmployees);
-                session.getTransaction().commit();
-                value = "admin/listEmployee";
-            } catch (Exception e) {
-                value = "admin/listEmployee";
-            }
+        String viewName;
 
+        if (user != null) {
+            try (Jedis jedis = RedisConfig.getJedis()) {
+                List<Employee> listEmployees;
+                System.out.println("Kết nối được với Redis");
+
+                String cached = jedis.get("cacheEmployee");
+                if (cached != null) {
+                    listEmployees = objectMapper.readValue(cached, new TypeReference<List<Employee>>() {
+                    });
+                    System.out.println("Lấy danh sách từ cache Redis");
+                } else {
+                    Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+                    session.beginTransaction();
+                    listEmployees = session.createQuery("from Employee").list();
+                    session.getTransaction().commit();
+
+                    jedis.set("cacheEmployee", objectMapper.writeValueAsString(listEmployees));
+                    jedis.expire("cacheEmployee", 300);
+                    System.out.println("Lấy từ DB và lưu vào Redis");
+                }
+
+                model.addAttribute("listEmployees", listEmployees);
+                viewName = "admin/listEmployee";
+            } catch (Exception e) {
+                e.printStackTrace();
+                model.addAttribute("listEmployees", new ArrayList<>());
+                viewName = "admin/listEmployee";
+                System.err.println("Lỗi khi lấy hoặc lưu cache Redis");
+            }
         } else {
             model.addAttribute("user", new Users());
-            value = "redirect:/admin/login.html";
+            viewName = "redirect:/admin/login.html";
         }
-        return value;
+
+        return viewName;
+    }
+
+    @RequestMapping(value = "/employee/clearCache", method = RequestMethod.GET)
+    @ResponseBody
+    public String clearEmployeeCache() {
+        try (Jedis jedis = RedisConfig.getJedis()) {
+            jedis.del("cacheEmployee");
+            return "Đã xóa cache nhân viên.";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Lỗi khi xóa cache.";
+        }
     }
 
     @RequestMapping(value = {"employee/create"}, consumes = "application/json", produces = "application/json", method = RequestMethod.POST)
     public ResponseEntity<String> insertEmployee(@RequestBody Employee employee) {
         try {
             edao.insert(employee);
+            clearEmployeeCache();
             return new ResponseEntity<>("chen thanh cong", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("{\"error\": \"Chen that bai\"}", HttpStatus.EXPECTATION_FAILED);
@@ -233,7 +274,7 @@ public class EmployeeController {
             if (edao.checkExistId(eperson.getIdEmployee())) {
                 return new ResponseEntity<>("Lỗi khi tạo employee từ EPerson vì trùng id", HttpStatus.BAD_REQUEST);
             }
-            
+
             emp.setIdEmployee(eperson.getIdEmployee());
             emp.setEmployeeNumber(eperson.getEmployeeNumber());
             emp.setFirstName(eperson.getFirstName());
@@ -246,6 +287,7 @@ public class EmployeeController {
             emp.setPaidLastYear(eperson.getPaidLastYear());
             //   list.add(emp);
             edao.insert(emp);
+            clearEmployeeCache();
             try {
                 RestTemplate rest = new RestTemplate();
                 String cacheUrl = "http://localhost:8888/springapp_show/admin/EPerson/clearCache";
@@ -289,7 +331,7 @@ public class EmployeeController {
             list.add(emp);  // chỉ 1 employee
 
             edao.insertBatch(list);
-
+            clearEmployeeCache();
             // xử lý xóa cache khi thêm mới employee
             try {
                 RestTemplate rest = new RestTemplate();
@@ -335,7 +377,7 @@ public class EmployeeController {
             list.add(emp);  // chỉ 1 employee
 
             edao.insertBatch(list);
-
+            clearEmployeeCache();
             // xử lý xóa cache khi thêm mới employee
             try {
                 RestTemplate rest = new RestTemplate();
@@ -397,6 +439,7 @@ public class EmployeeController {
             if (!list.isEmpty()) {
                 edao.insertBatch(list);
             }
+            clearEmployeeCache();
             try {
                 RestTemplate rest = new RestTemplate();
                 String cacheUrl = "http://localhost:8888/springapp_show/admin/EPerson/clearCache";
@@ -418,6 +461,7 @@ public class EmployeeController {
     public ResponseEntity<String> deleteAllEmployees() {
         try {
             edao.deleteAll();
+            clearEmployeeCache();
             try {
                 RestTemplate rest = new RestTemplate();
                 String cacheUrl = "http://localhost:8888/springapp_show/admin/EPerson/clearCache";
@@ -437,6 +481,8 @@ public class EmployeeController {
     public ResponseEntity<String> deleteEmployeeById(@PathVariable("id") int id) {
         try {
             edao.deleteById(id);
+            clearEmployeeCache();
+
             try {
                 RestTemplate rest = new RestTemplate();
                 String cacheUrl = "http://localhost:8888/springapp_show/admin/EPerson/clearCache";
