@@ -40,6 +40,49 @@
                 </div>
             </div><!--/.module-->
         </div>
+        <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
+        <script type="text/javascript">
+            let stompClient = null;
+
+            function connectWebSocket() {
+                const socket = new SockJS("${contextPath}/ws"); // endpoint bên backend
+                stompClient = Stomp.over(socket);
+                stompClient.connect({}, function (frame) {
+                    console.log('Connected: ' + frame);
+
+                    stompClient.subscribe('/topic/employee', function (message) {
+                        const employeeList = JSON.parse(message.body);
+                        updateEmployeeTable(employeeList);
+                    });
+                });
+            }
+
+            function updateEmployeeTable(employeeList) {
+                const tbody = document.querySelector("table tbody");
+                tbody.innerHTML = ''; // clear bảng cũ
+
+                employeeList.forEach(emp => {
+                    const row = `
+                        <tr>
+                            <td>${emp.employeeNumber}</td>
+                            <td>${emp.firstName} ${emp.lastName}</td>
+                            <td>${emp.ssn}</td>
+                            <td>${emp.payRate}</td>
+                            <td>${emp.vacationDays}</td>
+                        </tr>
+                    `;
+                    tbody.insertAdjacentHTML('beforeend', row);
+                });
+            }
+
+            document.addEventListener("DOMContentLoaded", function () {
+                connectWebSocket();
+            });
+        </script>
 
     </tiles:putAttribute>
 </tiles:insertDefinition>
