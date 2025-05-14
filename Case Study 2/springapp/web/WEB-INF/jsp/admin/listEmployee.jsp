@@ -49,8 +49,9 @@
             let stompClient = null;
 
             function connectWebSocket() {
-                const socket = new SockJS("${contextPath}/ws"); // endpoint bên backend
+                const socket = new SockJS("${contextPath}/ws"); 
                 stompClient = Stomp.over(socket);
+                stompClient.debug = null;
                 stompClient.connect({}, function (frame) {
                     console.log('Connected: ' + frame);
 
