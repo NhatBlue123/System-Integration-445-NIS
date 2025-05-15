@@ -4,7 +4,7 @@
        "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
 <tiles-definitions>
     <definition name="layouts" template="/WEB-INF/jsp/layout/layout.jsp">
-        <put-attribute name="title" value="Admin" />
+        <put-attribute name="title" value="Admin EPerson" />
         <put-attribute name="header" value="/WEB-INF/jsp/layout/header.jsp" />
         <put-attribute name="navigation" value="/WEB-INF/jsp/layout/navigation.jsp" />
         <put-attribute name="body" value="" />

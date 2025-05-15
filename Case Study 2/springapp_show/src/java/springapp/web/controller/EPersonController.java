@@ -14,14 +14,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 import redis.clients.jedis.Jedis;
 import springapp.web.model.Employee;
+import springapp.web.model.EPerson;
 import springapp.web.model.HibernateUtil;
-import springapp.web.model.MergedEmployeePersonal;
+import springapp.web.model.EPerson;
 import springapp.web.model.Personal;
 import springapp.web.model.Users;
 import until.RedisConfig;
@@ -32,6 +34,8 @@ public class EPersonController {
 
     private static final String EMPLOYEE_API_URL = "http://localhost:8080/springapp/admin/employee/getAllEmployee";
     private static final String PERSONAL_API_URL = "http://localhost:19335/Personals/getAllPersonal";
+    private static final String CREATE_EMPLOYEE_API_URL = "http://localhost:8080/springapp/admin/employee/generateAEmployeeByEPerson";
+    private static final String CREATE_PERSONAL_API_URL = "http://localhost:19335/Personals/CreateAPersonalByEPerson";
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
@@ -40,16 +44,15 @@ public class EPersonController {
     @RequestMapping(value = "/EPerson", method = RequestMethod.GET)
 
     public String listEPersonByIdJedis(ModelMap model, HttpServletRequest request) {
-
         try (Jedis jedis = RedisConfig.getJedis()) {
             System.out.println("Ket noi duoc jedis");
 
             String cached = jedis.get("mergedEPerson");
-            List<MergedEmployeePersonal> mergedList = new ArrayList<>();
+            List<EPerson> mergedList = new ArrayList<>();
 
             // nếu cached có thì hiển thị lên table
             if (cached != null) {
-                mergedList = objectMapper.readValue(cached, new TypeReference<List<MergedEmployeePersonal>>() {
+                mergedList = objectMapper.readValue(cached, new TypeReference<List<EPerson>>() {
                 });
                 //cho dữ liệu vào listMerge
                 model.addAttribute("listMerge", mergedList);
@@ -77,7 +80,7 @@ public class EPersonController {
 
                     Personal per = personalMap.get(id);
 
-                    MergedEmployeePersonal merged = new MergedEmployeePersonal();
+                    EPerson merged = new EPerson();
                     if (emp != null) {
                         merged.setIdEmployee(emp.getIdEmployee());
                         merged.setEmployeeNumber(emp.getEmployeeNumber());
@@ -94,6 +97,8 @@ public class EPersonController {
                     if (per != null) {
                         merged.setMiddle_Initial(per.getMiddle_Initial());
                         merged.setIdEmployee(per.getEmployee_ID());
+                        merged.setFirstName(per.getFirst_Name());
+                        merged.setLastName(per.getLast_Name());
                         merged.setAddress1(per.getAddress1());
                         merged.setAddress2(per.getAddress2());
                         merged.setCity(per.getCity());
@@ -125,7 +130,7 @@ public class EPersonController {
             }
 
 //            System.out.println("== Merged List ==");
-//            for (MergedEmployeePersonal m : mergedList) {
+//            for (EPerson m : mergedList) {
 //                System.out.println("ID: " + m.getIdEmployee()
 //                        + ", FirstName: " + m.getFirstName()
 //                        + ", MiddleInitial: " + m.getMiddle_Initial());
@@ -154,6 +159,27 @@ public class EPersonController {
         }
     }
 
+    @RequestMapping(value = "/EPerson/addEPerson", method = RequestMethod.GET)
+    public String addEPerson(ModelMap model, HttpServletRequest request) {
+        model.addAttribute("eperson", new EPerson());
+        return "admin/addEPerson";
+    }
+
+    @RequestMapping(value = "/EPerson/createEPerson", method = RequestMethod.POST)
+    public String createEPerson(@ModelAttribute("eperson") EPerson eperson) {
+        System.out.println("Called from eperon");
+        try {
+            ResponseEntity<String> employeeResponse = restTemplate.postForEntity(CREATE_EMPLOYEE_API_URL, eperson, String.class);
+            updateRealtimeMergeData();
+            return "redirect:/admin/EPerson";
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println( "loi gi"+ e.getMessage());
+            return "error";
+        }
+
+    }
+
     public String listEPersonByNAME(ModelMap model, HttpServletRequest request) {
         try {
             List<Employee> employees = fetchEmployees();
@@ -163,7 +189,7 @@ public class EPersonController {
             Map<String, Personal> personalMap = personals.stream()
                     .collect(Collectors.toMap(Personal::getFull_Name, p -> p, (p1, p2) -> p1)); // nếu trùng thì giữ p1
 
-            List<MergedEmployeePersonal> mergedList = new ArrayList<>();
+            List<EPerson> mergedList = new ArrayList<>();
 
             Set<String> allFullNames = new HashSet<>();
             employees.forEach(e -> allFullNames.add(e.getFullName()));
@@ -176,7 +202,7 @@ public class EPersonController {
 
                 Personal per = personalMap.get(fullName);
 
-                MergedEmployeePersonal merged = new MergedEmployeePersonal();
+                EPerson merged = new EPerson();
 
                 if (emp != null) {
                     merged.setIdEmployee(emp.getIdEmployee());
@@ -277,7 +303,6 @@ public class EPersonController {
         }
     }
 
-   
     private List<Employee> fetchEmployees() {
         try {
             ResponseEntity<String> response = restTemplate.exchange(
@@ -414,13 +439,13 @@ public class EPersonController {
             employees.forEach(e -> allIds.add(e.getIdEmployee()));
             personals.forEach(p -> allIds.add(p.getEmployee_ID()));
 
-            List<MergedEmployeePersonal> mergedList = new ArrayList<>();
+            List<EPerson> mergedList = new ArrayList<>();
 
             for (Integer id : allIds) {
                 Employee emp = employees.stream().filter(e -> e.getIdEmployee() == id).findFirst().orElse(null);
                 Personal per = personalMap.get(id);
 
-                MergedEmployeePersonal merged = new MergedEmployeePersonal();
+                EPerson merged = new EPerson();
                 if (emp != null) {
                     merged.setIdEmployee(emp.getIdEmployee());
                     merged.setEmployeeNumber(emp.getEmployeeNumber());
@@ -460,22 +485,31 @@ public class EPersonController {
 
                 mergedList.add(merged);
             }
+                   System.out.println("== Merged List real time ==");
+            for (EPerson m : mergedList) {
+                System.out.println("ID: " + m.getIdEmployee()
+                        + ", FirstName: " + m.getFirstName()
+                        + ", MiddleInitial: " + m.getMiddle_Initial()
+                        + ", "
+                
+                );
+            }
 
             jedis.set("mergedEPerson", objectMapper.writeValueAsString(mergedList));
             jedis.expire("mergedEPerson", 300);
 
-            socketC.bcMergeData(mergedList); 
+            socketC.bcMergeData(mergedList);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    @RequestMapping(value = "/EPerson/realtime-update", method = RequestMethod.GET)
-    @ResponseBody
-    public String updateAndPushWebSocket() {
-        updateRealtimeMergeData();
-        return "Đã merge và đẩy xuống socket!";
-    }
+//    @RequestMapping(value = "/EPerson/realtime-update", method = RequestMethod.GET)
+//    @ResponseBody
+//    public String updateAndPushWebSocket() {
+//        updateRealtimeMergeData();
+//        return "Đã merge và đẩy xuống socket!";
+//    }
 
 }

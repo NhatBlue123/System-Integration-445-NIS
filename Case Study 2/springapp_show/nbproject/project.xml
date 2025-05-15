@@ -75,6 +75,10 @@
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
                 <library dirs="200">
+                    <file>${file.reference.javafaker-0.8.jar}</file>
+                    <path-in-war>WEB-INF/lib</path-in-war>
+                </library>
+                <library dirs="200">
                     <file>${file.reference.javassist-3.18.1-GA.jar}</file>
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>

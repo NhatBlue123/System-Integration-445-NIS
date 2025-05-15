@@ -15,7 +15,7 @@ public class SimpleCORSFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) res;
 
         // Cấu hình CORS
-        response.setHeader("Access-Control-Allow-Origin", "http://localhost:8888");
+        response.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         response.setHeader("Access-Control-Allow-Headers", "Origin, Content-Type, Accept");
         response.setHeader("Access-Control-Allow-Credentials", "true");
