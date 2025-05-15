@@ -99,6 +99,8 @@ public class EPersonController {
                         merged.setIdEmployee(per.getEmployee_ID());
                         merged.setFirstName(per.getFirst_Name());
                         merged.setLastName(per.getLast_Name());
+                        System.out.println("firtsname personal" + merged.getFirst_Name());
+                        System.out.println("lastname personal" + merged.getLast_Name());
                         merged.setAddress1(per.getAddress1());
                         merged.setAddress2(per.getAddress2());
                         merged.setCity(per.getCity());
@@ -174,7 +176,7 @@ public class EPersonController {
             return "redirect:/admin/EPerson";
         } catch (Exception e) {
             e.printStackTrace();
-            System.err.println( "loi gi"+ e.getMessage());
+            System.err.println("loi gi" + e.getMessage());
             return "error";
         }
 
@@ -464,6 +466,10 @@ public class EPersonController {
                     merged.setIdEmployee(per.getEmployee_ID());
                     merged.setAddress1(per.getAddress1());
                     merged.setAddress2(per.getAddress2());
+                    merged.setFirstName(per.getFirst_Name());
+                    merged.setLastName(per.getLast_Name());
+                    System.out.println("firtsname personal" + merged.getFirst_Name());
+                    System.out.println("lastname personal" + merged.getLast_Name());
                     merged.setCity(per.getCity());
                     merged.setState(per.getState());
                     merged.setZip(per.getZip());
@@ -485,15 +491,14 @@ public class EPersonController {
 
                 mergedList.add(merged);
             }
-                   System.out.println("== Merged List real time ==");
-            for (EPerson m : mergedList) {
-                System.out.println("ID: " + m.getIdEmployee()
-                        + ", FirstName: " + m.getFirstName()
-                        + ", MiddleInitial: " + m.getMiddle_Initial()
-                        + ", "
-                
-                );
-            }
+//            System.out.println("== Merged List real time ==");
+//            for (EPerson m : mergedList) {
+//                System.out.println("ID: " + m.getIdEmployee()
+//                        + ", FirstName: " + m.getFirstName()
+//                        + ", MiddleInitial: " + m.getMiddle_Initial()
+//                        + ", "
+//                );
+//            }
 
             jedis.set("mergedEPerson", objectMapper.writeValueAsString(mergedList));
             jedis.expire("mergedEPerson", 300);
@@ -511,5 +516,4 @@ public class EPersonController {
 //        updateRealtimeMergeData();
 //        return "Đã merge và đẩy xuống socket!";
 //    }
-
 }
