@@ -485,6 +485,15 @@ public class EPersonController {
 
                 mergedList.add(merged);
             }
+                   System.out.println("== Merged List real time ==");
+            for (EPerson m : mergedList) {
+                System.out.println("ID: " + m.getIdEmployee()
+                        + ", FirstName: " + m.getFirstName()
+                        + ", MiddleInitial: " + m.getMiddle_Initial()
+                        + ", "
+                
+                );
+            }
 
             jedis.set("mergedEPerson", objectMapper.writeValueAsString(mergedList));
             jedis.expire("mergedEPerson", 300);

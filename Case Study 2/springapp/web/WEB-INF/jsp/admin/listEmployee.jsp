@@ -57,6 +57,8 @@
 
                     stompClient.subscribe('/topic/employee', function (message) {
                         const employeeList = JSON.parse(message.body);
+                        console.log('OK です ' + frame);
+
                         updateEmployeeTable(employeeList);
                     });
                 });
@@ -64,7 +66,7 @@
 
             function updateEmployeeTable(employeeList) {
                 const tbody = document.querySelector("table tbody");
-                tbody.innerHTML = ''; // clear bảng cũ
+                tbody.innerHTML = ''; 
 
                 employeeList.forEach(emp => {
                     const row = `
