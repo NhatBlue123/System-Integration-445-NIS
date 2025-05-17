@@ -1,92 +1,100 @@
-﻿@model IEnumerable<HRWebApp.Models.Personal>
-
-@{
+﻿@{
     ViewBag.Title = "Index";
 }
+
+<!-- Tabulator CSS -->
+<link href="https://unpkg.com/tabulator-tables@5.5.0/dist/css/tabulator.min.css" rel="stylesheet" />
 
 <div class="module">
     <div class="module-head">
         <h3>Personals - @Html.ActionLink("Create New", "Create")</h3>
     </div>
-    <div class="module-body table">
-        <table cellpadding="0" cellspacing="0" border="0" class="datatable-1 table table-bordered table-striped	 display" width="100%">
-            <thead>
-                <tr>
-                    <th>
-                        Full Name
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.City)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Email)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Phone_Number)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Gender)
-                    </th>
-                    <th>
-                        Shareholder
-                    </th>
-                    <th></th>
-                </tr>
 
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr class="odd gradeX">
-                        <td>
-                            @Html.DisplayFor(modelItem => item.First_Name)
-                            @Html.DisplayFor(modelItem => item.Last_Name)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.City)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Email)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Phone_Number)
-                        </td>
-                        <td class="center">
-                            @{
-                    string gender = "";
-                    if ((bool)item.Gender)
-                    {
-                        gender = "Male";
-                    }
-                    else
-                    {
-                        gender = "Female";
-                    }
-                            }
-                            @Html.DisplayFor(modelItem => gender)
-                        </td>
-                        <td class="center">
-                            @{
-                    string Shareholder = "";
-                    if ((bool)item.Shareholder_Status)
-                    {
-                        Shareholder = "Yes";
-                    }
-                    else
-                    {
-                        Shareholder = "No";
-                    }
-                            }
-                            @Html.DisplayFor(modelItem => Shareholder)
-                        </td>
-                        <td>
-                            @Html.ActionLink("Edit", "Edit", new { id = item.Employee_ID }) |
-                            @*@Html.ActionLink("Details", "Details", new { id = item.Employee_ID }) |*@
-                            @Html.ActionLink("Delete", "Delete", new { id = item.Employee_ID })
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+    <div class="module-body">
+        <input id="search-box" type="text" placeholder="🔍 Search..." class="form-control" style="margin-bottom: 10px;" />
+
+        <div id="personal-table"></div>
     </div>
-</div><!--/.module-->
+</div>
+
+@section Scripts {
+    <!-- Tabulator JS -->
+    <script src="https://unpkg.com/tabulator-tables@5.5.0/dist/js/tabulator.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        var table;
+
+        function loadTabulator() {
+            table = new Tabulator("#personal-table", {
+                layout: "fitColumns",
+                pagination: "local",
+                paginationSize: 10,
+                responsiveLayout: "collapse",
+                ajaxURL: "/Personals/GetPersonalsJson",
+                columns: [
+                    { title: "Employee ID", field: "Employee_ID",headerFilter: true },
+                    { title: "Full Name", field: "FullName", headerFilter: true },
+                    { title: "City", field: "City", headerFilter: true },
+                    { title: "Email", field: "Email", headerFilter: true },
+                    { title: "Phone", field: "Phone_Number", headerFilter: true },
+                    { title: "Gender", field: "Gender", headerFilter: true },
+                    { title: "Shareholder", field: "Shareholder", headerFilter: true },
+                    {
+                        title: "Actions",
+                        field: "Employee_ID",
+                        hozAlign: "center",
+                        formatter: function (cell) {
+                            var id = cell.getValue();
+                            return `
+                                    <a href="/Personals/Edit/${id}">Edit</a> |
+                                    <a href="/Personals/Delete/${id}">Delete</a>
+                                `;
+                        }
+                    }
+                ]
+            });
+
+            $("#search-box").on("keyup", function () {
+                var keyword = $(this).val();
+                if (keyword === "") {
+                    table.clearFilter();
+                } else {
+                    table.setFilter([
+                        [
+
+                            { field: "FullName", type: "like", value: keyword },
+                            { field: "City", type: "like", value: keyword },
+                            { field: "Email", type: "like", value: keyword },
+                            { field: "Phone_Number", type: "like", value: keyword },
+                            { field: "Gender", type: "like", value: keyword },
+                            { field: "Shareholder", type: "like", value: keyword },
+                        ]
+                    ]);
+                }
+            });
+        }
+
+        const socket = new WebSocket("ws://localhost:8181");
+
+        socket.onopen = () => {
+            console.log("✅ WebSocket connected.");
+        };
+
+        socket.onmessage = function (event) {
+            console.log("🔁 Reload table from WebSocket");
+            if (table) {
+                table.replaceData();
+            }
+        };
+
+        socket.onerror = (e) => {
+            console.error("❌ WebSocket error", e);
+        };
+
+        $(document).ready(function () {
+            loadTabulator();
+        });
+    </script>
+}

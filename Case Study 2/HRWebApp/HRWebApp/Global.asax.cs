@@ -13,6 +13,8 @@ namespace HRWebApp
         {
             AreaRegistration.RegisterAllAreas();
             RouteConfig.RegisterRoutes(RouteTable.Routes);
+            WebSocketServerManager.Start();
+
         }
         protected void Session_End(Object sender, EventArgs e)
         {
