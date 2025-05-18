@@ -13,6 +13,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using HRWebApp.Models;
 using System.Web.Mvc;
+using Microsoft.AspNet.SignalR;
 //using System.Web.Mvc;
 
 
@@ -26,8 +27,29 @@ namespace HRWebApp.Controllers
         // GET: Personals
         public ActionResult Index()
         {
-            var personals = db.Personals.Include(p => p.Benefit_Plans1).Include(p => p.Emergency_Contacts).Include(p => p.Employment);
-            return View(personals.ToList());
+            // db1 là một kết nối đến Redis và có thể được sử dụng để lưu trữ dữ liệu
+            var db1 = RedisService.Connection.GetDatabase();
+            string key = "personalList";
+            List<Personal> personals;
+
+            var cached = db1.StringGet(key);
+
+            if (cached.IsNullOrEmpty)
+            {
+                // Nếu không có dữ liệu trong cache, lấy từ database
+                personals = db.Personals.ToList();
+                // Lưu vào cache với thời gian sống là 5 phút
+
+                db1.StringSet(key, Newtonsoft.Json.JsonConvert.SerializeObject(personals), TimeSpan.FromMinutes(5));
+            }
+            else
+            {
+                // Nếu có dữ liệu trong cache, lấy từ cache
+                personals = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Personal>>(cached);
+            }
+
+            // var personals = db.Personals.Include(p => p.Benefit_Plans1).Include(p => p.Emergency_Contacts).Include(p => p.Employment);
+            return View(personals);
         }
 
         //GET: Personals/getAllPersonal
@@ -151,6 +173,14 @@ namespace HRWebApp.Controllers
                 name = personal.First_Name + " " + personal.Last_Name;
                 decimal id = personal.Employee_ID;
 
+                // Xóa cache
+                RedisService.DeleteCache("personalList");
+
+                //  Gửi thông báo realtime
+                //var contextr = GlobalHost.ConnectionManager.GetHubContext<PersonalHub>();
+                //contextr.Clients.All.updatePersonalList();
+                WebSocketServerManager.Broadcast("new-personal");
+
                 Task.Run(async () => await ClearCacheAsync());
 
 
@@ -216,6 +246,11 @@ namespace HRWebApp.Controllers
                 context.Configuration.AutoDetectChangesEnabled = true;
                 name = personal.First_Name + " " + personal.Last_Name;
                 decimal employeeId = personal.Employee_ID;
+
+                // Xóa cache
+                RedisService.DeleteCache("personalList");
+                //  Gửi thông báo realtime
+                WebSocketServerManager.Broadcast("new-personal");
 
                 Task.Run(async () => await ClearCacheAsync());
 
@@ -289,7 +324,12 @@ public JsonResult DeleteAllPersonals()
         db.Personals.RemoveRange(db.Personals);
         db.SaveChanges();
 
-        Task.Run(async () => await ClearCacheAsync());
+         // Xóa cache
+         RedisService.DeleteCache("personalList");
+                // Gửi thông báo realtime
+                WebSocketServerManager.Broadcast("new-personal");
+
+                Task.Run(async () => await ClearCacheAsync());
 
         return Json(new { success = true, message = "Đã xoá tất cả Personal." }, JsonRequestBehavior.AllowGet);
     }
@@ -346,6 +386,11 @@ public JsonResult DeleteAllPersonals()
                 }
 
                 context.Configuration.AutoDetectChangesEnabled = true;
+                // Xóa cache
+                RedisService.DeleteCache("personalList");
+                // Gửi thông báo realtime
+                WebSocketServerManager.Broadcast("new-personal");
+
                 Task.Run(async () => await ClearCacheAsync());
 
                 return Json(new { success = true, message = $"✅ Tạo thành công {inserted}  Personals!" });
@@ -371,9 +416,12 @@ public JsonResult DeleteAllPersonals()
         db.Personals.Remove(personal);
         db.SaveChanges();
 
-        Task.Run(async () => await ClearCacheAsync());
+                // Xóa cache
+                RedisService.DeleteCache("personalList");
+                // Gửi thông báo realtime
+                WebSocketServerManager.Broadcast("new-personal");
 
-        return Json(new { success = true, message = $"Đã xoá Personal với ID = {id}" }, JsonRequestBehavior.AllowGet);
+                return Json(new { success = true, message = $"Đã xoá Personal với ID = {id}" }, JsonRequestBehavior.AllowGet);
     }
     catch (Exception ex)
     {
@@ -391,7 +439,14 @@ public JsonResult DeleteAllPersonals()
             ViewBag.Benefit_Plans = new SelectList(db.Benefit_Plans, "Benefit_Plan_ID", "Plan_Name");
             ViewBag.Employee_ID = new SelectList(db.Emergency_Contacts, "Employee_ID", "Emergency_Contact_Name");
             ViewBag.Employee_ID = new SelectList(db.Employments, "Employee_ID", "Employment_Status");
+            // xóa cache
+            
+            RedisService.DeleteCache("personalList");
+            // Gửi thông báo realtime
+            WebSocketServerManager.Broadcast("new-personal");
+
             Task.Run(async () => await ClearCacheAsync());
+
             return View();
         }
 
@@ -406,6 +461,11 @@ public JsonResult DeleteAllPersonals()
             {
                 db.Personals.Add(personal);
                 db.SaveChanges();
+                // xóa cache
+                RedisService.DeleteCache("personalList");
+                // Gửi thông báo realtime
+                WebSocketServerManager.Broadcast("new-personal");
+
                 Task.Run(async () => await ClearCacheAsync());
 
                 return RedirectToAction("Index");
@@ -432,6 +492,11 @@ public JsonResult DeleteAllPersonals()
             ViewBag.Benefit_Plans = new SelectList(db.Benefit_Plans, "Benefit_Plan_ID", "Plan_Name", personal.Benefit_Plans);
             ViewBag.Employee_ID = new SelectList(db.Emergency_Contacts, "Employee_ID", "Emergency_Contact_Name", personal.Employee_ID);
             ViewBag.Employee_ID = new SelectList(db.Employments, "Employee_ID", "Employment_Status", personal.Employee_ID);
+            // xóa cache
+            RedisService.DeleteCache("personalList");
+            // Gửi thông báo realtime
+            WebSocketServerManager.Broadcast("new-personal");
+
             Task.Run(async () => await ClearCacheAsync());
 
             return View(personal);
@@ -453,6 +518,11 @@ public JsonResult DeleteAllPersonals()
             ViewBag.Benefit_Plans = new SelectList(db.Benefit_Plans, "Benefit_Plan_ID", "Plan_Name", personal.Benefit_Plans);
             ViewBag.Employee_ID = new SelectList(db.Emergency_Contacts, "Employee_ID", "Emergency_Contact_Name", personal.Employee_ID);
             ViewBag.Employee_ID = new SelectList(db.Employments, "Employee_ID", "Employment_Status", personal.Employee_ID);
+            // xóa cache
+            RedisService.DeleteCache("personalList");
+            // Gửi thông báo realtime
+            WebSocketServerManager.Broadcast("new-personal");
+
             Task.Run(async () => await ClearCacheAsync());
             return View(personal);
         }
@@ -465,6 +535,10 @@ public JsonResult DeleteAllPersonals()
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Personal personal = db.Personals.Find(id);
+            // xóa cache
+            RedisService.DeleteCache("personalList");
+            WebSocketServerManager.Broadcast("new-personal");
+
             Task.Run(async () => await ClearCacheAsync());
             if (personal == null)
             {
@@ -481,6 +555,11 @@ public JsonResult DeleteAllPersonals()
             Personal personal = db.Personals.Find(id);
             db.Personals.Remove(personal);
             db.SaveChanges();
+            // xóa cache
+            RedisService.DeleteCache("personalList");
+            // Gửi thông báo realtime
+            WebSocketServerManager.Broadcast("new-personal");
+
             Task.Run(async () => await ClearCacheAsync());
             return RedirectToAction("Index");
         }
@@ -493,6 +572,22 @@ public JsonResult DeleteAllPersonals()
             }
             base.Dispose(disposing);
         }
+
+        public JsonResult GetPersonalsJson()
+        {
+            var data = db.Personals.Select(p => new {
+                FullName = p.First_Name + " " + p.Last_Name,
+                p.City,
+                p.Email,
+                p.Phone_Number,
+                Gender = (p.Gender == true ? "Male" : "Female"),
+                Shareholder = (p.Shareholder_Status == true ? "Yes" : "No"),
+                p.Employee_ID
+            }).ToList();
+
+            return Json(data, JsonRequestBehavior.AllowGet);
+        }
+
 
         // GET: /PersonalsApi/GetAll
         public JsonResult GetAll()
