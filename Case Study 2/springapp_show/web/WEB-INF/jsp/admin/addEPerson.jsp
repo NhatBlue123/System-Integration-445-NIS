@@ -57,7 +57,7 @@
             }
         </style>
 
-        <form:form method="POST" action="${contextPath}/admin/EPerson/createEPerson" modelAttribute="eperson">
+        <form:form method="POST" action="${contextPath}/admin/EPerson/createEPerson" modelAttribute="eperson" id="EPersonForm">
             <div class="form-container">
                 <!-- Employee Section -->
                 <div class="form-section">
@@ -96,8 +96,6 @@
                 <!-- Personal Section -->
                 <div class="form-section">
                     <h2>Personal Info</h2>
-                    <label>Employee ID:</label>
-                    <form:input path="Employee_ID" />
 
                     <label>First Name:</label>
                     <form:input path="First_Name" />
@@ -156,6 +154,157 @@
                 <button type="submit">Save EPerson</button>
             </div>
         </form:form>
+        <script>
+            document.getElementById("EPersonForm").addEventListener("submit", function (event) {
+                function isNumber(value) {
+                    return /^\d+$/.test(value);
+                }
+
+                const getVal = name => document.getElementsByName(name)[0].value.trim();
+
+                const employeeNumber = getVal("employeeNumber");
+                const idEmployee = getVal("idEmployee");
+                const firstName = getVal("firstName");
+                const lastName = getVal("lastName");
+                const ssn = getVal("ssn");
+                const payRate = getVal("payRate");
+                const payRatesId = getVal("payRatesId");
+                const vacationDays = getVal("vacationDays");
+                const paidToDate = getVal("paidToDate");
+                const paidLastYear = getVal("paidLastYear");
+
+                // Personal
+                const personalFirstName = getVal("First_Name");
+                const personalLastName = getVal("Last_Name");
+                const middleInitial = getVal("Middle_Initial");
+                const address1 = getVal("Address1");
+                const address2 = getVal("Address2");
+                const city = getVal("City");
+                const state = getVal("State");
+                const zip = getVal("Zip");
+                const email = getVal("Email");
+                const phone = getVal("Phone_Number");
+                const ssnPersonal = getVal("Social_Security_Number");
+                const driverLicense = getVal("Drivers_License");
+                const maritalStatus = getVal("Marital_Status");
+                const benefitPlans = getVal("Benefit_Plans");
+                const ethnicity = getVal("Ethnicity");
+
+                let errors = [];
+
+                // === EMPLOYEE VALIDATION ===
+
+                if (!employeeNumber || !idEmployee || !firstName || !lastName || !ssn) {
+                    errors.push("Vui lòng nhập đầy đủ các trường bắt buộc (Employee).");
+                }
+
+                if (employeeNumber.length > 10 || !isNumber(employeeNumber)) {
+                    errors.push("Employee Number phải là số và tối đa 10 chữ số.");
+                }
+
+                if (idEmployee.length > 11 || !isNumber(idEmployee)) {
+                    errors.push("ID Employee phải là số và tối đa 11 chữ số.");
+                }
+
+                if (firstName.length > 45) {
+                    errors.push("First Name (Employee) tối đa 45 ký tự.");
+                }
+
+                if (lastName.length > 45) {
+                    errors.push("Last Name (Employee) tối đa 45 ký tự.");
+                }
+
+                if (ssn.length > 10 || !isNumber(ssn)) {
+                    errors.push("SSN (Employee) phải là số và tối đa 10 chữ số.");
+                }
+
+                if (payRate.length > 40) {
+                    errors.push("Pay Rate tối đa 40 ký tự.");
+                }
+
+                if (payRatesId && (!isNumber(payRatesId) || payRatesId.length > 11)) {
+                    errors.push("Pay Rates ID phải là số và tối đa 11 chữ số.");
+                }
+
+                if (vacationDays && (!isNumber(vacationDays) || vacationDays.length > 11)) {
+                    errors.push("Vacation Days phải là số và tối đa 11 chữ số.");
+                }
+
+                if (paidToDate && (!isNumber(paidToDate) || paidToDate.length > 2)) {
+                    errors.push("Paid To Date phải là số và tối đa 2 chữ số.");
+                }
+
+                if (paidLastYear && (!isNumber(paidLastYear) || paidLastYear.length > 2)) {
+                    errors.push("Paid Last Year phải là số và tối đa 2 chữ số.");
+                }
+
+                // === PERSONAL VALIDATION ===
+
+                if (personalFirstName.length > 50) {
+                    errors.push("First Name (Personal) tối đa 50 ký tự.");
+                }
+
+                if (personalLastName.length > 50) {
+                    errors.push("Last Name (Personal) tối đa 50 ký tự.");
+                }
+
+                if (middleInitial.length > 50) {
+                    errors.push("Middle Initial tối đa 50 ký tự.");
+                }
+
+                if (address1.length > 50 || address2.length > 50) {
+                    errors.push("Address 1 và Address 2 tối đa 50 ký tự.");
+                }
+
+                if (city.length > 50) {
+                    errors.push("City tối đa 50 ký tự.");
+                }
+
+                if (state.length > 50) {
+                    errors.push("State tối đa 50 ký tự.");
+                }
+
+                if (zip && (!isNumber(zip) || zip.length > 18)) {
+                    errors.push("Zip phải là số và tối đa 18 chữ số.");
+                }
+
+                if (email.length > 50) {
+                    errors.push("Email tối đa 50 ký tự.");
+                }
+
+                if (phone.length > 50) {
+                    errors.push("Phone Number tối đa 50 ký tự.");
+                }
+
+                if (ssnPersonal.length > 50) {
+                    errors.push("SSN (Personal) tối đa 50 ký tự.");
+                }
+
+                if (driverLicense.length > 50) {
+                    errors.push("Driver's License tối đa 50 ký tự.");
+                }
+
+                if (maritalStatus.length > 50) {
+                    errors.push("Marital Status tối đa 50 ký tự.");
+                }
+
+                if (benefitPlans && (!isNumber(benefitPlans) || benefitPlans.length > 18)) {
+                    errors.push("Benefit Plans phải là số và tối đa 18 chữ số.");
+                }
+
+                if (ethnicity.length > 50) {
+                    errors.push("Ethnicity tối đa 50 ký tự.");
+                }
+
+                if (errors.length > 0) {
+                    alert("Thông báo:\n" + errors.join("\n"));
+                    event.preventDefault();
+                    return;
+                }
+
+                alert("Thành công: Dữ liệu đã hợp lệ!");
+            });
+        </script>
 
     </tiles:putAttribute>
 </tiles:insertDefinition>

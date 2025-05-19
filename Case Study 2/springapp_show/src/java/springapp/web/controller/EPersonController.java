@@ -300,6 +300,8 @@ public class EPersonController {
 
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println("Loi sever employee");
+
             return new ResponseEntity<>("Lỗi server: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 
         }
@@ -318,6 +320,7 @@ public class EPersonController {
             });
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println("Loi sever personal");
             return new ArrayList<>(); // fallback
 
         }

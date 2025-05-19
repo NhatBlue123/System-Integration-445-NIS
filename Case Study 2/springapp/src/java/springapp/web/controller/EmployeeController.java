@@ -110,7 +110,7 @@ public class EmployeeController {
 
     }
 
-    //api them 1 employee
+    //api them 1 employee của phần trang add Employe của spring
     @RequestMapping(value = "/employee/createEmployee", method = RequestMethod.POST)
     public String createEPerson(@ModelAttribute("employee") Employee employee) {
         System.out.println("Called from employee");
@@ -266,57 +266,12 @@ public class EmployeeController {
 
     }
 
-//    @RequestMapping(value = "/employee/generateAEmployeeAndAPersonal", method = RequestMethod.POST)
-//    public ResponseEntity<String> generateAEmployeeAndAPersonal() {
-//        Faker myF = new Faker(new Locale("en"));
-//        try {
-//            List<Employee> list = new ArrayList<>();
-//            Random rand = new Random();
-//
-//            int currentCount = edao.getEmployeeCount();
-//            int startIndex = currentCount + 1;
-//
-//            Employee emp = new Employee();
-//            emp.setEmployeeNumber(startIndex);
-//            emp.setIdEmployee(1000 + startIndex);
-//
-//            emp.setFirstName(myF.name().firstName());
-//            emp.setLastName(myF.name().lastName());
-//
-//            String hrApiUrl = "Personals/CreateAPersonalWithFirtsNameAndLastName/"
-//                    + "?firstName=" + emp.getFirstName()
-//                    + "&lastName=" + emp.getLastName();
-//
-//            emp.setSsn(100000000L + startIndex);
-//            emp.setPayRate(String.format("%.2f", rand.nextDouble() * 100));
-//            emp.setPayRatesId(rand.nextInt(5) + 1);
-//            emp.setVacationDays(rand.nextInt(30));
-//            emp.setPaidToDate((byte) (rand.nextInt(2)));
-//            emp.setPaidLastYear((byte) (rand.nextInt(2)));
-//
-//            list.add(emp);  // chỉ 1 employee
-//
-//            edao.insertBatch(list);
-//
-//            RestTemplate restTemplate = new RestTemplate();
-//            try {
-//                String result = restTemplate.postForObject(hrApiUrl, null, String.class);
-//                System.out.println("HR App response: " + result);
-//            } catch (Exception ex) {
-//                System.err.println("❌ Không thể gọi HR App: " + ex.getMessage());
-//            }
-//
-//            return new ResponseEntity<>("Tạo 1 employee thành công với ID = " + emp.getIdEmployee(), HttpStatus.OK);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return new ResponseEntity<>("Lỗi khi tạo employee", HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
 
+    // api tạo employee từ bên addEPerson của EPerson 
     @RequestMapping(value = "/employee/generateAEmployeeByEPerson", method = RequestMethod.POST)
     public ResponseEntity<String> generateAEmployeeByEPerson(@RequestBody EPerson eperson) {
         try {
@@ -405,7 +360,7 @@ public class EmployeeController {
             return new ResponseEntity<>("Tạo 1 employee thành công", HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<>("Lỗi khi tạo employee", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Lỗi khi tạo employee: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
