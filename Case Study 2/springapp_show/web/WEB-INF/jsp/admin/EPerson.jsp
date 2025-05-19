@@ -30,7 +30,7 @@
             const data = [
             <c:forEach var="item" items="${listMerge}" varStatus="loop">
             {
-            idEmployee: "${item.idEmployee}",
+            idEmployee: ${item.idEmployee},
                     employeeNumber: "${item.employeeNumber}",
                     lastName: "${item.lastName}",
                     firstName: "${item.firstName}",
@@ -55,7 +55,7 @@
                     Shareholder_Status: "${item.shareholder_Status}",
                     Benefit_Plans: "${item.benefit_Plans}",
                     Ethnicity: "${item.ethnicity}"
-                    }<c:if test="${!loop.last}">,</c:if>
+            }<c:if test="${!loop.last}">,</c:if>
             </c:forEach>
             ];
                     //                    + "\"Middle_Initial\": \"%s\", "
@@ -105,8 +105,39 @@
                             { title: "Shareholder Status", field: "Shareholder_Status", headerFilter: "input" },
                             { title: "Benefit Plans", field: "Benefit_Plans", headerFilter: "input" },
                             { title: "Ethnicity", field: "Ethnicity", headerFilter: "input" },
+                            {
+                            title: "Actions",
+                                    field: "idEmployee",
+                                    hozAlign: "center",
+                                    formatter: function (cell) {
+                                    const id = cell.getValue();
+                                            return '<a href="http://localhost:8888/springapp_show/admin/EPerson/editEPerson/' + id + '" ' +
+                                            'class="btn btn-warning btn-sm" style="margin-right: 5px;">Edit</a>' +
+                                            '<button class="btn btn-danger btn-sm" onclick="deleteEPerson(' + id + ')">Delete</button>';
+                                    },
+                                    width: 200
+                            }
                             ]
                     });
+                    window.deleteEPerson = function(id) {
+                    if (confirm('Are you sure you want to delete EPerson ID: ' + id + '?')) {
+                    fetch('http://localhost:8888/springapp_show/admin/EPerson/deleteEPersonById/' + id, {
+                    method: 'DELETE'
+                    })
+                            .then(response => {
+                            if (response.ok) {
+                            alert('Deleted EPerson ' + id);
+                                    //  location.reload();
+                            } else {
+                            alert('Failed to delete EPerson ' + id);
+                            }
+                            })
+                            .catch(error => {
+                            console.error('Error:', error);
+                                    alert('Error deleting EPerson ' + id);
+                            });
+                    }
+                    };
                     document.getElementById("search-input").addEventListener("input", function (e) {
             table.setFilter(function (data) {
             let match = false;

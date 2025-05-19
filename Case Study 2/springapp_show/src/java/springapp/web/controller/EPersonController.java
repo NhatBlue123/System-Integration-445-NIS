@@ -15,6 +15,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -148,6 +149,31 @@ public class EPersonController {
         return "admin/EPerson";
     }
 
+    @RequestMapping(value = {"/EPerson/editEPerson/{id}"}, method = RequestMethod.GET)
+    public String pageEditEPerson(@PathVariable("id") int id, ModelMap model) {
+        try {
+            System.out.println("called edit");
+
+        } catch (Exception e) {
+            return "admin/error";
+        }
+
+        return "admin/editEPerson";
+    }
+    @RequestMapping(value = "/EPerson/updateEPerson", method = RequestMethod.POST)
+    public String updateEmployee(@ModelAttribute("eperson") EPerson eperson) {
+        try {
+            System.out.println("called updated");
+           
+           
+            // updateRealTimeData();
+            //socketE.bcMergeData(list);
+        } catch (Exception e) {
+            return "admin/error";
+        }
+            return "redirect:/admin/employee/list.html";
+    }
+
     @RequestMapping(value = "/EPerson/clearCache", method = RequestMethod.GET)
     @ResponseBody
     public String clearCache() {
@@ -158,6 +184,16 @@ public class EPersonController {
         } catch (Exception e) {
             e.printStackTrace();
             return "Lỗi khi xóa cache";
+        }
+    }
+
+    @RequestMapping(value = {"EPerson/deleteEPersonById/{id}"}, method = RequestMethod.DELETE)
+    public ResponseEntity<String> deleteEmployeeById(@PathVariable("id") int id) {
+        try {
+
+            return new ResponseEntity<>("Đã xoá EPerson với id = " + id + "", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Lỗi khi xoá employee", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

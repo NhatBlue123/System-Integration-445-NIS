@@ -131,7 +131,7 @@
                     return;
                 }
 
-                alert("Thành công: Dữ liệu đã hợp lệ!");
+                alert("Cập nhật thành công: Dữ liệu đã hợp lệ!");
             });
         </script>
 
