@@ -96,6 +96,12 @@ public class EmployeeController {
         return viewName;
     }
 
+    @RequestMapping(value = {"/employee/editEmployee/{id}"}, method = RequestMethod.GET)
+    public  String pageEditEmployee(@PathVariable("id") int id)
+    {
+        return "admin/editEmployee";
+    }
+    
     // trang addEmployee
     @RequestMapping(value = {"/employee/addEmployee"}, method = RequestMethod.GET)
     public String addEmployee(ModelMap model, HttpServletRequest request) {
@@ -122,7 +128,7 @@ public class EmployeeController {
             } catch (Exception e) {
                 System.err.println("Loi khi xoa cache" + e.getMessage());
             }
-           // updateRealTimeData();
+            // updateRealTimeData();
             socketE.bcMergeData(list);
             return "redirect:/admin/employee/list.html";
         } catch (Exception e) {
@@ -346,7 +352,7 @@ public class EmployeeController {
             } catch (Exception e) {
                 System.err.println("Loi khi xoa cache" + e.getMessage());
             }
-          //  updateRealTimeData();
+            //  updateRealTimeData();
             socketE.bcMergeData(list);
             return new ResponseEntity<>("Đã tạo employee từ EPerson", HttpStatus.OK);
         } catch (Exception e) {
@@ -393,8 +399,8 @@ public class EmployeeController {
             } catch (Exception e) {
                 System.err.println("Loi khi xoa cache" + e.getMessage());
             }
-           // updateRealTimeData();
-             socketE.bcMergeData(list);
+            // updateRealTimeData();
+            socketE.bcMergeData(list);
 
             return new ResponseEntity<>("Tạo 1 employee thành công", HttpStatus.OK);
         } catch (Exception e) {
@@ -441,7 +447,7 @@ public class EmployeeController {
             } catch (Exception e) {
                 System.err.println("Loi khi xoa cache" + e.getMessage());
             }
-          //  updateRealTimeData();
+            //  updateRealTimeData();
             socketE.bcMergeData(list);
 
             return new ResponseEntity<>("Tạo 1 employee thành công với ID = " + emp.getIdEmployee(), HttpStatus.OK);
@@ -536,7 +542,7 @@ public class EmployeeController {
     @RequestMapping(value = {"employee/deleteEmployeeById/{id}"}, method = RequestMethod.DELETE)
     public ResponseEntity<String> deleteEmployeeById(@PathVariable("id") int id) {
         try {
-            
+
             edao.deleteById(id);
             clearEmployeeCache();
 

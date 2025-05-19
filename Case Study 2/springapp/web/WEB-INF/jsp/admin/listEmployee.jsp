@@ -65,7 +65,7 @@
                                     hozAlign: "center",
                                     formatter: function (cell) {
                                     const id = cell.getValue();
-                                            return '<a href="http://localhost:8080/springapp/admin/employee/edit/' + id + '" ' +
+                                            return '<a href="http://localhost:8080/springapp/admin/employee/editEmployee/' + id + '" ' +
                                             'class="btn btn-warning btn-sm" style="margin-right: 5px;">Edit</a>' +
                                             '<button class="btn btn-danger btn-sm" onclick="deleteEmployee(' + id + ')">Delete</button>';
                                     },
