@@ -9,6 +9,7 @@ package springapp.web.dao;
  * @author Bluez
  */
 import java.util.List;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Repository;
@@ -99,6 +100,52 @@ public class EmployeeDao {
         return list;
     }
 
+    public Employee getById(int id) {
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        try {
+            session.beginTransaction();
+
+            String sql = "SELECT * FROM employee WHERE idEmployee = :id";
+            Query query = session.createSQLQuery(sql)
+                    .addEntity(Employee.class)
+                    .setParameter("id", id);
+
+            Employee employee = (Employee) query.uniqueResult();
+
+            session.getTransaction().commit();
+            return employee;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            if (session.isOpen()) {
+                session.close();
+            }
+        }
+    }
+
+    public boolean update(Employee employee) {
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        try {
+            session.beginTransaction();
+
+            session.update(employee);
+
+            session.getTransaction().commit();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (session.getTransaction() != null) {
+                session.getTransaction().rollback();
+            }
+            return false;
+        } finally {
+            if (session.isOpen()) {
+                session.close();
+            }
+        }
+    }
+
     public void deleteAll() {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         try {
@@ -131,21 +178,19 @@ public class EmployeeDao {
             session.close();
         }
     }
-    
-    public boolean checkExistId(int idEmployee)
-    {
+
+    public boolean checkExistId(int idEmployee) {
         Session session = HibernateUtil.getSessionFactory().openSession();
-        try{
+        try {
             Long count = (Long) session.createQuery("SELECT COUNT(e) FROM Employee e WHERE e.idEmployee = :idEmployee")
                     .setParameter("idEmployee", idEmployee).uniqueResult();
-            return count !=null && count > 0;
-        }catch(Exception e)
-        {
+            return count != null && count > 0;
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
-        }finally{
+        } finally {
             session.close();
         }
     }
-    
+
 }

@@ -68,7 +68,7 @@
                     <form:input path="idEmployee" />
 
                     <label>First Name:</label>
-                    <form:input path="firstName" />
+                <form:input path="firstName" />
 
                     <label>Last Name:</label>
                     <form:input path="lastName" />

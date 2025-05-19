@@ -35,5 +35,5 @@ Spring Show	      8888	     Hiển thị bảng dữ liệu Merged từ 2 app tr
 ✅ Tích hợp Redis để cache dữ liệu
 
 ✅ Tích hợp WebSocket (SockJS + STOMP) để cập nhật realtime khi có dữ liệu mới
-✅ Tích hợp Kafka để tối ưu dữ liệu
+✅ Tích hợp Rabbit để message broker hệ thống
 
