@@ -271,16 +271,16 @@ public class EmployeeController {
         return new RestTemplate();
     }
 
-    // api tạo employee từ bên addEPerson của EPerson 
+    // api tạo employee từ bên addEPerson của EPerson Management 
     @RequestMapping(value = "/employee/generateAEmployeeByEPerson", method = RequestMethod.POST)
     public ResponseEntity<String> generateAEmployeeByEPerson(@RequestBody EPerson eperson) {
         try {
             List<Employee> list = new ArrayList<>();
 
             Employee emp = new Employee();
-            if (edao.checkExistId(eperson.getIdEmployee())) {
-                return new ResponseEntity<>("Lỗi khi tạo employee từ EPerson vì trùng id", HttpStatus.BAD_REQUEST);
-            }
+//            if (edao.checkExistId(eperson.getIdEmployee())) {
+//                return new ResponseEntity<>("Lỗi khi tạo employee từ EPerson vì trùng id", HttpStatus.BAD_REQUEST);
+//            }
 
             emp.setIdEmployee(eperson.getIdEmployee());
             emp.setEmployeeNumber(eperson.getEmployeeNumber());

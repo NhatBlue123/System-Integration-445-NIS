@@ -171,13 +171,16 @@ public class EPersonController {
     public String createEPerson(@ModelAttribute("eperson") EPerson eperson) {
         System.out.println("Called from eperon");
         try {
+            ObjectMapper ob = new ObjectMapper();
+            System.out.println("DEBUG GUI DI");
+            System.out.println(ob.writeValueAsString(eperson));
             ResponseEntity<String> employeeResponse = restTemplate.postForEntity(CREATE_EMPLOYEE_API_URL, eperson, String.class);
             updateRealtimeMergeData();
             return "redirect:/admin/EPerson";
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("loi gi" + e.getMessage());
-            return "error";
+            return "admin/error";
         }
 
     }
