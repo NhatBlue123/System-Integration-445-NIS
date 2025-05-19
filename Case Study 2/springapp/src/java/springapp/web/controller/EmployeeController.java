@@ -97,11 +97,42 @@ public class EmployeeController {
     }
 
     @RequestMapping(value = {"/employee/editEmployee/{id}"}, method = RequestMethod.GET)
-    public  String pageEditEmployee(@PathVariable("id") int id)
-    {
+    public String pageEditEmployee(@PathVariable("id") int id, ModelMap model) {
+        try {
+            System.out.println("called edit");
+            Employee employee = edao.getById(id);
+            //  System.out.println("id employee: " + employee.getIdEmployee());
+            model.addAttribute("employee", employee);
+        } catch (Exception e) {
+            return "admin/error";
+        }
+
         return "admin/editEmployee";
     }
-    
+
+    @RequestMapping(value = "/employee/updateEmployee", method = RequestMethod.POST)
+    public String updateEmployee(@ModelAttribute("employee") Employee employee) {
+        try {
+            System.out.println("called updated");
+            edao.update(employee);
+            clearEmployeeCache();
+            try {
+                RestTemplate rest = new RestTemplate();
+                String cacheUrl = "http://localhost:8888/springapp_show/admin/EPerson/clearCache";
+                rest.getForObject(cacheUrl, String.class);
+                System.out.println("Da xoa cache");
+
+            } catch (Exception e) {
+                System.err.println("Loi khi xoa cache" + e.getMessage());
+            }
+            // updateRealTimeData();
+            //socketE.bcMergeData(list);
+        } catch (Exception e) {
+            return "admin/error";
+        }
+            return "redirect:/admin/employee/list.html";
+    }
+
     // trang addEmployee
     @RequestMapping(value = {"/employee/addEmployee"}, method = RequestMethod.GET)
     public String addEmployee(ModelMap model, HttpServletRequest request) {
