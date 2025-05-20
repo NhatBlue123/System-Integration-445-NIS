@@ -115,6 +115,41 @@ namespace HRWebApp.Controllers
 
             return Json(personals, JsonRequestBehavior.AllowGet);
         }
+        public JsonResult GetPersonalById(int id)
+        {
+            var personal = db.Personals
+                .Where(p => p.Employee_ID == id)
+                .Select(p => new {
+                    p.Employee_ID,
+                    p.First_Name,
+                    p.Last_Name,
+                    Full_Name = p.First_Name + " " + p.Last_Name,
+                    p.Middle_Initial,
+                    p.Address1,
+                    p.Address2,
+                    p.City,
+                    p.State,
+                    p.Zip,
+                    p.Email,
+                    p.Phone_Number,
+                    p.Social_Security_Number,
+                    p.Drivers_License,
+                    p.Marital_Status,
+                    p.Gender,
+                    p.Shareholder_Status,
+                    p.Benefit_Plans,
+                    p.Ethnicity
+                })
+                .FirstOrDefault();
+
+            if (personal == null)
+            {
+                return Json(new { success = false, message = "Personal not found" }, JsonRequestBehavior.AllowGet);
+            }
+
+            return Json( personal, JsonRequestBehavior.AllowGet);
+        }
+
 
 
         // GET: Personals/Details/5

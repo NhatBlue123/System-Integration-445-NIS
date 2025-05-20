@@ -37,6 +37,9 @@ public class EPersonController {
     private static final String PERSONAL_API_URL = "http://localhost:19335/Personals/getAllPersonal";
     private static final String CREATE_EMPLOYEE_API_URL = "http://localhost:8080/springapp/admin/employee/generateAEmployeeByEPerson";
     private static final String CREATE_PERSONAL_API_URL = "http://localhost:19335/Personals/CreateAPersonalByEPerson";
+    private static final String GET_EMPLOYEE_BY_ID_API_URL = "http://localhost:8080/springapp/admin/employee/getEmployeeById";
+    private static final String GET_PERSONAL_BY_ID_API_URL = "http://localhost:19335/Personals/GetPersonalById";
+
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
@@ -152,13 +155,83 @@ public class EPersonController {
     @RequestMapping(value = {"/EPerson/editEPerson/{id}"}, method = RequestMethod.GET)
     public String pageEditEPerson(@PathVariable("id") int id, ModelMap model) {
         try {
+            Employee em = fetchEmployeesId(id);
+            Personal pe = fetchPersonalsId(id);
+//            System.out.println("employee: " + em.getFirstName() + "" + em.getLastName());
+//            System.out.println("personal: " + pe.getFirst_Name()+ "" + pe.getLast_Name());
+
             System.out.println("called edit");
+            EPerson e = new EPerson();
+            //employww
+            e.setEmployeeNumber(em.getEmployeeNumber());
+            e.setFirstName(em.getFirstName());
+            e.setLastName(em.getLastName());
+            e.setSsn(em.getSsn());
+            e.setPayRate(em.getPayRate());
+            e.setPayRatesId(em.getPayRatesId());
+            e.setVacationDays(em.getVacationDays());
+            e.setPaidLastYear(em.getPaidLastYear());
+            e.setPaidToDate(em.getPaidToDate());
+            //personal
+            e.setFirst_Name(pe.getFirst_Name());
+            e.setLast_Name(pe.getLast_Name());
+            e.setMiddle_Initial(pe.getMiddle_Initial());
+            e.setAddress1(pe.getAddress1());
+            e.setAddress2(pe.getAddress2());
+            e.setCity(pe.getCity());
+            e.setState(pe.getState());
+            e.setZip(pe.getZip());
+            e.setPhone_Number(pe.getPhone_Number());
+            e.setEmail(pe.getEmail());
+            e.setSocial_Security_Number(pe.getSocial_Security_Number());
+            e.setDrivers_License(pe.getDrivers_License());
+            e.setMarital_Status(pe.getMarital_Status());
+            e.setGender(pe.isGender());
+            e.setMarital_Status(pe.getMarital_Status());
+            e.setEthnicity(pe.getEthnicity());
+            model.addAttribute("eperson", e);
 
         } catch (Exception e) {
             return "admin/error";
         }
 
         return "admin/editEPerson";
+    }
+
+    private Employee fetchEmployeesId(int id) {
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(
+                    GET_EMPLOYEE_BY_ID_API_URL + "/" + id,
+                    HttpMethod.GET,
+                    null,
+                    String.class
+            );
+
+            return objectMapper.readValue(response.getBody(), new TypeReference<Employee>() {
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Loi sever personal");
+            return null; // fallback
+
+        }
+    }
+
+    private Personal fetchPersonalsId(int id) {
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(
+                    GET_PERSONAL_BY_ID_API_URL + "/" + id,
+                    HttpMethod.GET,
+                    null,
+                    String.class
+            );
+
+            return objectMapper.readValue(response.getBody(), new TypeReference<Personal>() {
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null; // fallback
+        }
     }
 
     @RequestMapping(value = "/EPerson/updateEPerson", method = RequestMethod.POST)

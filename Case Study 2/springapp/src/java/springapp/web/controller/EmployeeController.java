@@ -96,6 +96,24 @@ public class EmployeeController {
         return viewName;
     }
 
+    @RequestMapping(value = "/employee/getEmployeeById/{id}", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<?> getEmployeeById(@PathVariable("id") int id) {
+        try {
+            Employee employee = edao.getById(id);
+            if (employee != null) {
+                ObjectMapper mapper = new ObjectMapper();
+                String json = mapper.writeValueAsString(employee);
+                return new ResponseEntity<>(json, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Không tìm thấy nhân viên với ID: " + id, HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Lỗi khi lấy thông tin nhân viên", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @RequestMapping(value = {"/employee/editEmployee/{id}"}, method = RequestMethod.GET)
     public String pageEditEmployee(@PathVariable("id") int id, ModelMap model) {
         try {
@@ -130,7 +148,7 @@ public class EmployeeController {
         } catch (Exception e) {
             return "admin/error";
         }
-            return "redirect:/admin/employee/list.html";
+        return "redirect:/admin/employee/list.html";
     }
 
     // trang addEmployee
@@ -309,9 +327,6 @@ public class EmployeeController {
             List<Employee> list = new ArrayList<>();
 
             Employee emp = new Employee();
-//            if (edao.checkExistId(eperson.getIdEmployee())) {
-//                return new ResponseEntity<>("Lỗi khi tạo employee từ EPerson vì trùng id", HttpStatus.BAD_REQUEST);
-//            }
 
             emp.setIdEmployee(eperson.getIdEmployee());
             emp.setEmployeeNumber(eperson.getEmployeeNumber());
@@ -324,8 +339,7 @@ public class EmployeeController {
             emp.setPaidToDate(eperson.getPaidToDate());
             emp.setPaidLastYear(eperson.getPaidLastYear());
             list.add(emp);
-            //   list.add(emp);
-            //  edao.insert(emp);          
+
             edao.insertBatch(list);
 
             clearEmployeeCache();
@@ -568,29 +582,3 @@ public class EmployeeController {
     }
 
 }
-
-//@Controller
-//@RequestMapping(value = "/admin")
-//public class EmployeeController {
-//    @RequestMapping(value = "/employee/list", method = RequestMethod.GET)
-//    public String listEmployee(ModelMap model, HttpServletRequest request) {
-//        Users user = (Users) request.getSession().getAttribute("LOGGEDIN_USER");
-//        String value = "";
-//        if (user != null) {
-//            try {
-//                Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-//                session.beginTransaction();
-//                List listEmployees = session.createQuery("from Employee").list();
-//                model.addAttribute("listEmployees", listEmployees);
-//                session.getTransaction().commit();
-//                value = "admin/listEmployee";
-//            } catch (Exception e) {
-//            }
-//
-//        } else {
-//            model.addAttribute("user", new Users());
-//            value= "redirect:/admin/login.html";
-//        }
-//        return value;
-//    }
-//}
