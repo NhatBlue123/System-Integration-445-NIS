@@ -160,18 +160,18 @@ public class EPersonController {
 
         return "admin/editEPerson";
     }
+
     @RequestMapping(value = "/EPerson/updateEPerson", method = RequestMethod.POST)
     public String updateEmployee(@ModelAttribute("eperson") EPerson eperson) {
         try {
             System.out.println("called updated");
-           
-           
+
             // updateRealTimeData();
             //socketE.bcMergeData(list);
         } catch (Exception e) {
             return "admin/error";
         }
-            return "redirect:/admin/employee/list.html";
+        return "redirect:/admin/EPerson";
     }
 
     @RequestMapping(value = "/EPerson/clearCache", method = RequestMethod.GET)
@@ -197,20 +197,52 @@ public class EPersonController {
         }
     }
 
+    // page
     @RequestMapping(value = "/EPerson/addEPerson", method = RequestMethod.GET)
     public String addEPerson(ModelMap model, HttpServletRequest request) {
         model.addAttribute("eperson", new EPerson());
         return "admin/addEPerson";
     }
 
-    @RequestMapping(value = "/EPerson/createEPerson", method = RequestMethod.POST)
+    @RequestMapping(value = "/EPerson/createEPerson", method = RequestMethod.POST, produces = "application/json")
     public String createEPerson(@ModelAttribute("eperson") EPerson eperson) {
         System.out.println("Called from eperon");
         try {
             ObjectMapper ob = new ObjectMapper();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            Map<String, Object> map = ob.convertValue(eperson, new TypeReference<Map<String, Object>>() {
+            });
+            map.remove("state");
+            map.remove("email");
+            map.remove("city");
+            map.remove("zip");
+            map.remove("gender");
+            map.remove("address1");
+            map.remove("address2");
+            map.remove("last_Name");
+            map.remove("employee_ID");
+            map.remove("first_Name");
+            map.remove("ethnicity");
+            map.remove("phone_Number");
+            map.remove("drivers_License");
+            map.remove("shareholder_Status");
+            map.remove("marital_Status");
+            map.remove("benefit_Plans");
+            map.remove("social_Security_Number");
+            map.remove("middle_Initial");
+            String jsonbody = ob.writeValueAsString(map);
+
+            HttpEntity<String> entity = new HttpEntity<>(jsonbody, headers);
+            System.out.println("test cuoi " + entity);
             System.out.println("DEBUG GUI DI");
-            System.out.println(ob.writeValueAsString(eperson));
+            //    System.out.println("test object" + ob.writeValueAsString(eperson));
+            if (eperson == null) {
+                return "admin/error";
+
+            }
             ResponseEntity<String> employeeResponse = restTemplate.postForEntity(CREATE_EMPLOYEE_API_URL, eperson, String.class);
+            ResponseEntity<String> personalResponse = restTemplate.postForEntity(CREATE_PERSONAL_API_URL, entity, String.class);
             updateRealtimeMergeData();
             return "redirect:/admin/EPerson";
         } catch (Exception e) {

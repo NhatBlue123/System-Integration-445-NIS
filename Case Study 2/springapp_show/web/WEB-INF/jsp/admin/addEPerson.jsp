@@ -96,7 +96,8 @@
                 <!-- Personal Section -->
                 <div class="form-section">
                     <h2>Personal Info</h2>
-
+                    <label>Employee ID:</label>
+                    <form:input path="Employee_ID" />
                     <label>First Name:</label>
                     <form:input path="First_Name" />
 
@@ -174,6 +175,7 @@
                 const paidLastYear = getVal("paidLastYear");
 
                 // Personal
+                const personalEmployeeID = getVal("Employee_ID");
                 const personalFirstName = getVal("First_Name");
                 const personalLastName = getVal("Last_Name");
                 const middleInitial = getVal("Middle_Initial");
@@ -192,7 +194,7 @@
 
                 let errors = [];
 
-                // === EMPLOYEE VALIDATION ===
+                 === EMPLOYEE VALIDATION ===
 
                 if (!employeeNumber || !idEmployee || !firstName || !lastName || !ssn) {
                     errors.push("Vui lòng nhập đầy đủ các trường bắt buộc (Employee).");
@@ -239,7 +241,12 @@
                 }
 
                 // === PERSONAL VALIDATION ===
-
+                if (!personalEmployeeID || personalEmployeeID == 0) {
+                    errors.push("Vui lòng nhập đầy đủ các trường bắt buộc (Personal).");
+                }
+                if (personalEmployeeID.length > 18 || !isNumber(personalEmployeeID)) {
+                    errors.push("Employee ID(Personal)  phải là số và tối đa 18 chữ số.");
+                }
                 if (personalFirstName.length > 50) {
                     errors.push("First Name (Personal) tối đa 50 ký tự.");
                 }

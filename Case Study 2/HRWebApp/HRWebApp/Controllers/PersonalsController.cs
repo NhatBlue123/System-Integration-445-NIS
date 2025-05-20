@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using HRWebApp.Models;
 using System.Web.Mvc;
 using Microsoft.AspNet.SignalR;
+using System.Diagnostics;
 //using System.Web.Mvc;
 
 
@@ -197,13 +198,47 @@ namespace HRWebApp.Controllers
         [HttpPost]
         public ActionResult CreateAPersonalByEPerson(EPerson eperson)
         {
+            Console.WriteLine("Hello call from eperson");
             try
             {
+                Personal per = new Personal();
                 var context = new HRDB();
+                per.Employee_ID = eperson.Employee_ID;
+                per.First_Name = eperson.First_Name;
+                per.Last_Name = eperson.Last_Name;
+                per.Address1 = eperson.Address1;
+                per.Address2 = eperson.Address2;
+                per.City = eperson.City;
+                per.State = eperson.State;
+                per.Zip = eperson.Zip;
+                per.Email = eperson.Email;
+                per.Phone_Number = eperson.Phone_Number;
+                per.Social_Security_Number  = eperson.Social_Security_Number;
+                per.Drivers_License = eperson.Drivers_License;
+                per.Marital_Status = eperson.Marital_Status; 
+                per.Gender = eperson.Gender;
+                per.Shareholder_Status = eperson.Shareholder_Status;
+              
+                per.Ethnicity = eperson.Ethnicity;
+              
+                
+                context.Personals.Add(per);
+                context.Configuration.AutoDetectChangesEnabled = true;
+                context.SaveChanges();
+
+                // Xóa cache
+                RedisService.DeleteCache("personalList");
+                //  Gửi thông báo realtime
+                WebSocketServerManager.Broadcast("new-personal");
+
+                Task.Run(async () => await ClearCacheAsync());
+
+
                 return Json(new { success = true, message = $"Tao thanh cong personal" });
             }
             catch (Exception ex)
             {
+                Console.WriteLine("LOI SERVER: " + ex.ToString());
                 var inner = ex.InnerException?.Message ?? ex.Message;
                 return Json(new { success = false, error = inner });
             }
