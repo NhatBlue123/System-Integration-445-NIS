@@ -278,6 +278,44 @@ namespace HRWebApp.Controllers
                 return Json(new { success = false, error = inner });
             }
         }
+
+        // POST: Personals/clearCache
+        public ActionResult clearCache()
+        {
+            // Xóa cache
+            RedisService.DeleteCache("personalList");
+            //  Gửi thông báo realtime
+            WebSocketServerManager.Broadcast("new-personal");
+          //  Task.Run(async () => await ClearCacheAsync());
+            return Json(new { success = true, message = "Đã xóa cache" });
+        }
+
+        [HttpPost]
+        public ActionResult updatePersonal(Personal personal)
+        {
+            try
+            {
+                db.Entry(personal).State = EntityState.Modified;
+                db.SaveChanges();
+
+                // Xóa cache
+                RedisService.DeleteCache("personalList");
+                //  Gửi thông báo realtime
+                WebSocketServerManager.Broadcast("new-personal");
+
+                Task.Run(async () => await ClearCacheAsync());
+
+                return Json(personal); // hoặc return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return new HttpStatusCodeResult(500, ex.Message);
+            }
+        }
+
+
+
+
         // POST: Personals/CreateAPersonalById?id = 122
         [HttpPost]
         public ActionResult CreateAPersonalById(int id)

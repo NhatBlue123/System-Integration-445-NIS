@@ -131,7 +131,31 @@ public class EmployeeController {
     @RequestMapping(value = "/employee/updateEmployee", method = RequestMethod.POST)
     public String updateEmployee(@ModelAttribute("employee") Employee employee) {
         try {
-            System.out.println("called updated");
+            System.out.println("called updated8888");
+            System.out.println("last and firts name: " + employee.getLastName() + " " + employee.getFullName());
+            edao.update(employee);
+            clearEmployeeCache();
+            try {
+                RestTemplate rest = new RestTemplate();
+                String cacheUrl = "http://localhost:8888/springapp_show/admin/EPerson/clearCache";
+                rest.getForObject(cacheUrl, String.class);
+                System.out.println("Da xoa cache");
+
+            } catch (Exception e) {
+                System.err.println("Loi khi xoa cache" + e.getMessage());
+            }
+            // updateRealTimeData();
+            //socketE.bcMergeData(list);
+        } catch (Exception e) {
+            return "admin/error";
+        }
+        return "redirect:/admin/employee/list.html";
+    }
+    @RequestMapping(value = "/employee/updateEmployeeEPerson", method = RequestMethod.POST)
+    public String updateEmployeeEPerson(@RequestBody Employee employee) {
+        try {
+            System.out.println("called updated8888");
+            System.out.println("last and firts name: " + employee.getLastName() + " " + employee.getFullName());
             edao.update(employee);
             clearEmployeeCache();
             try {

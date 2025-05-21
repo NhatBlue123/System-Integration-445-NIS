@@ -62,6 +62,10 @@
                 <!-- Employee Section -->
                 <div class="form-section">
                     <h2>EPerson Info</h2>
+                    
+                    <label>Employee ID(Employee):</label>
+                    <form:input path="idEmployee" readonly="true" />
+                    
                     <label>Employee Number:</label>
                     <form:input path="employeeNumber" />
 
@@ -94,6 +98,9 @@
                 <!-- Personal Section -->
                 <div class="form-section">
                   
+                     <label>Employee ID(Personal):</label>
+                    <form:input path="Employee_ID" readonly="true"/>
+                    
                     <label>First Name:</label>
                     <form:input path="First_Name" />
 

@@ -2,6 +2,7 @@ package springapp.web.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -35,10 +36,18 @@ public class EPersonController {
 
     private static final String EMPLOYEE_API_URL = "http://localhost:8080/springapp/admin/employee/getAllEmployee";
     private static final String PERSONAL_API_URL = "http://localhost:19335/Personals/getAllPersonal";
+
     private static final String CREATE_EMPLOYEE_API_URL = "http://localhost:8080/springapp/admin/employee/generateAEmployeeByEPerson";
     private static final String CREATE_PERSONAL_API_URL = "http://localhost:19335/Personals/CreateAPersonalByEPerson";
+
     private static final String GET_EMPLOYEE_BY_ID_API_URL = "http://localhost:8080/springapp/admin/employee/getEmployeeById";
     private static final String GET_PERSONAL_BY_ID_API_URL = "http://localhost:19335/Personals/GetPersonalById";
+
+    private static final String CLEAR_CACHE_EMPLOYEE_API_URL = "http://localhost:8080/springapp/admin/employee/clearCache";
+    private static final String CLEAR_CACHE_PERSONAL_API_URL = "http://localhost:19335/Personals/clearCache";
+
+    private static final String UPDATE_EMPLOYEE_API_URL = "http://localhost:8080/springapp/admin/employee/updateEmployeeEPerson";
+    private static final String UPDATE_PERSONAL_API_URL = "http://localhost:19335/Personals/updatePersonal";
 
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -163,6 +172,7 @@ public class EPersonController {
             System.out.println("called edit");
             EPerson e = new EPerson();
             //employww
+            e.setIdEmployee(em.getIdEmployee());
             e.setEmployeeNumber(em.getEmployeeNumber());
             e.setFirstName(em.getFirstName());
             e.setLastName(em.getLastName());
@@ -173,6 +183,7 @@ public class EPersonController {
             e.setPaidLastYear(em.getPaidLastYear());
             e.setPaidToDate(em.getPaidToDate());
             //personal
+            e.setEmployee_ID(pe.getEmployee_ID());
             e.setFirst_Name(pe.getFirst_Name());
             e.setLast_Name(pe.getLast_Name());
             e.setMiddle_Initial(pe.getMiddle_Initial());
@@ -234,11 +245,76 @@ public class EPersonController {
         }
     }
 
+    public void clearCacheEmployee() {
+        try {
+            RestTemplate rest = new RestTemplate();
+            rest.getForObject(CLEAR_CACHE_EMPLOYEE_API_URL, String.class);
+            System.out.println("Da xoa cache employee");
+
+        } catch (Exception e) {
+            System.err.println("Loi khi xoa cache" + e.getMessage());
+        }
+    }
+
+    public void clearCachePersonal() {
+        try {
+            RestTemplate rest = new RestTemplate();
+            rest.postForObject(CLEAR_CACHE_PERSONAL_API_URL, null, String.class);
+            System.out.println("Da xoa cache persoal");
+
+        } catch (Exception e) {
+            System.err.println("Loi khi xoa cache" + e.getMessage());
+        }
+    }
+
     @RequestMapping(value = "/EPerson/updateEPerson", method = RequestMethod.POST)
     public String updateEmployee(@ModelAttribute("eperson") EPerson eperson) {
         try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            ObjectMapper ob = new ObjectMapper();
             System.out.println("called updated");
+            System.out.println("em id:" + eperson.getIdEmployee() + " fname" + eperson.getFirstName() + "lname" + eperson.getLastName());
+            System.out.println("per name" + eperson.getFirstName());
+            Employee em = new Employee(eperson.getEmployeeNumber(), eperson.getIdEmployee(), eperson.getLastName(), eperson.getFirstName(), eperson.getSsn(), eperson.getPayRate(), eperson.getPayRatesId(), eperson.getVacationDays(), eperson.getPaidLastYear(), eperson.getPaidToDate());
+            Personal pe = new Personal(eperson.getEmployee_ID(), eperson.getFirst_Name(), eperson.getLast_Name(), eperson.getBenefit_Plans(), eperson.getMiddle_Initial(), eperson.getAddress1(), eperson.getAddress2(), eperson.getCity(), eperson.getState(), eperson.getZip(), eperson.getEmail(), eperson.getPhone_Number(), eperson.getSocial_Security_Number(), eperson.getDrivers_License(), eperson.getMarital_Status(), eperson.isGender(), eperson.isShareholder_Status(), eperson.getEthnicity());
 
+            Map<String, Object> map = ob.convertValue(pe, new TypeReference<Map<String, Object>>() {
+            });
+            map.remove("state");
+            map.remove("email");
+            map.remove("city");
+            map.remove("zip");
+            map.remove("gender");
+            map.remove("address1");
+            map.remove("full_Name");
+            map.remove("address2");
+            map.remove("last_Name");
+            map.remove("employee_ID");
+            map.remove("first_Name");
+            map.remove("ethnicity");
+            map.remove("Benefit_Plans");
+            map.remove("phone_Number");
+            map.remove("drivers_License");
+            map.remove("shareholder_Status");
+            map.remove("marital_Status");
+            map.remove("benefit_Plans");
+            map.remove("social_Security_Number");
+            map.remove("middle_Initial");
+
+            String jsonbody = ob.writeValueAsString(map);
+            String jsonebody = ob.writeValueAsString(em);
+
+            HttpEntity<String> entity = new HttpEntity<>(jsonbody, headers);
+            HttpEntity<String> entityE = new HttpEntity<>(jsonebody, headers);
+
+            System.out.println("test cuoi e" + entityE);
+            RestTemplate temp = new RestTemplate();
+            temp.postForObject(UPDATE_EMPLOYEE_API_URL, entityE, String.class);
+            temp.postForObject(UPDATE_PERSONAL_API_URL, entity, String.class);
+
+            clearCacheEmployee();
+            clearCachePersonal();
             // updateRealTimeData();
             //socketE.bcMergeData(list);
         } catch (Exception e) {
