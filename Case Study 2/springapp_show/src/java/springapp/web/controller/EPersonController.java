@@ -49,6 +49,9 @@ public class EPersonController {
     private static final String UPDATE_EMPLOYEE_API_URL = "http://localhost:8080/springapp/admin/employee/updateEmployeeEPerson";
     private static final String UPDATE_PERSONAL_API_URL = "http://localhost:19335/Personals/updatePersonal";
 
+    private static final String DELETE_EMPLOYEE_API_URL = "http://localhost:8080/springapp/admin/employee/deleteEmployeeById";
+    private static final String DELETE_PERSONAL_API_URL = "http://localhost:19335/Personals/DeleteByEmployeeId";
+
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
@@ -339,7 +342,9 @@ public class EPersonController {
     @RequestMapping(value = {"EPerson/deleteEPersonById/{id}"}, method = RequestMethod.DELETE)
     public ResponseEntity<String> deleteEmployeeById(@PathVariable("id") int id) {
         try {
-
+            RestTemplate temp = new RestTemplate();
+            temp.delete(DELETE_EMPLOYEE_API_URL,id);
+            temp.delete(DELETE_PERSONAL_API_URL,id);
             return new ResponseEntity<>("Đã xoá EPerson với id = " + id + "", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Lỗi khi xoá employee", HttpStatus.INTERNAL_SERVER_ERROR);
