@@ -33,9 +33,14 @@ import springapp.web.dao.EmployeeDao;
 import springapp.web.model.EPerson;
 import springapp.web.model.Employee;
 import config.RedisConfig;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.ResponseBody;
+import springapp.web.model.Personal;
 
 /**
  *
@@ -50,6 +55,7 @@ public class EmployeeController {
     EmployeeDao edao = new EmployeeDao();
     Jedis jedis = RedisConfig.getJedis();
     private final ObjectMapper objectMapper = new ObjectMapper();
+
     @Autowired
     private EmployeeSocketController socketE;
 
@@ -151,6 +157,7 @@ public class EmployeeController {
         }
         return "redirect:/admin/employee/list.html";
     }
+
     @RequestMapping(value = "/employee/updateEmployeeEPerson", method = RequestMethod.POST)
     public String updateEmployeeEPerson(@RequestBody Employee employee) {
         try {
@@ -183,14 +190,61 @@ public class EmployeeController {
 
     }
 
+    private static final String CREATE_PERSONAL_API_URL = "http://localhost:19335/Personals/generateAPersonalFrompEmployee";
+
+    public void createPersonalFromEmployee(Personal per) {
+        try {
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            ObjectMapper ob = new ObjectMapper();
+            Map<String, Object> map = ob.convertValue(per, new TypeReference<Map<String, Object>>() {
+            });
+            map.remove("state");
+            map.remove("email");
+            map.remove("city");
+            map.remove("zip");
+            map.remove("gender");
+            map.remove("address1");
+            map.remove("full_Name");
+            map.remove("address2");
+            map.remove("last_Name");
+            map.remove("employee_ID");
+            map.remove("first_Name");
+            map.remove("ethnicity");
+            map.remove("Benefit_Plans");
+            map.remove("phone_Number");
+            map.remove("drivers_License");
+            map.remove("shareholder_Status");
+            map.remove("marital_Status");
+            map.remove("benefit_Plans");
+            map.remove("social_Security_Number");
+            map.remove("middle_Initial");
+            String jsonbody = ob.writeValueAsString(map);
+            HttpEntity<String> entity = new HttpEntity<>(jsonbody, headers);
+            System.out.println("ENTITY cuoi: " + entity);
+            RestTemplate temp = new RestTemplate();
+            temp.postForObject(CREATE_PERSONAL_API_URL, entity, String.class);
+            System.out.println("Personal da duoc gui qua hr");
+        } catch (Exception e) {
+            System.out.println("Loi: " + e.getMessage());
+        }
+
+    }
+
     //api them 1 employee của phần trang add Employe của spring
     @RequestMapping(value = "/employee/createEmployee", method = RequestMethod.POST)
     public String createEPerson(@ModelAttribute("employee") Employee employee) {
         System.out.println("Called from employee");
+        Personal per = new Personal();
         try {
             List<Employee> list = new ArrayList<>();
             list.add(employee);
             edao.insertBatch(list);
+            per.setEmployee_ID(employee.getIdEmployee());
+            per.setFirst_Name(employee.getFirstName());
+            per.setLast_Name(employee.getLastName());
+            createPersonalFromEmployee(per);
             clearEmployeeCache();
             try {
                 RestTemplate rest = new RestTemplate();
@@ -479,6 +533,45 @@ public class EmployeeController {
             e.printStackTrace();
             return new ResponseEntity<>("Lỗi khi tạo employee or trùng id", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    // nhan queue tu c#
+    @RequestMapping(value = "/employee/generateAEmployeeFrompPersonal", method = RequestMethod.POST)
+    public ResponseEntity<String> generateAEmployeeFrompPersonal(@RequestBody Employee employee) {
+        try {
+
+            Faker myF = new Faker(new Locale("en"));
+            int currentCount = edao.getEmployeeCount();
+            int startIndex = currentCount + 1;
+
+            //if(employee.getFirstName() == "" || employee.getLastName() == "" )
+            Employee e = new Employee();
+            e.setEmployeeNumber(1000 + employee.getIdEmployee());
+            e.setIdEmployee(employee.getIdEmployee());
+            e.setFirstName(employee.getFirstName());
+            e.setLastName(employee.getLastName());
+            e.setSsn(100000000L + startIndex);
+
+            edao.insert(e);
+            clearEmployeeCache();
+
+            try {
+                RestTemplate rest = new RestTemplate();
+                String cacheUrl = "http://localhost:8888/springapp_show/admin/EPerson/clearCache";
+                rest.getForObject(cacheUrl, String.class);
+                System.out.println("Da xoa cache");
+
+            } catch (Exception ee) {
+                System.err.println("Loi khi xoa cache" + ee.getMessage());
+            }
+            return new ResponseEntity<>("Tạo 1 employee thành công với ID = ", HttpStatus.OK);
+
+        } catch (Exception ee) {
+            ee.printStackTrace();
+            return new ResponseEntity<>("Lỗi khi tạo employee or trùng id", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        //  return new ResponseEntity<>("Tạo  " + "employee thành công", HttpStatus.OK);
     }
 
     @RequestMapping(value = "/employee/generate/{limit}", method = RequestMethod.POST)

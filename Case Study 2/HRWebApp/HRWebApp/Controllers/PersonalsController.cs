@@ -15,6 +15,8 @@ using HRWebApp.Models;
 using System.Web.Mvc;
 using Microsoft.AspNet.SignalR;
 using System.Diagnostics;
+using Newtonsoft.Json;
+using System.Text;
 //using System.Web.Mvc;
 
 
@@ -229,6 +231,32 @@ namespace HRWebApp.Controllers
                 return Json(new { success = false, error = inner });
             }
         }
+
+        [HttpPost]
+        public ActionResult generateAPersonalFrompEmployee(Personal personal)
+        {
+            var context = new HRDB();
+
+            Personal per = new Personal();
+            per.Employee_ID = personal.Employee_ID;
+            per.Last_Name = personal.Last_Name;
+            per.First_Name = personal.First_Name;
+
+            context.Personals.Add(per);
+            context.Configuration.AutoDetectChangesEnabled = true;
+            context.SaveChanges();
+
+            // Xóa cache
+            RedisService.DeleteCache("personalList");
+            //  Gửi thông báo realtime
+            WebSocketServerManager.Broadcast("new-personal");
+
+            Task.Run(async () => await ClearCacheAsync());
+
+            return Json(new { success = true, message = $"Tao thanh cong personal" });
+            
+        }
+
         // POST: Personals/CreateAPersonalByEPerson
         [HttpPost]
         public ActionResult CreateAPersonalByEPerson(EPerson eperson)
@@ -311,6 +339,54 @@ namespace HRWebApp.Controllers
             {
                 return new HttpStatusCodeResult(500, ex.Message);
             }
+        }
+
+        public ActionResult generateAEmployeeFromPersonal(Personal per)
+        {
+            
+
+            // Gửi qua Spring App để tạo Employee tương ứng
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    var employeeObj = new
+                    {
+                        idEmployee = per.Employee_ID,
+                        firstName = per.First_Name,
+                        lastName = per.Last_Name
+                    };
+
+                    string apiUrl = "http://localhost:8080/springapp/admin/employee/generateAEmployeeFrompPersonal";
+                    var json = JsonConvert.SerializeObject(employeeObj);
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                    var result = client.PostAsync(apiUrl, content).Result;
+
+                    if (result.IsSuccessStatusCode)
+                    {
+                        Console.WriteLine("Đã gửi Employee sang SpringApp thành công.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Lỗi khi gửi Employee sang SpringApp: " + result.StatusCode);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Exception khi gửi Employee" });
+
+              //  Console.WriteLine("Exception khi gửi Employee: " + ex.Message);
+            }
+
+            // Xóa cache
+            RedisService.DeleteCache("personalList");
+            WebSocketServerManager.Broadcast("new-personal");
+
+            Task.Run(async () => await ClearCacheAsync());
+
+            return Json(new { success = true, message = $"Tao thanh cong personal" });
         }
 
 
@@ -573,6 +649,8 @@ public JsonResult DeleteAllPersonals()
                 RedisService.DeleteCache("personalList");
                 // Gửi thông báo realtime
                 WebSocketServerManager.Broadcast("new-personal");
+               // Task.Run(async () => await GenerateAEmployeeFromPersonal(personal));
+
 
                 Task.Run(async () => await ClearCacheAsync());
 

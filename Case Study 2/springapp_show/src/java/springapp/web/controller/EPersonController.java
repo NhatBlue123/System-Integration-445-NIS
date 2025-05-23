@@ -132,10 +132,12 @@ public class EPersonController {
                         merged.setBenefit_Plans(per.getBenefit_Plans());
                         merged.setEthnicity(per.getEthnicity());
                     }
-                    if (emp != null && per != null) {
-                        merged.setFirstName(emp.getFirstName() + "(" + per.getFirst_Name() + ")");
-                        merged.setLastName(emp.getLastName() + "(" + per.getLast_Name() + ")");
-
+                    if (emp == null) {
+                        merged.setFirstName(per.getFirst_Name());
+                        merged.setLastName(per.getLast_Name());
+                    } else {
+                        merged.setFirstName(emp.getFirstName());
+                        merged.setLastName(emp.getLastName());
                     }
 
                     mergedList.add(merged);
@@ -251,7 +253,7 @@ public class EPersonController {
     public void clearCacheEmployee() {
         try {
             RestTemplate rest = new RestTemplate();
-            rest.getForObject(CLEAR_CACHE_EMPLOYEE_API_URL, String.class);
+            rest.getForObject(CLEAR_CACHE_EMPLOYEE_API_URL, null, String.class);
             System.out.println("Da xoa cache employee");
 
         } catch (Exception e) {
@@ -269,6 +271,7 @@ public class EPersonController {
             System.err.println("Loi khi xoa cache" + e.getMessage());
         }
     }
+
 
     @RequestMapping(value = "/EPerson/updateEPerson", method = RequestMethod.POST)
     public String updateEmployee(@ModelAttribute("eperson") EPerson eperson) {
@@ -343,8 +346,8 @@ public class EPersonController {
     public ResponseEntity<String> deleteEmployeeById(@PathVariable("id") int id) {
         try {
             RestTemplate temp = new RestTemplate();
-            temp.delete(DELETE_EMPLOYEE_API_URL,id);
-            temp.delete(DELETE_PERSONAL_API_URL,id);
+            temp.delete(DELETE_EMPLOYEE_API_URL, id);
+            temp.delete(DELETE_PERSONAL_API_URL, id);
             return new ResponseEntity<>("Đã xoá EPerson với id = " + id + "", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Lỗi khi xoá employee", HttpStatus.INTERNAL_SERVER_ERROR);

@@ -371,6 +371,7 @@
     <Compile Include="Hubs\PersonalHub.cs" />
     <Compile Include="Models\Benefit_Plans.cs" />
     <Compile Include="Models\Emergency_Contacts.cs" />
+    <Compile Include="Models\Employee.cs" />
     <Compile Include="Models\Employment.cs" />
     <Compile Include="Models\EPerson.cs" />
     <Compile Include="Models\HRDB.cs" />
