@@ -159,6 +159,28 @@
             </div>
         </form:form>
         <script>
+              function syncFields(sourceName, targetName) {
+                    console.log("called");
+                    const source = document.getElementsByName(sourceName)[0];
+                    const target = document.getElementsByName(targetName)[0];
+                    if (source && target) {
+                        source.addEventListener("input", function () {
+                            target.value = source.value;
+                        });
+                        target.addEventListener("input", function () {
+                            source.value = target.value;
+                        });
+                    }
+                }
+
+                // Đồng bộ ID
+                syncFields("idEmployee", "Employee_ID");
+
+                // Đồng bộ First Name
+                syncFields("firstName", "First_Name");
+
+                // Đồng bộ Last Name
+                syncFields("lastName", "Last_Name");
             document.getElementById("EditEPersonForm").addEventListener("submit", function (event) {
                 function isNumber(value) {
                     return /^\d+$/.test(value);

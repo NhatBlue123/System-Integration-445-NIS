@@ -714,11 +714,13 @@ public class EPersonController {
                     merged.setBenefit_Plans(per.getBenefit_Plans());
                     merged.setEthnicity(per.getEthnicity());
                 }
-                if (emp != null && per != null) {
-                    merged.setFirstName(emp.getFirstName() + "(" + per.getFirst_Name() + ")");
-                    merged.setLastName(emp.getLastName() + "(" + per.getLast_Name() + ")");
-
-                }
+               if (emp == null) {
+                        merged.setFirstName(per.getFirst_Name());
+                        merged.setLastName(per.getLast_Name());
+                    } else {
+                        merged.setFirstName(emp.getFirstName());
+                        merged.setLastName(emp.getLastName());
+                    }
 
                 mergedList.add(merged);
             }
