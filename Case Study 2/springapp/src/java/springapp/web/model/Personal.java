@@ -39,17 +39,6 @@ public class Personal {
 
     public int Employee_ID;
 
-    public int getEmployeeNumber() {
-        return employeeNumber;
-    }
-
-    public void setEmployeeNumber(int employeeNumber) {
-        this.employeeNumber = employeeNumber;
-    }
-
-    private int employeeNumber;
-
-    
     public String First_Name;
 
     public String Last_Name;

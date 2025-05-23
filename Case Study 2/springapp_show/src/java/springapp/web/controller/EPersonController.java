@@ -13,8 +13,11 @@ import javax.servlet.http.HttpServletRequest;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -272,7 +275,6 @@ public class EPersonController {
         }
     }
 
-
     @RequestMapping(value = "/EPerson/updateEPerson", method = RequestMethod.POST)
     public String updateEmployee(@ModelAttribute("eperson") EPerson eperson) {
         try {
@@ -343,14 +345,29 @@ public class EPersonController {
     }
 
     @RequestMapping(value = {"EPerson/deleteEPersonById/{id}"}, method = RequestMethod.DELETE)
-    public ResponseEntity<String> deleteEmployeeById(@PathVariable("id") int id) {
+    public ResponseEntity<String> deleteEPersonById(@PathVariable("id") int id) {
+        System.out.println("Called from eperson ok dese id: " + id);
         try {
             RestTemplate temp = new RestTemplate();
-            temp.delete(DELETE_EMPLOYEE_API_URL, id);
-            temp.delete(DELETE_PERSONAL_API_URL, id);
-            return new ResponseEntity<>("Đã xoá EPerson với id = " + id + "", HttpStatus.OK);
+
+            // Gọi API xóa employee (Spring App)
+            temp.delete(DELETE_EMPLOYEE_API_URL + "/" + id);
+
+            // Gọi API xóa personal (HR App dùng POST)
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+            MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+            map.add("id", String.valueOf(id));
+
+            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
+            temp.postForEntity(DELETE_PERSONAL_API_URL, request, String.class);
+
+            return new ResponseEntity<>("Đã xoá EPerson với id = " + id, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>("Lỗi khi xoá employee", HttpStatus.INTERNAL_SERVER_ERROR);
+            System.out.println("Lỗi khi xoá eperson: " + e.getMessage());
+            e.printStackTrace();
+            return new ResponseEntity<>("Lỗi khi xoá eperson", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -714,13 +731,13 @@ public class EPersonController {
                     merged.setBenefit_Plans(per.getBenefit_Plans());
                     merged.setEthnicity(per.getEthnicity());
                 }
-               if (emp == null) {
-                        merged.setFirstName(per.getFirst_Name());
-                        merged.setLastName(per.getLast_Name());
-                    } else {
-                        merged.setFirstName(emp.getFirstName());
-                        merged.setLastName(emp.getLastName());
-                    }
+                if (emp == null) {
+                    merged.setFirstName(per.getFirst_Name());
+                    merged.setLastName(per.getLast_Name());
+                } else {
+                    merged.setFirstName(emp.getFirstName());
+                    merged.setLastName(emp.getLastName());
+                }
 
                 mergedList.add(merged);
             }

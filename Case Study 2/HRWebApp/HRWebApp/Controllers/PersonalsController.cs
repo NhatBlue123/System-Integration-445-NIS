@@ -592,19 +592,19 @@ public JsonResult DeleteAllPersonals()
 {
     try
     {
-        var personal = db.Personals.FirstOrDefault(p => p.Employee_ID == id);
-        if (personal == null)
-        {
-            return Json(new { success = false, message = $"Không tìm thấy Personal với ID = {id}" }, JsonRequestBehavior.AllowGet);
-        }
-
-        db.Personals.Remove(personal);
-        db.SaveChanges();
-
+                Personal personal = db.Personals.Find(id);
+                db.Personals.Remove(personal);
+                db.SaveChanges();
+                if(personal == null)
+                {
+                    return Json(new { success = false, message = "Personal not found" }, JsonRequestBehavior.AllowGet);
+                }
                 // Xóa cache
                 RedisService.DeleteCache("personalList");
                 // Gửi thông báo realtime
                 WebSocketServerManager.Broadcast("new-personal");
+                Task.Run(async () => await ClearCacheAsync());
+
 
                 return Json(new { success = true, message = $"Đã xoá Personal với ID = {id}" }, JsonRequestBehavior.AllowGet);
     }

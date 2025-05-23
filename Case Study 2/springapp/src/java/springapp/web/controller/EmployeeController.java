@@ -738,6 +738,7 @@ public class EmployeeController {
 
     @RequestMapping(value = {"employee/deleteEmployeeById/{id}"}, method = RequestMethod.DELETE)
     public ResponseEntity<String> deleteEmployeeById(@PathVariable("id") int id) {
+       System.out.println("Called from eperson ok desu");
         try {
 
             edao.deleteById(id);
