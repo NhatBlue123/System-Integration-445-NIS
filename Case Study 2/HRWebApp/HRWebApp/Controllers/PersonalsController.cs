@@ -14,6 +14,9 @@ using System.Threading.Tasks;
 using HRWebApp.Models;
 using System.Web.Mvc;
 using Microsoft.AspNet.SignalR;
+using System.Diagnostics;
+using Newtonsoft.Json;
+using System.Text;
 //using System.Web.Mvc;
 
 
@@ -114,6 +117,41 @@ namespace HRWebApp.Controllers
 
             return Json(personals, JsonRequestBehavior.AllowGet);
         }
+        public JsonResult GetPersonalById(int id)
+        {
+            var personal = db.Personals
+                .Where(p => p.Employee_ID == id)
+                .Select(p => new {
+                    p.Employee_ID,
+                    p.First_Name,
+                    p.Last_Name,
+                    Full_Name = p.First_Name + " " + p.Last_Name,
+                    p.Middle_Initial,
+                    p.Address1,
+                    p.Address2,
+                    p.City,
+                    p.State,
+                    p.Zip,
+                    p.Email,
+                    p.Phone_Number,
+                    p.Social_Security_Number,
+                    p.Drivers_License,
+                    p.Marital_Status,
+                    p.Gender,
+                    p.Shareholder_Status,
+                    p.Benefit_Plans,
+                    p.Ethnicity
+                })
+                .FirstOrDefault();
+
+            if (personal == null)
+            {
+                return Json(new { success = false, message = "Personal not found" }, JsonRequestBehavior.AllowGet);
+            }
+
+            return Json( personal, JsonRequestBehavior.AllowGet);
+        }
+
 
 
         // GET: Personals/Details/5
@@ -168,11 +206,12 @@ namespace HRWebApp.Controllers
                 // Generate a single Personal object
                 var personal = faker.Generate(1).FirstOrDefault();
                 context.Personals.Add(personal);
+
                 context.SaveChanges();
                 context.Configuration.AutoDetectChangesEnabled = true;
                 name = personal.First_Name + " " + personal.Last_Name;
                 decimal id = personal.Employee_ID;
-
+                generateAEmployeeFromPersonal(personal);
                 // Xóa cache
                 RedisService.DeleteCache("personalList");
 
@@ -193,21 +232,216 @@ namespace HRWebApp.Controllers
                 return Json(new { success = false, error = inner });
             }
         }
+
+        [HttpPost]
+        public ActionResult generateAPersonalFrompEmployee(Personal personal)
+        {
+            var context = new HRDB();
+
+            Personal per = new Personal();
+            per.Employee_ID = personal.Employee_ID;
+            per.Last_Name = personal.Last_Name;
+            per.First_Name = personal.First_Name;
+
+            context.Personals.Add(per);
+            context.Configuration.AutoDetectChangesEnabled = true;
+            context.SaveChanges();
+
+            // Xóa cache
+            RedisService.DeleteCache("personalList");
+            //  Gửi thông báo realtime
+            WebSocketServerManager.Broadcast("new-personal");
+
+            Task.Run(async () => await ClearCacheAsync());
+
+            return Json(new { success = true, message = $"Tao thanh cong personal" });
+            
+        }
+
         // POST: Personals/CreateAPersonalByEPerson
         [HttpPost]
         public ActionResult CreateAPersonalByEPerson(EPerson eperson)
         {
+            Console.WriteLine("Hello call from eperson");
             try
             {
+                Personal per = new Personal();
                 var context = new HRDB();
+                per.Employee_ID = eperson.Employee_ID;
+                per.First_Name = eperson.First_Name;
+                per.Last_Name = eperson.Last_Name;
+                per.Address1 = eperson.Address1;
+                per.Address2 = eperson.Address2;
+                per.City = eperson.City;
+                per.State = eperson.State;
+                per.Zip = eperson.Zip;
+                per.Email = eperson.Email;
+                per.Phone_Number = eperson.Phone_Number;
+                per.Social_Security_Number  = eperson.Social_Security_Number;
+                per.Drivers_License = eperson.Drivers_License;
+                per.Marital_Status = eperson.Marital_Status; 
+                per.Gender = eperson.Gender;
+                per.Shareholder_Status = eperson.Shareholder_Status;
+              
+                per.Ethnicity = eperson.Ethnicity;
+              
+                
+                context.Personals.Add(per);
+                context.Configuration.AutoDetectChangesEnabled = true;
+                context.SaveChanges();
+
+                // Xóa cache
+                RedisService.DeleteCache("personalList");
+                //  Gửi thông báo realtime
+                WebSocketServerManager.Broadcast("new-personal");
+
+                Task.Run(async () => await ClearCacheAsync());
+
+
                 return Json(new { success = true, message = $"Tao thanh cong personal" });
             }
             catch (Exception ex)
             {
+                Console.WriteLine("LOI SERVER: " + ex.ToString());
                 var inner = ex.InnerException?.Message ?? ex.Message;
                 return Json(new { success = false, error = inner });
             }
         }
+
+        // POST: Personals/clearCache
+        public ActionResult clearCache()
+        {
+            // Xóa cache
+            RedisService.DeleteCache("personalList");
+            //  Gửi thông báo realtime
+            WebSocketServerManager.Broadcast("new-personal");
+          //  Task.Run(async () => await ClearCacheAsync());
+            return Json(new { success = true, message = "Đã xóa cache" });
+        }
+
+        [HttpPost]
+        public ActionResult updatePersonal(Personal personal)
+        {
+            try
+            {
+                db.Entry(personal).State = EntityState.Modified;
+                db.SaveChanges();
+
+                // Xóa cache
+                RedisService.DeleteCache("personalList");
+                //  Gửi thông báo realtime
+                WebSocketServerManager.Broadcast("new-personal");
+
+                Task.Run(async () => await ClearCacheAsync());
+
+                return Json(personal); // hoặc return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return new HttpStatusCodeResult(500, ex.Message);
+            }
+        }
+
+        public ActionResult generateAEmployeeFromPersonal(Personal per)
+        {
+            
+
+            // Gửi qua Spring App để tạo Employee tương ứng
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    var employeeObj = new
+                    {
+                        idEmployee = per.Employee_ID,
+                        firstName = per.First_Name,
+                        lastName = per.Last_Name
+                    };
+
+                    string apiUrl = "http://localhost:8080/springapp/admin/employee/generateAEmployeeFrompPersonal";
+                    var json = JsonConvert.SerializeObject(employeeObj);
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                    var result = client.PostAsync(apiUrl, content).Result;
+
+                    if (result.IsSuccessStatusCode)
+                    {
+                        Console.WriteLine("Đã gửi Employee sang SpringApp thành công.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Lỗi khi gửi Employee sang SpringApp: " + result.StatusCode);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Exception khi gửi Employee" });
+
+              //  Console.WriteLine("Exception khi gửi Employee: " + ex.Message);
+            }
+
+            // Xóa cache
+            RedisService.DeleteCache("personalList");
+            WebSocketServerManager.Broadcast("new-personal");
+
+            Task.Run(async () => await ClearCacheAsync());
+
+            return Json(new { success = true, message = $"Tao thanh cong personal" });
+        }
+        public ActionResult UpdateEmployeeFromPersonal(Personal per)
+        {
+            Employee e = new Employee();
+
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    Decimal idE = per.Employee_ID;
+                    String lastName = per.Last_Name;
+                    String firstName = per.First_Name;
+                    e.idEmployee = idE;
+                    e.firstName = firstName;
+                    e.lastName = lastName;
+                    //var employeeObj = new
+                    //{
+                    //    idEmployee = per.Employee_ID,
+                    //    firstName = per.First_Name,
+                    //    lastName = per.Last_Name
+                    //};  
+
+                    string apiUrl = "http://localhost:8080/springapp/admin/employee/updateEmployeeFromPersonal";
+                    var json = JsonConvert.SerializeObject(e);
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                    var result = client.PostAsync(apiUrl, content).Result;
+
+                    if (result.IsSuccessStatusCode)
+                    {
+                        return Json(e);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Lỗi khi cập nhật Employee sang SpringApp: " + result.StatusCode);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Exception khi gửi Employee: {ex.Message}" });
+            }
+
+            // Xóa cache và đẩy realtime nếu cần
+            RedisService.DeleteCache("personalList");
+            WebSocketServerManager.Broadcast("new-personal");
+            Task.Run(async () => await ClearCacheAsync());
+
+            return Json(e);
+        }
+
+
+
+
         // POST: Personals/CreateAPersonalById?id = 122
         [HttpPost]
         public ActionResult CreateAPersonalById(int id)
@@ -265,56 +499,7 @@ namespace HRWebApp.Controllers
         }
 
 
-        // POST: Personals/CreateAPersonalWithFirtsNameAndLastName/firstName=John&lastName=Doe //something
-        [HttpPost]
-        public ActionResult CreateAPersonalWithFirtsNameAndLastName(String firstName, String lastName)
-        {
-            try
-            {
-                var context = new HRDB();
-                int currentCount = context.Personals.Count();   // Số dòng hiện tại
-                int startIndex = currentCount + 1;
-                String name = "";
-
-                var faker = new Bogus.Faker<Personal>()
-                    .RuleFor(p => p.Employee_ID, (f, p) => startIndex + f.IndexFaker)
-
-                    .RuleFor(p => p.First_Name, firstName)
-                    .RuleFor(p => p.Last_Name, lastName)
-                    .RuleFor(p => p.Middle_Initial, f => f.Random.Char('A', 'Z').ToString())
-                    .RuleFor(p => p.Address1, f => f.Address.StreetAddress())
-                    .RuleFor(p => p.Address2, f => f.Address.SecondaryAddress())
-                    .RuleFor(p => p.City, f => f.Address.City())
-                    .RuleFor(p => p.State, f => f.Address.StateAbbr())
-                    .RuleFor(p => p.Zip, f => Convert.ToDecimal(f.Random.Number(10000, 99999)))
-                    .RuleFor(p => p.Email, f => f.Internet.Email())
-                    .RuleFor(p => p.Phone_Number, f => f.Phone.PhoneNumber())
-                    .RuleFor(p => p.Social_Security_Number, f => f.Random.Replace("###-##-####"))
-                    .RuleFor(p => p.Drivers_License, f => f.Random.Replace("DL########"))
-                    .RuleFor(p => p.Marital_Status, f => f.PickRandom("Single", "Married", "Divorced"))
-                    .RuleFor(p => p.Gender, f => f.PickRandom(true, false))
-                    .RuleFor(p => p.Shareholder_Status, f => f.Random.Bool()) // NOT NULL
-                    .RuleFor(p => p.Benefit_Plans, f => (decimal?)null)
-                    .RuleFor(p => p.Ethnicity, f => f.PickRandom("Asian", "White", "Black", "Latino", "Other"));
-
-                context.Configuration.AutoDetectChangesEnabled = false;
-                // Generate a single Personal object
-                var personal = faker.Generate(1).FirstOrDefault();
-                context.Personals.Add(personal);
-                context.SaveChanges();
-                context.Configuration.AutoDetectChangesEnabled = true;
-                name = personal.First_Name + " " + personal.Last_Name;
-                decimal id = personal.Employee_ID;
-                return Json(new { success = false, message = $"Tao thanh cong personal voi userame = {name} va id = {id}" });
-
-            }
-            catch (Exception ex)
-            {
-                var inner = ex.InnerException?.Message ?? ex.Message;
-                return Json(new { success = false, error = inner });
-            }
-        }
-
+      
         [HttpPost]
 //[Route("Personals/DeleteAll")]
 public JsonResult DeleteAllPersonals()
@@ -407,19 +592,19 @@ public JsonResult DeleteAllPersonals()
 {
     try
     {
-        var personal = db.Personals.FirstOrDefault(p => p.Employee_ID == id);
-        if (personal == null)
-        {
-            return Json(new { success = false, message = $"Không tìm thấy Personal với ID = {id}" }, JsonRequestBehavior.AllowGet);
-        }
-
-        db.Personals.Remove(personal);
-        db.SaveChanges();
-
+                Personal personal = db.Personals.Find(id);
+                db.Personals.Remove(personal);
+                db.SaveChanges();
+                if(personal == null)
+                {
+                    return Json(new { success = false, message = "Personal not found" }, JsonRequestBehavior.AllowGet);
+                }
                 // Xóa cache
                 RedisService.DeleteCache("personalList");
                 // Gửi thông báo realtime
                 WebSocketServerManager.Broadcast("new-personal");
+                Task.Run(async () => await ClearCacheAsync());
+
 
                 return Json(new { success = true, message = $"Đã xoá Personal với ID = {id}" }, JsonRequestBehavior.AllowGet);
     }
@@ -439,6 +624,7 @@ public JsonResult DeleteAllPersonals()
             ViewBag.Benefit_Plans = new SelectList(db.Benefit_Plans, "Benefit_Plan_ID", "Plan_Name");
             ViewBag.Employee_ID = new SelectList(db.Emergency_Contacts, "Employee_ID", "Emergency_Contact_Name");
             ViewBag.Employee_ID = new SelectList(db.Employments, "Employee_ID", "Employment_Status");
+
             // xóa cache
             
             RedisService.DeleteCache("personalList");
@@ -465,6 +651,9 @@ public JsonResult DeleteAllPersonals()
                 RedisService.DeleteCache("personalList");
                 // Gửi thông báo realtime
                 WebSocketServerManager.Broadcast("new-personal");
+                generateAEmployeeFromPersonal(personal);
+                // Task.Run(async () => await GenerateAEmployeeFromPersonal(personal));
+
 
                 Task.Run(async () => await ClearCacheAsync());
 
@@ -513,8 +702,11 @@ public JsonResult DeleteAllPersonals()
             {
                 db.Entry(personal).State = EntityState.Modified;
                 db.SaveChanges();
+               UpdateEmployeeFromPersonal(personal);
                 return RedirectToAction("Index");
             }
+           // UpdateEmployeeFromPersonal(personal);
+
             ViewBag.Benefit_Plans = new SelectList(db.Benefit_Plans, "Benefit_Plan_ID", "Plan_Name", personal.Benefit_Plans);
             ViewBag.Employee_ID = new SelectList(db.Emergency_Contacts, "Employee_ID", "Emergency_Contact_Name", personal.Employee_ID);
             ViewBag.Employee_ID = new SelectList(db.Employments, "Employee_ID", "Employment_Status", personal.Employee_ID);

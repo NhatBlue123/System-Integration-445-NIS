@@ -2,6 +2,7 @@ package springapp.web.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -12,9 +13,13 @@ import javax.servlet.http.HttpServletRequest;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -34,8 +39,22 @@ public class EPersonController {
 
     private static final String EMPLOYEE_API_URL = "http://localhost:8080/springapp/admin/employee/getAllEmployee";
     private static final String PERSONAL_API_URL = "http://localhost:19335/Personals/getAllPersonal";
+
     private static final String CREATE_EMPLOYEE_API_URL = "http://localhost:8080/springapp/admin/employee/generateAEmployeeByEPerson";
     private static final String CREATE_PERSONAL_API_URL = "http://localhost:19335/Personals/CreateAPersonalByEPerson";
+
+    private static final String GET_EMPLOYEE_BY_ID_API_URL = "http://localhost:8080/springapp/admin/employee/getEmployeeById";
+    private static final String GET_PERSONAL_BY_ID_API_URL = "http://localhost:19335/Personals/GetPersonalById";
+
+    private static final String CLEAR_CACHE_EMPLOYEE_API_URL = "http://localhost:8080/springapp/admin/employee/clearCache";
+    private static final String CLEAR_CACHE_PERSONAL_API_URL = "http://localhost:19335/Personals/clearCache";
+
+    private static final String UPDATE_EMPLOYEE_API_URL = "http://localhost:8080/springapp/admin/employee/updateEmployeeEPerson";
+    private static final String UPDATE_PERSONAL_API_URL = "http://localhost:19335/Personals/updatePersonal";
+
+    private static final String DELETE_EMPLOYEE_API_URL = "http://localhost:8080/springapp/admin/employee/deleteEmployeeById";
+    private static final String DELETE_PERSONAL_API_URL = "http://localhost:19335/Personals/DeleteByEmployeeId";
+
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
@@ -116,10 +135,12 @@ public class EPersonController {
                         merged.setBenefit_Plans(per.getBenefit_Plans());
                         merged.setEthnicity(per.getEthnicity());
                     }
-                    if (emp != null && per != null) {
-                        merged.setFirstName(emp.getFirstName() + "(" + per.getFirst_Name() + ")");
-                        merged.setLastName(emp.getLastName() + "(" + per.getLast_Name() + ")");
-
+                    if (emp == null) {
+                        merged.setFirstName(per.getFirst_Name());
+                        merged.setLastName(per.getLast_Name());
+                    } else {
+                        merged.setFirstName(emp.getFirstName());
+                        merged.setLastName(emp.getLastName());
                     }
 
                     mergedList.add(merged);
@@ -148,6 +169,168 @@ public class EPersonController {
         return "admin/EPerson";
     }
 
+    @RequestMapping(value = {"/EPerson/editEPerson/{id}"}, method = RequestMethod.GET)
+    public String pageEditEPerson(@PathVariable("id") int id, ModelMap model) {
+        try {
+            Employee em = fetchEmployeesId(id);
+            Personal pe = fetchPersonalsId(id);
+//            System.out.println("employee: " + em.getFirstName() + "" + em.getLastName());
+//            System.out.println("personal: " + pe.getFirst_Name()+ "" + pe.getLast_Name());
+
+            System.out.println("called edit");
+            EPerson e = new EPerson();
+            //employww
+            e.setIdEmployee(em.getIdEmployee());
+            e.setEmployeeNumber(em.getEmployeeNumber());
+            e.setFirstName(em.getFirstName());
+            e.setLastName(em.getLastName());
+            e.setSsn(em.getSsn());
+            e.setPayRate(em.getPayRate());
+            e.setPayRatesId(em.getPayRatesId());
+            e.setVacationDays(em.getVacationDays());
+            e.setPaidLastYear(em.getPaidLastYear());
+            e.setPaidToDate(em.getPaidToDate());
+            //personal
+            e.setEmployee_ID(pe.getEmployee_ID());
+            e.setFirst_Name(pe.getFirst_Name());
+            e.setLast_Name(pe.getLast_Name());
+            e.setMiddle_Initial(pe.getMiddle_Initial());
+            e.setAddress1(pe.getAddress1());
+            e.setAddress2(pe.getAddress2());
+            e.setCity(pe.getCity());
+            e.setState(pe.getState());
+            e.setZip(pe.getZip());
+            e.setPhone_Number(pe.getPhone_Number());
+            e.setEmail(pe.getEmail());
+            e.setSocial_Security_Number(pe.getSocial_Security_Number());
+            e.setDrivers_License(pe.getDrivers_License());
+            e.setMarital_Status(pe.getMarital_Status());
+            e.setGender(pe.isGender());
+            e.setMarital_Status(pe.getMarital_Status());
+            e.setEthnicity(pe.getEthnicity());
+            model.addAttribute("eperson", e);
+
+        } catch (Exception e) {
+            return "admin/error";
+        }
+
+        return "admin/editEPerson";
+    }
+
+    private Employee fetchEmployeesId(int id) {
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(
+                    GET_EMPLOYEE_BY_ID_API_URL + "/" + id,
+                    HttpMethod.GET,
+                    null,
+                    String.class
+            );
+
+            return objectMapper.readValue(response.getBody(), new TypeReference<Employee>() {
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Loi sever personal");
+            return null; // fallback
+
+        }
+    }
+
+    private Personal fetchPersonalsId(int id) {
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(
+                    GET_PERSONAL_BY_ID_API_URL + "/" + id,
+                    HttpMethod.GET,
+                    null,
+                    String.class
+            );
+
+            return objectMapper.readValue(response.getBody(), new TypeReference<Personal>() {
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null; // fallback
+        }
+    }
+
+    public void clearCacheEmployee() {
+        try {
+            RestTemplate rest = new RestTemplate();
+            rest.getForObject(CLEAR_CACHE_EMPLOYEE_API_URL, null, String.class);
+            System.out.println("Da xoa cache employee");
+
+        } catch (Exception e) {
+            System.err.println("Loi khi xoa cache" + e.getMessage());
+        }
+    }
+
+    public void clearCachePersonal() {
+        try {
+            RestTemplate rest = new RestTemplate();
+            rest.postForObject(CLEAR_CACHE_PERSONAL_API_URL, null, String.class);
+            System.out.println("Da xoa cache persoal");
+
+        } catch (Exception e) {
+            System.err.println("Loi khi xoa cache" + e.getMessage());
+        }
+    }
+
+    @RequestMapping(value = "/EPerson/updateEPerson", method = RequestMethod.POST)
+    public String updateEmployee(@ModelAttribute("eperson") EPerson eperson) {
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            ObjectMapper ob = new ObjectMapper();
+            System.out.println("called updated");
+            System.out.println("em id:" + eperson.getIdEmployee() + " fname" + eperson.getFirstName() + "lname" + eperson.getLastName());
+            System.out.println("per name" + eperson.getFirstName());
+            Employee em = new Employee(eperson.getEmployeeNumber(), eperson.getIdEmployee(), eperson.getLastName(), eperson.getFirstName(), eperson.getSsn(), eperson.getPayRate(), eperson.getPayRatesId(), eperson.getVacationDays(), eperson.getPaidLastYear(), eperson.getPaidToDate());
+            Personal pe = new Personal(eperson.getEmployee_ID(), eperson.getFirst_Name(), eperson.getLast_Name(), eperson.getBenefit_Plans(), eperson.getMiddle_Initial(), eperson.getAddress1(), eperson.getAddress2(), eperson.getCity(), eperson.getState(), eperson.getZip(), eperson.getEmail(), eperson.getPhone_Number(), eperson.getSocial_Security_Number(), eperson.getDrivers_License(), eperson.getMarital_Status(), eperson.isGender(), eperson.isShareholder_Status(), eperson.getEthnicity());
+
+            Map<String, Object> map = ob.convertValue(pe, new TypeReference<Map<String, Object>>() {
+            });
+            map.remove("state");
+            map.remove("email");
+            map.remove("city");
+            map.remove("zip");
+            map.remove("gender");
+            map.remove("address1");
+            map.remove("full_Name");
+            map.remove("address2");
+            map.remove("last_Name");
+            map.remove("employee_ID");
+            map.remove("first_Name");
+            map.remove("ethnicity");
+            map.remove("Benefit_Plans");
+            map.remove("phone_Number");
+            map.remove("drivers_License");
+            map.remove("shareholder_Status");
+            map.remove("marital_Status");
+            map.remove("benefit_Plans");
+            map.remove("social_Security_Number");
+            map.remove("middle_Initial");
+
+            String jsonbody = ob.writeValueAsString(map);
+            String jsonebody = ob.writeValueAsString(em);
+
+            HttpEntity<String> entity = new HttpEntity<>(jsonbody, headers);
+            HttpEntity<String> entityE = new HttpEntity<>(jsonebody, headers);
+
+            System.out.println("test cuoi e" + entityE);
+            RestTemplate temp = new RestTemplate();
+            temp.postForObject(UPDATE_EMPLOYEE_API_URL, entityE, String.class);
+            temp.postForObject(UPDATE_PERSONAL_API_URL, entity, String.class);
+
+            clearCacheEmployee();
+            clearCachePersonal();
+            // updateRealTimeData();
+            //socketE.bcMergeData(list);
+        } catch (Exception e) {
+            return "admin/error";
+        }
+        return "redirect:/admin/EPerson";
+    }
+
     @RequestMapping(value = "/EPerson/clearCache", method = RequestMethod.GET)
     @ResponseBody
     public String clearCache() {
@@ -161,20 +344,79 @@ public class EPersonController {
         }
     }
 
+    @RequestMapping(value = {"EPerson/deleteEPersonById/{id}"}, method = RequestMethod.DELETE)
+    public ResponseEntity<String> deleteEPersonById(@PathVariable("id") int id) {
+        System.out.println("Called from eperson ok dese id: " + id);
+        try {
+            RestTemplate temp = new RestTemplate();
+
+            // Gọi API xóa employee (Spring App)
+            temp.delete(DELETE_EMPLOYEE_API_URL + "/" + id);
+
+            // Gọi API xóa personal (HR App dùng POST)
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+            MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+            map.add("id", String.valueOf(id));
+
+            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
+            temp.postForEntity(DELETE_PERSONAL_API_URL, request, String.class);
+
+            return new ResponseEntity<>("Đã xoá EPerson với id = " + id, HttpStatus.OK);
+        } catch (Exception e) {
+            System.out.println("Lỗi khi xoá eperson: " + e.getMessage());
+            e.printStackTrace();
+            return new ResponseEntity<>("Lỗi khi xoá eperson", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // page
     @RequestMapping(value = "/EPerson/addEPerson", method = RequestMethod.GET)
     public String addEPerson(ModelMap model, HttpServletRequest request) {
         model.addAttribute("eperson", new EPerson());
         return "admin/addEPerson";
     }
 
-    @RequestMapping(value = "/EPerson/createEPerson", method = RequestMethod.POST)
+    @RequestMapping(value = "/EPerson/createEPerson", method = RequestMethod.POST, produces = "application/json")
     public String createEPerson(@ModelAttribute("eperson") EPerson eperson) {
         System.out.println("Called from eperon");
         try {
             ObjectMapper ob = new ObjectMapper();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            Map<String, Object> map = ob.convertValue(eperson, new TypeReference<Map<String, Object>>() {
+            });
+            map.remove("state");
+            map.remove("email");
+            map.remove("city");
+            map.remove("zip");
+            map.remove("gender");
+            map.remove("address1");
+            map.remove("address2");
+            map.remove("last_Name");
+            map.remove("employee_ID");
+            map.remove("first_Name");
+            map.remove("ethnicity");
+            map.remove("phone_Number");
+            map.remove("drivers_License");
+            map.remove("shareholder_Status");
+            map.remove("marital_Status");
+            map.remove("benefit_Plans");
+            map.remove("social_Security_Number");
+            map.remove("middle_Initial");
+            String jsonbody = ob.writeValueAsString(map);
+
+            HttpEntity<String> entity = new HttpEntity<>(jsonbody, headers);
+            System.out.println("test cuoi " + entity);
             System.out.println("DEBUG GUI DI");
-            System.out.println(ob.writeValueAsString(eperson));
+            //    System.out.println("test object" + ob.writeValueAsString(eperson));
+            if (eperson == null) {
+                return "admin/error";
+
+            }
             ResponseEntity<String> employeeResponse = restTemplate.postForEntity(CREATE_EMPLOYEE_API_URL, eperson, String.class);
+            ResponseEntity<String> personalResponse = restTemplate.postForEntity(CREATE_PERSONAL_API_URL, entity, String.class);
             updateRealtimeMergeData();
             return "redirect:/admin/EPerson";
         } catch (Exception e) {
@@ -489,10 +731,12 @@ public class EPersonController {
                     merged.setBenefit_Plans(per.getBenefit_Plans());
                     merged.setEthnicity(per.getEthnicity());
                 }
-                if (emp != null && per != null) {
-                    merged.setFirstName(emp.getFirstName() + "(" + per.getFirst_Name() + ")");
-                    merged.setLastName(emp.getLastName() + "(" + per.getLast_Name() + ")");
-
+                if (emp == null) {
+                    merged.setFirstName(per.getFirst_Name());
+                    merged.setLastName(per.getLast_Name());
+                } else {
+                    merged.setFirstName(emp.getFirstName());
+                    merged.setLastName(emp.getLastName());
                 }
 
                 mergedList.add(merged);

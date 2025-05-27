@@ -171,7 +171,7 @@
             return;
         }
 
-        alert("Thành công: Dữ liệu đã hợp lệ!");
+        alert("Thêm Thành công: Dữ liệu đã hợp lệ!");
     });
 </script>
 

@@ -14,6 +14,11 @@ public class Employee implements java.io.Serializable {
     private long ssn;
     private String payRate;
     private Integer payRatesId;
+
+    @Override
+    public String toString() {
+        return "Employee{" + "employeeNumber=" + employeeNumber + ", idEmployee=" + idEmployee + ", lastName=" + lastName + ", firstName=" + firstName + ", fullName=" + fullName + ", ssn=" + ssn + ", payRate=" + payRate + ", payRatesId=" + payRatesId + ", vacationDays=" + vacationDays + ", paidToDate=" + paidToDate + ", paidLastYear=" + paidLastYear + '}';
+    }
     private Integer vacationDays;
     private Byte paidToDate;
     private Byte paidLastYear;
@@ -45,11 +50,11 @@ public class Employee implements java.io.Serializable {
     public int getEmployeeNumber() {
         return this.employeeNumber;
     }
-    
-    public String getFullName()
-    {
+
+    public String getFullName() {
         return this.fullName;
     }
+
     public void setEmployeeNumber(int employeeNumber) {
         this.employeeNumber = employeeNumber;
     }

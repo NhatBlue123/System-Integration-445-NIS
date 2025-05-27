@@ -10,6 +10,33 @@ package springapp.web.model;
  */
 public class Personal {
 
+                //Personal pe = new Personal(eperson.getEmployee_ID(), eperson.getFirstName(), eperson.getLast_Name(), eperson.getBenefit_Plans(), eperson.getMiddle_Initial(), eperson.getAddress1(), eperson.getAddress2(), eperson.getCity(), eperson.getState(), eperson.getZip(), eperson.getPhone_Number(), eperson.getSocial_Security_Number(), eperson.getDrivers_License(), eperson.getMarital_Status(), PERSONAL_API_URL, eperson.isGender(), eperson.isShareholder_Status(), eperson.getEthnicity());
+
+    public Personal(int Employee_ID, String First_Name, String Last_Name, int Benefit_Plans, String Middle_Initial, String Address1, String Address2, String City, String State, int Zip, String Email, String Phone_Number, String Social_Security_Number, String Drivers_License, String Marital_Status, boolean Gender, boolean Shareholder_Status, String Ethnicity) {
+        this.Employee_ID = Employee_ID;
+        this.First_Name = First_Name;
+        this.Last_Name = Last_Name;
+        this.Benefit_Plans = Benefit_Plans;
+        this.Middle_Initial = Middle_Initial;
+        this.Address1 = Address1;
+        this.Address2 = Address2;
+        this.City = City;
+        this.State = State;
+        this.Zip = Zip;
+        this.Email = Email;
+        this.Phone_Number = Phone_Number;
+        this.Social_Security_Number = Social_Security_Number;
+        this.Drivers_License = Drivers_License;
+        this.Marital_Status = Marital_Status;
+        this.Gender = Gender;
+        this.Shareholder_Status = Shareholder_Status;
+        this.Ethnicity = Ethnicity;
+    }
+    public Personal()
+    {
+        
+    }
+
     public int Employee_ID;
 
     public String First_Name;

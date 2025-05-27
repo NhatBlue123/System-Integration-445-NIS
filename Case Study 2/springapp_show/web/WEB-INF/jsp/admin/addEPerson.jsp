@@ -57,7 +57,7 @@
             }
         </style>
 
-        <form:form method="POST" action="${contextPath}/admin/EPerson/createEPerson" modelAttribute="eperson" id="EPersonForm">
+        <form:form method="POST" action="${contextPath}/admin/EPerson/createEPerson" modelAttribute="eperson" id="epersonForm">
             <div class="form-container">
                 <!-- Employee Section -->
                 <div class="form-section">
@@ -96,7 +96,8 @@
                 <!-- Personal Section -->
                 <div class="form-section">
                     <h2>Personal Info</h2>
-
+                    <label>Employee ID:</label>
+                    <form:input path="Employee_ID" />
                     <label>First Name:</label>
                     <form:input path="First_Name" />
 
@@ -134,7 +135,7 @@
                     <form:input path="Drivers_License" />
 
                     <label>Marital Status:</label>
-                    <form:input path="Marital_Status" />
+                    <form:input path="Marital_Status" /> 
 
                     <label>Gender:</label>
                     <form:checkbox path="Gender" />
@@ -155,7 +156,29 @@
             </div>
         </form:form>
         <script>
-            document.getElementById("EPersonForm").addEventListener("submit", function (event) {
+            function syncFields(sourceName, targetName) {
+                console.log("called");
+                const source = document.getElementsByName(sourceName)[0];
+                const target = document.getElementsByName(targetName)[0];
+                if (source && target) {
+                    source.addEventListener("input", function () {
+                        target.value = source.value;
+                    });
+                    target.addEventListener("input", function () {
+                        source.value = target.value;
+                    });
+                }
+            }
+
+            // Đồng bộ ID
+            syncFields("idEmployee", "Employee_ID");
+
+            // Đồng bộ First Name
+            syncFields("firstName", "First_Name");
+
+            // Đồng bộ Last Name
+            syncFields("lastName", "Last_Name");
+            document.getElementById("epersonForm").addEventListener("submit", function (event) {
                 function isNumber(value) {
                     return /^\d+$/.test(value);
                 }
@@ -174,6 +197,7 @@
                 const paidLastYear = getVal("paidLastYear");
 
                 // Personal
+                const personalEmployeeID = getVal("Employee_ID");
                 const personalFirstName = getVal("First_Name");
                 const personalLastName = getVal("Last_Name");
                 const middleInitial = getVal("Middle_Initial");
@@ -190,9 +214,10 @@
                 const benefitPlans = getVal("Benefit_Plans");
                 const ethnicity = getVal("Ethnicity");
 
+
                 let errors = [];
 
-                // === EMPLOYEE VALIDATION ===
+                //  === EMPLOYEE VALIDATION ===
 
                 if (!employeeNumber || !idEmployee || !firstName || !lastName || !ssn) {
                     errors.push("Vui lòng nhập đầy đủ các trường bắt buộc (Employee).");
@@ -239,7 +264,12 @@
                 }
 
                 // === PERSONAL VALIDATION ===
-
+                if (!personalEmployeeID || personalEmployeeID == 0) {
+                    errors.push("Vui lòng nhập đầy đủ các trường bắt buộc (Personal).");
+                }
+                if (personalEmployeeID.length > 18 || !isNumber(personalEmployeeID)) {
+                    errors.push("Employee ID(Personal)  phải là số và tối đa 18 chữ số.");
+                }
                 if (personalFirstName.length > 50) {
                     errors.push("First Name (Personal) tối đa 50 ký tự.");
                 }

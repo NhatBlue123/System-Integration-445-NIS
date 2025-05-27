@@ -33,9 +33,14 @@ import springapp.web.dao.EmployeeDao;
 import springapp.web.model.EPerson;
 import springapp.web.model.Employee;
 import config.RedisConfig;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.ResponseBody;
+import springapp.web.model.Personal;
 
 /**
  *
@@ -50,6 +55,8 @@ public class EmployeeController {
     EmployeeDao edao = new EmployeeDao();
     Jedis jedis = RedisConfig.getJedis();
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private static final String UPDATE_PERSONAL_API_URL = "http://localhost:19335/Personals/updatePersonal";
+
     @Autowired
     private EmployeeSocketController socketE;
 
@@ -96,6 +103,24 @@ public class EmployeeController {
         return viewName;
     }
 
+    @RequestMapping(value = "/employee/getEmployeeById/{id}", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<?> getEmployeeById(@PathVariable("id") int id) {
+        try {
+            Employee employee = edao.getById(id);
+            if (employee != null) {
+                ObjectMapper mapper = new ObjectMapper();
+                String json = mapper.writeValueAsString(employee);
+                return new ResponseEntity<>(json, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Không tìm thấy nhân viên với ID: " + id, HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Lỗi khi lấy thông tin nhân viên", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @RequestMapping(value = {"/employee/editEmployee/{id}"}, method = RequestMethod.GET)
     public String pageEditEmployee(@PathVariable("id") int id, ModelMap model) {
         try {
@@ -113,7 +138,42 @@ public class EmployeeController {
     @RequestMapping(value = "/employee/updateEmployee", method = RequestMethod.POST)
     public String updateEmployee(@ModelAttribute("employee") Employee employee) {
         try {
-            System.out.println("called updated");
+            Personal per = new Personal();
+            per.setEmployee_ID(employee.getIdEmployee());
+            per.setLast_Name(employee.getLastName());
+            per.setFirst_Name(employee.getFirstName());
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            Map<String, Object> map = objectMapper.convertValue(per, new TypeReference<Map<String, Object>>() {
+            });
+            map.remove("state");
+            map.remove("email");
+            map.remove("city");
+            map.remove("zip");
+            map.remove("gender");
+            map.remove("address1");
+            map.remove("full_Name");
+            map.remove("address2");
+            map.remove("last_Name");
+            map.remove("employee_ID");
+            map.remove("first_Name");
+            map.remove("ethnicity");
+            map.remove("Benefit_Plans");
+            map.remove("phone_Number");
+            map.remove("drivers_License");
+            map.remove("shareholder_Status");
+            map.remove("marital_Status");
+            map.remove("benefit_Plans");
+            map.remove("social_Security_Number");
+            map.remove("middle_Initial");
+            String jsonbody = objectMapper.writeValueAsString(map);
+            HttpEntity<String> entity = new HttpEntity<>(jsonbody, headers);
+            System.out.println("TEST CUOI" + entity);
+
+            RestTemplate temp = new RestTemplate();
+            temp.postForObject(UPDATE_PERSONAL_API_URL, entity, String.class);
+            System.out.println("called updated8888");
+            System.out.println("last and firts name: " + employee.getLastName() + " " + employee.getFullName());
             edao.update(employee);
             clearEmployeeCache();
             try {
@@ -130,25 +190,15 @@ public class EmployeeController {
         } catch (Exception e) {
             return "admin/error";
         }
-            return "redirect:/admin/employee/list.html";
+        return "redirect:/admin/employee/list.html";
     }
 
-    // trang addEmployee
-    @RequestMapping(value = {"/employee/addEmployee"}, method = RequestMethod.GET)
-    public String addEmployee(ModelMap model, HttpServletRequest request) {
-        model.addAttribute("employee", new Employee());
-        return "admin/addEmployee";
-
-    }
-
-    //api them 1 employee của phần trang add Employe của spring
-    @RequestMapping(value = "/employee/createEmployee", method = RequestMethod.POST)
-    public String createEPerson(@ModelAttribute("employee") Employee employee) {
-        System.out.println("Called from employee");
+    @RequestMapping(value = "/employee/updateEmployeeEPerson", method = RequestMethod.POST)
+    public String updateEmployeeEPerson(@RequestBody Employee employee) {
         try {
-            List<Employee> list = new ArrayList<>();
-            list.add(employee);
-            edao.insertBatch(list);
+            System.out.println("EMPLOYEE: " + employee.toString());
+            System.out.println("last and firts name: " + employee.getLastName() + " " + employee.getFullName());
+            edao.update(employee);
             clearEmployeeCache();
             try {
                 RestTemplate rest = new RestTemplate();
@@ -160,7 +210,123 @@ public class EmployeeController {
                 System.err.println("Loi khi xoa cache" + e.getMessage());
             }
             // updateRealTimeData();
-            socketE.bcMergeData(list);
+            //socketE.bcMergeData(list);
+        } catch (Exception e) {
+            return "admin/error";
+        }
+        return "redirect:/admin/employee/list.html";
+    }
+
+    @RequestMapping(value = "/employee/updateEmployeeFromPersonal", method = RequestMethod.POST)
+    public String updateEmployeeFromPersonal(@RequestBody Employee employee) {
+        Employee temp = edao.getById(employee.getIdEmployee());
+        System.out.println("ENUMBER8888" + temp.getEmployeeNumber());
+        try {
+            System.out.println("called updated from personal");
+            System.out.println("called updated 07640724");
+
+            Employee e = new Employee();
+            e.setEmployeeNumber(temp.getEmployeeNumber());
+            e.setIdEmployee(employee.getIdEmployee());
+            e.setFirstName(employee.getFirstName());
+            e.setLastName(employee.getLastName());
+            System.out.println("EMPLOYEE: " + employee.toString());
+
+            System.out.println("last and firts name: " + e.getLastName() + " " + e.getFullName());
+            edao.update(e);
+            clearEmployeeCache();
+            try {
+                RestTemplate rest = new RestTemplate();
+                String cacheUrl = "http://localhost:8888/springapp_show/admin/EPerson/clearCache";
+                rest.getForObject(cacheUrl, String.class);
+                System.out.println("Da xoa cache");
+
+            } catch (Exception ew) {
+                System.err.println("Loi khi xoa cache" + ew.getMessage());
+            }
+            // updateRealTimeData();
+            //socketE.bcMergeData(list);
+        } catch (Exception e) {
+            return "admin/error";
+        }
+        return "redirect:/admin/employee/list.html";
+    }
+
+    // trang addEmployee
+    @RequestMapping(value = {"/employee/addEmployee"}, method = RequestMethod.GET)
+    public String addEmployee(ModelMap model, HttpServletRequest request) {
+        model.addAttribute("employee", new Employee());
+        return "admin/addEmployee";
+
+    }
+
+    private static final String CREATE_PERSONAL_API_URL = "http://localhost:19335/Personals/generateAPersonalFrompEmployee";
+
+    public void createPersonalFromEmployee(Employee e) {
+        try {
+            Personal per = new Personal();
+            per.setEmployee_ID(e.getIdEmployee());
+            per.setLast_Name(e.getLastName());
+            per.setFirst_Name(e.getFirstName());
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            ObjectMapper ob = new ObjectMapper();
+            Map<String, Object> map = ob.convertValue(per, new TypeReference<Map<String, Object>>() {
+            });
+            map.remove("state");
+            map.remove("email");
+            map.remove("city");
+            map.remove("zip");
+            map.remove("gender");
+            map.remove("address1");
+            map.remove("full_Name");
+            map.remove("address2");
+            map.remove("last_Name");
+            map.remove("employee_ID");
+            map.remove("first_Name");
+            map.remove("ethnicity");
+            map.remove("Benefit_Plans");
+            map.remove("phone_Number");
+            map.remove("drivers_License");
+            map.remove("shareholder_Status");
+            map.remove("marital_Status");
+            map.remove("benefit_Plans");
+            map.remove("social_Security_Number");
+            map.remove("middle_Initial");
+            String jsonbody = ob.writeValueAsString(map);
+            HttpEntity<String> entity = new HttpEntity<>(jsonbody, headers);
+            System.out.println("ENTITY cuoi: " + entity);
+            RestTemplate temp = new RestTemplate();
+            temp.postForObject(CREATE_PERSONAL_API_URL, entity, String.class);
+            System.out.println("Personal da duoc gui qua hr");
+        } catch (Exception ee) {
+            System.out.println("Loi: " + ee.getMessage());
+        }
+
+    }
+
+    //api them 1 employee của phần trang add Employe của spring
+    @RequestMapping(value = "/employee/createEmployee", method = RequestMethod.POST)
+    public String createEPerson(@ModelAttribute("employee") Employee employee) {
+        System.out.println("Called from employee");
+        try {
+            List<Employee> list = new ArrayList<>();
+            list.add(employee);
+            edao.insertBatch(list);
+
+            createPersonalFromEmployee(employee);
+            clearEmployeeCache();
+            try {
+                RestTemplate rest = new RestTemplate();
+                String cacheUrl = "http://localhost:8888/springapp_show/admin/EPerson/clearCache";
+                rest.getForObject(cacheUrl, String.class);
+                System.out.println("Da xoa cache");
+
+            } catch (Exception e) {
+                System.err.println("Loi khi xoa cache" + e.getMessage());
+            }
+            // updateRealTimeData();
+            // socketE.bcMergeData(list);
             return "redirect:/admin/employee/list.html";
         } catch (Exception e) {
             e.printStackTrace();
@@ -309,9 +475,6 @@ public class EmployeeController {
             List<Employee> list = new ArrayList<>();
 
             Employee emp = new Employee();
-//            if (edao.checkExistId(eperson.getIdEmployee())) {
-//                return new ResponseEntity<>("Lỗi khi tạo employee từ EPerson vì trùng id", HttpStatus.BAD_REQUEST);
-//            }
 
             emp.setIdEmployee(eperson.getIdEmployee());
             emp.setEmployeeNumber(eperson.getEmployeeNumber());
@@ -323,9 +486,10 @@ public class EmployeeController {
             emp.setVacationDays(eperson.getVacationDays());
             emp.setPaidToDate(eperson.getPaidToDate());
             emp.setPaidLastYear(eperson.getPaidLastYear());
+            //  createPersonalFromEmployee(emp);
+
             list.add(emp);
-            //   list.add(emp);
-            //  edao.insert(emp);          
+
             edao.insertBatch(list);
 
             clearEmployeeCache();
@@ -339,7 +503,7 @@ public class EmployeeController {
                 System.err.println("Loi khi xoa cache" + e.getMessage());
             }
             //  updateRealTimeData();
-            socketE.bcMergeData(list);
+            // socketE.bcMergeData(list);
             return new ResponseEntity<>("Đã tạo employee từ EPerson", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Lỗi khi tạo employee từ EPerson", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -369,6 +533,7 @@ public class EmployeeController {
             emp.setVacationDays(rand.nextInt(30));
             emp.setPaidToDate((byte) (rand.nextInt(2)));
             emp.setPaidLastYear((byte) (rand.nextInt(2)));
+            createPersonalFromEmployee(emp);
 
             list.add(emp);  // chỉ 1 employee
 
@@ -386,7 +551,7 @@ public class EmployeeController {
                 System.err.println("Loi khi xoa cache" + e.getMessage());
             }
             // updateRealTimeData();
-            socketE.bcMergeData(list);
+            //   socketE.bcMergeData(list);
 
             return new ResponseEntity<>("Tạo 1 employee thành công", HttpStatus.OK);
         } catch (Exception e) {
@@ -418,6 +583,7 @@ public class EmployeeController {
             emp.setVacationDays(rand.nextInt(30));
             emp.setPaidToDate((byte) (rand.nextInt(2)));
             emp.setPaidLastYear((byte) (rand.nextInt(2)));
+            createPersonalFromEmployee(emp);
 
             list.add(emp);  // chỉ 1 employee
 
@@ -434,13 +600,58 @@ public class EmployeeController {
                 System.err.println("Loi khi xoa cache" + e.getMessage());
             }
             //  updateRealTimeData();
-            socketE.bcMergeData(list);
+            // socketE.bcMergeData(list);
 
             return new ResponseEntity<>("Tạo 1 employee thành công với ID = " + emp.getIdEmployee(), HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>("Lỗi khi tạo employee or trùng id", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    // nhan queue tu c#
+    @RequestMapping(value = "/employee/generateAEmployeeFrompPersonal", method = RequestMethod.POST)
+    public ResponseEntity<String> generateAEmployeeFrompPersonal(@RequestBody Employee employee) {
+        try {
+            System.out.println("CALLED FROM PERSONAL: EMPLOYEE NAME: " + employee.getFirstName() + " " + employee.getLastName());
+            List<Employee> list = new ArrayList<>();
+
+            Faker myF = new Faker(new Locale("en"));
+            int currentCount = edao.getEmployeeCount();
+            int startIndex = currentCount + 1;
+
+            //if(employee.getFirstName() == "" || employee.getLastName() == "" )
+            Employee e = new Employee();
+            e.setEmployeeNumber(1000 + employee.getIdEmployee());
+            e.setIdEmployee(employee.getIdEmployee());
+            e.setFirstName(employee.getFirstName());
+            e.setLastName(employee.getLastName());
+            e.setSsn(100000000L + startIndex);
+
+            list.add(e);
+            edao.insertBatch(list);
+            //  System.out.println("THONG BAO CACHE: " + clearEmployeeCache());
+            clearEmployeeCache();
+
+            try {
+                RestTemplate rest = new RestTemplate();
+                String cacheUrl = "http://localhost:8888/springapp_show/admin/EPerson/clearCache";
+                rest.getForObject(cacheUrl, String.class);
+                System.out.println("Da xoa cache");
+
+            } catch (Exception ee) {
+                System.err.println("Loi khi xoa cache" + ee.getMessage());
+            }
+            updateRealTimeData();
+            socketE.bcMergeData(list);
+            return new ResponseEntity<>("Tạo 1 employee thành công với ID = ", HttpStatus.OK);
+
+        } catch (Exception ee) {
+            ee.printStackTrace();
+            return new ResponseEntity<>("Lỗi khi tạo employee or trùng id", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        //  return new ResponseEntity<>("Tạo  " + "employee thành công", HttpStatus.OK);
     }
 
     @RequestMapping(value = "/employee/generate/{limit}", method = RequestMethod.POST)
@@ -496,7 +707,7 @@ public class EmployeeController {
             } catch (Exception e) {
                 System.err.println("Loi khi xoa cache" + e.getMessage());
             }
-            socketE.bcMergeData(list);
+            //socketE.bcMergeData(list);
 
             return new ResponseEntity<>("Tạo " + dem + " employee thành công", HttpStatus.OK);
         } catch (Exception e) {
@@ -527,6 +738,7 @@ public class EmployeeController {
 
     @RequestMapping(value = {"employee/deleteEmployeeById/{id}"}, method = RequestMethod.DELETE)
     public ResponseEntity<String> deleteEmployeeById(@PathVariable("id") int id) {
+       System.out.println("Called from eperson ok desu");
         try {
 
             edao.deleteById(id);
@@ -555,7 +767,6 @@ public class EmployeeController {
             session.beginTransaction();
             listEmployees = session.createQuery("from Employee").list();
             session.getTransaction().commit();
-
             jedis.set("cacheEmployee", objectMapper.writeValueAsString(listEmployees));
             jedis.expire("cacheEmployee", 300);
             socketE.bcMergeData(listEmployees);
@@ -568,29 +779,3 @@ public class EmployeeController {
     }
 
 }
-
-//@Controller
-//@RequestMapping(value = "/admin")
-//public class EmployeeController {
-//    @RequestMapping(value = "/employee/list", method = RequestMethod.GET)
-//    public String listEmployee(ModelMap model, HttpServletRequest request) {
-//        Users user = (Users) request.getSession().getAttribute("LOGGEDIN_USER");
-//        String value = "";
-//        if (user != null) {
-//            try {
-//                Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-//                session.beginTransaction();
-//                List listEmployees = session.createQuery("from Employee").list();
-//                model.addAttribute("listEmployees", listEmployees);
-//                session.getTransaction().commit();
-//                value = "admin/listEmployee";
-//            } catch (Exception e) {
-//            }
-//
-//        } else {
-//            model.addAttribute("user", new Users());
-//            value= "redirect:/admin/login.html";
-//        }
-//        return value;
-//    }
-//}

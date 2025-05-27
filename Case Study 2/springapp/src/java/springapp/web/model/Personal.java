@@ -4,30 +4,15 @@
  */
 package springapp.web.model;
 
-
 /**
  *
  * @author bluez
  */
-public class EPerson {
+public class Personal {
 
-    // ==================== EMPLOYEE FIELDS ====================
-     public EPerson()
-    {
-        
-    }
+                //Personal pe = new Personal(eperson.getEmployee_ID(), eperson.getFirstName(), eperson.getLast_Name(), eperson.getBenefit_Plans(), eperson.getMiddle_Initial(), eperson.getAddress1(), eperson.getAddress2(), eperson.getCity(), eperson.getState(), eperson.getZip(), eperson.getPhone_Number(), eperson.getSocial_Security_Number(), eperson.getDrivers_License(), eperson.getMarital_Status(), PERSONAL_API_URL, eperson.isGender(), eperson.isShareholder_Status(), eperson.getEthnicity());
 
-    public EPerson(int employeeNumber, int idEmployee, String lastName, String firstName, long ssn, String payRate, Integer payRatesId, Integer vacationDays, Byte paidToDate, Byte paidLastYear, int Employee_ID, String First_Name, String Last_Name, int Benefit_Plans, String Middle_Initial, String Address1, String Address2, String City, String State, int Zip, String Email, String Phone_Number, String Social_Security_Number, String Drivers_License, String Marital_Status, boolean Gender, boolean Shareholder_Status, String Ethnicity) {
-        this.employeeNumber = employeeNumber;
-        this.idEmployee = idEmployee;
-        this.lastName = lastName;
-        this.firstName = firstName;
-        this.ssn = ssn;
-        this.payRate = payRate;
-        this.payRatesId = payRatesId;
-        this.vacationDays = vacationDays;
-        this.paidToDate = paidToDate;
-        this.paidLastYear = paidLastYear;
+    public Personal(int Employee_ID, String First_Name, String Last_Name, int Benefit_Plans, String Middle_Initial, String Address1, String Address2, String City, String State, int Zip, String Email, String Phone_Number, String Social_Security_Number, String Drivers_License, String Marital_Status, boolean Gender, boolean Shareholder_Status, String Ethnicity) {
         this.Employee_ID = Employee_ID;
         this.First_Name = First_Name;
         this.Last_Name = Last_Name;
@@ -47,107 +32,18 @@ public class EPerson {
         this.Shareholder_Status = Shareholder_Status;
         this.Ethnicity = Ethnicity;
     }
-    
-    
-
-   private int employeeNumber;
-     private int idEmployee;
-     private String lastName;
-     private String firstName;
-     private String fullName = this.lastName + " " + this.fullName;
-     private long ssn;
-     private String payRate;
-     private Integer payRatesId;
-     private Integer vacationDays;
-     private Byte paidToDate;
-     private Byte paidLastYear;
-
-//    
-   
-    public int getEmployeeNumber() {
-        return this.employeeNumber;
-    }
-    
-    public void setEmployeeNumber(int employeeNumber) {
-        this.employeeNumber = employeeNumber;
-    }
-    public int getIdEmployee() {
-        return this.idEmployee;
-    }
-    public String getFullName()
+    public Personal()
     {
-        return this.fullName;
+        
     }
-    public void setFullName(String fullName)
-    {
-        this.fullName = fullName;
-    }
-    
-    public void setIdEmployee(int idEmployee) {
-        this.idEmployee = idEmployee;
-    }
-    public String getLastName() {
-        return this.lastName;
-    }
-    
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-    public String getFirstName() {
-        return this.firstName;
-    }
-    
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-    public long getSsn() {
-        return this.ssn;
-    }
-    
-    public void setSsn(long ssn) {
-        this.ssn = ssn;
-    }
-    public String getPayRate() {
-        return this.payRate;
-    }
-    
-    public void setPayRate(String payRate) {
-        this.payRate = payRate;
-    }
-    public Integer getPayRatesId() {
-        return this.payRatesId;
-    }
-    
-    public void setPayRatesId(Integer payRatesId) {
-        this.payRatesId = payRatesId;
-    }
-    public Integer getVacationDays() {
-        return this.vacationDays;
-    }
-    
-    public void setVacationDays(Integer vacationDays) {
-        this.vacationDays = vacationDays;
-    }
-    public Byte getPaidToDate() {
-        return this.paidToDate;
-    }
-    
-    public void setPaidToDate(Byte paidToDate) {
-        this.paidToDate = paidToDate;
-    }
-    public Byte getPaidLastYear() {
-        return this.paidLastYear;
-    }
-    
-    public void setPaidLastYear(Byte paidLastYear) {
-        this.paidLastYear = paidLastYear;
-    }
-  
-     public int Employee_ID;
+
+    public int Employee_ID;
 
     public String First_Name;
 
     public String Last_Name;
+    
+    public String Full_Name = First_Name + " " + Last_Name;
 
     public int getEmployee_ID() {
         return Employee_ID;
@@ -157,6 +53,10 @@ public class EPerson {
         this.Employee_ID = Employee_ID;
     }
 
+    public String getFull_Name()
+    {
+        return this.Full_Name;
+    }
     public String getFirst_Name() {
         return First_Name;
     }
@@ -322,5 +222,5 @@ public class EPerson {
     public boolean Shareholder_Status;
     
     public String Ethnicity;
-
+   
 }
